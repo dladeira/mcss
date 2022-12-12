@@ -1,0 +1,30 @@
+{
+  "name": "mcss-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dladeira/mcss-backend.git"
+  },
+  "author": "dladeira",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/dladeira/mcss-backend/issues"
+  },
+  "homepage": "https://github.com/dladeira/mcss-backend#readme",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon index.js --port=3021"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "minimist": "^1.2.7",
+    "mongoose": "^6.7.3"
+  }
+}
