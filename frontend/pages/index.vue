@@ -3,6 +3,7 @@
         <div class="page">
             <LandingSecMain />
             <LandingSecFeatures />
+            <LandingSecPricing />
         </div>
     </NuxtLayout>
 </template>
