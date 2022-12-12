@@ -4,13 +4,14 @@
             <LandingSecMain />
             <LandingSecFeatures />
             <LandingSecPricing />
+            <LandingSecRoadmap />
         </div>
+        <Footer />
     </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
 .page {
-    height: 100%;
     width: 1200px;
     max-width: 70%;
 

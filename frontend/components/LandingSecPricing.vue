@@ -13,27 +13,27 @@
                 </div>
                 <div class="desc">
                     <div class="desc-point">
-                        1 server slot
+                        - <span class="desc-bold">1</span> server slot
+                    </div>
+                    <div class="desc-point" />
+                    <div class="desc-point" />
+                    <div class="desc-point">
+                        - <span class="desc-bold">2GB</span> storage
                     </div>
                     <div class="desc-point">
+                        - <span class="desc-bold">6 months</span> server life
                     </div>
                     <div class="desc-point">
-                        2GB storage
-                    </div>
-                    <div class="desc-point">
-                        6 months server life
-                    </div>
-                    <div class="desc-point">
-                        Server pinged every 1h
+                        - Server pinged every <span class="desc-bold">1h</span>
                     </div>
                 </div>
-                <div class="plan-button">
+                <nuxt-link class="plan-button" to="login">
                     Register
-                </div>
+                </nuxt-link>
             </div>
 
             <div class="plan plan-premium">
-                <div class="plan-title">
+                <div class="plan-title title-blue">
                     Premium
                 </div>
                 <div class="plan-price">
@@ -41,30 +41,30 @@
                 </div>
                 <div class="desc">
                     <div class="desc-point">
-                        1 BungeeCord slot
+                        - <span class="desc-bold">1</span> BungeeCord slot
                     </div>
                     <div class="desc-point">
-                        5 server slots
+                        - <span class="desc-bold">5</span> server slots
                     </div>
                     <div class="desc-point">
                     </div>
                     <div class="desc-point">
-                        10GB storage
+                        - <span class="desc-bold">10GB</span> storage
                     </div>
                     <div class="desc-point">
-                        Permanent storage life
+                        - <span class="desc-bold">Permanent</span> storage life
                     </div>
                     <div class="desc-point">
-                        Server pinged every 30min
+                        - Server pinged every <span class="desc-bold">30min</span>
                     </div>
                 </div>
-                <div class="plan-button">
+                <nuxt-link class="plan-button button-blue" to="login">
                     Choose Plan
-                </div>
+                </nuxt-link>
             </div>
 
             <div class="plan plan-professional">
-                <div class="plan-title">
+                <div class="plan-title title-red">
                     Professional
                 </div>
                 <div class="plan-price">
@@ -72,33 +72,34 @@
                 </div>
                 <div class="desc">
                     <div class="desc-point">
-                        3 BungeeCord slots
+                        - <span class="desc-bold">3</span> BungeeCord slots
                     </div>
                     <div class="desc-point">
-                        15 server slots
+                        - <span class="desc-bold">15</span> server slots
                     </div>
                     <div class="desc-point">
                     </div>
                     <div class="desc-point">
-                        Infinite storage
+                        - <span class="desc-bold">Infinite</span> storage
                     </div>
                     <div class="desc-point">
-                        Permanent storage life
+                        - <span class="desc-bold">Permanent</span> storage life
                     </div>
                     <div class="desc-point">
-                        Server pinged every 15min
+                        - Server pinged every <span class="desc-bold">15min</span>
                     </div>
                 </div>
-                <div class="plan-button">
+                <nuxt-link class="plan-button button-red" to="login">
                     Choose Plan
-                </div>
+                </nuxt-link>
             </div>
         </div>
 
         <div class="custom">
             <div class="custom-title">Custom</div>
             <div class="custom-price">$X / month</div>
-            <div class="custom-description">None of these plans fit you?<br />Contact sales and we're work out a custom plan</div>
+            <div class="custom-description">None of these plans fit you?<br />Contact sales and we're work out a custom
+                plan</div>
             <div class="custom-button">Contact Sales</div>
         </div>
     </section>
@@ -112,7 +113,7 @@
 }
 
 .title {
-    margin: 3rem 0 4rem 0;
+    margin: 2rem 0 5rem 0;
 
     font-size: 3rem;
     font-weight: 700;
@@ -124,6 +125,14 @@
     &-green {
         color: $green;
     }
+}
+
+.title-blue {
+    color: $blue;
+}
+
+.title-red {
+    color: $red;
 }
 
 .plans {
@@ -163,9 +172,102 @@
 }
 
 .plan-title {
-    margin-bottom: 2rem;
+    margin: 0;
+    margin-bottom: 1.5rem;
 
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.plan-price {
+    margin: 0;
+    margin-bottom: 1.5rem;
+
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.desc {
+    height: 280px;
+    width: 100%;
+
+    margin-left: 100px;
+
+    &-point {
+        margin: 10px 0;
+
+        min-height: 1.5rem;
+
+        font-size: 1rem;
+        font-weight: 300;
+        line-height: 1.5em;
+    }
+
+    &-bold {
+        font-weight: 700;
+    }
+}
+
+.plan-button {
+    padding: 16px 58px;
+
+    border-radius: 10px;
+
+    text-align: center;
+    text-decoration: none;
+    background-color: rgba(#ffffff, 0.1);
+    color: #ffffff;
+}
+
+.button-blue {
+    background-color: rgba($blue, 0.1);
+    color: $blue;
+}
+
+.button-red {
+    background-color: rgba($red, 0.1);
+    color: $red;
+}
+
+.custom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 3rem;
+    padding: 20px 40px;
+
+    border-left: 10px solid rgba($green, 0.5);
+    border-radius: 10px;
+
+    background-color: rgba(#1F2940, 0.6);
+
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+}
+
+.custom-title {
     font-size: 2rem;
     font-weight: 700;
+    color: $green;
+}
+
+.custom-price {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.custom-description {
+    line-height: 200%;
+}
+
+.custom-button {
+    padding: 1rem 2rem;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+    background-color: rgba($green, 0.1);
+    color: $green;
 }
 </style>

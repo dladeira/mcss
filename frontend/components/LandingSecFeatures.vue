@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="panels">
-            <div class="panel-main" />
+            <div class="panel-main"/>
             <div class="panel-secondary" />
         </div>
     </section>
@@ -88,7 +88,7 @@
 }
 
 .title {
-    margin: 3rem 0 4rem 0;
+    margin: 3rem 0 5rem 0;
 
     font-size: 3rem;
     font-weight: 700;
@@ -177,13 +177,16 @@
     height: 22rem;
     width: 65%;
 
-    background-color: rgba(white, 0.2);
+    // background-color: rgba(white, 0.2);
+    background-image: url("/feature-1.png");
+    background-size: cover;
 }
 
 .panel-secondary {
     height: 22rem;
     width: 30%;
 
-    background-color: rgba(white, 0.2);
+    background-image: url("/feature-2.png");
+    background-size: cover;
 }
 </style>

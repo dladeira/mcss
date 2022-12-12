@@ -89,7 +89,7 @@
 
 .subtitle {
     margin: 0;
-    margin-bottom: 5rem;
+    margin-bottom: 3rem;
 
     font-size: 2rem;
     font-weight: 400;
@@ -99,7 +99,7 @@
 .cta {
     width: fit-content;
 
-    padding: 16px 40px;
+    padding: 1.5rem 4rem;
 
     font-size: 2rem;
     font-weight: 500;
