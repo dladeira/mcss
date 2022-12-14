@@ -50,6 +50,7 @@
 <style lang="scss" scoped>
 .main {
     height: 100vh;
+    min-height: 900px;
 
     padding-top: 20px;
 }
