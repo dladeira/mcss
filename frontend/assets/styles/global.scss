@@ -3,6 +3,7 @@
 html,
 body,
 #__nuxt {
+    min-height: calc(100vh + 140px);
     width: 100%;
 
     margin: 0;
@@ -20,6 +21,8 @@ body,
 html {
     background-color: black;
 
+    overflow-y: scroll;
+
     // SCROLLBAR
 
     ::-webkit-scrollbar {
@@ -36,7 +39,7 @@ html {
     }
 
     ::-webkit-scrollbar-thumb:vertical {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.2);
         
         border-radius: 100px;
         -webkit-border-radius: 100px;

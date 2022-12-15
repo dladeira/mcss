@@ -1,7 +1,5 @@
 <template>
     <section class="main">
-        <LandingNavbar />
-
         <div class="jumbotron">
             <div class="text">
 
@@ -51,8 +49,6 @@
 .main {
     height: 100vh;
     min-height: 900px;
-
-    padding-top: 20px;
 }
 
 .jumbotron {
@@ -101,6 +97,8 @@
     width: fit-content;
 
     padding: 1.5rem 4rem;
+
+    border-radius: 1000px;
 
     font-size: 2rem;
     font-weight: 500;

@@ -43,6 +43,8 @@
     height: 160px;
     width: 100%;
 
+    margin-top: auto;
+
     background-color: rgba(0, 0, 0, 0.2);
 
     overflow-y: hidden;

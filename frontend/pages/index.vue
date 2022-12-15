@@ -1,20 +1,25 @@
 <template>
     <NuxtLayout name="landing">
-        <div class="page">
-            <LandingSecMain />
-            <LandingSecFeatures />
-            <LandingSecPricing />
-            <LandingSecRoadmap />
-        </div>
-        <Footer />
+        <LandingSecMain />
+        <LandingSecFeatures />
+        <LandingSecPricing />
+        <LandingSecRoadmap />
     </NuxtLayout>
 </template>
 
-<style lang="scss" scoped>
-.page {
-    width: 1200px;
-    max-width: 70%;
-
-    margin: 0 auto;
+<style lang="scss">
+.fake {
+    color: white;
 }
 </style>
+
+<script setup>
+const token = useCookie("token", {
+    maxAge: 2592000,
+    sameSite: 'lax'
+})
+
+if (token && token.value.length > 0) {
+    navigateTo("/user")
+}
+</script>

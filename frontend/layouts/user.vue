@@ -1,18 +1,15 @@
 <template>
     <div class="wrapper">
-        <div class="inner-wrapper">
-            <div class="page">
-                <LandingNavbar />
-                <slot />
-            </div>
-            <Footer />
+        <UserNavbar />
+        <div class="page">
+            <slot />
         </div>
+        <Footer />
     </div>
 </template>
 
 <style lang="scss" scoped>
-.wrapper,
-.inner-wrapper {
+.wrapper {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -25,13 +22,9 @@
     overflow-x: hidden;
 }
 
-.inner-wrapper {
-    background-image: $gradient-main;
-}
-
 .page {
-    width: 1200px;
-    max-width: 70%;
+    width: 1600px;
+    max-width: 90%;
 
     margin: 0 auto;
 }

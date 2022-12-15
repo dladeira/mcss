@@ -1,8 +1,9 @@
 <template>
     <nav class="nav">
-        <div class="brand">
+
+        <nuxt-link to="/" class="brand">
             MCSS
-        </div>
+        </nuxt-link>
 
         <div class="links">
             <div class="link">Features</div>
@@ -18,6 +19,7 @@
 
 <style lang="scss" scoped>
 .nav {
+    position: static;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -25,11 +27,15 @@
 
     height: fit-content;
     width: 100%;
+
+    padding-top: 20px;
 }
 
 .brand {
     font-weight: 700;
     font-size: 1.5rem;
+    text-decoration: none;
+    color: white;
 }
 
 .links {
