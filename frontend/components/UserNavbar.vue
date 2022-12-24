@@ -19,7 +19,15 @@
                     <div class="link">Surveys</div>
                 </div>
                 <div class="divider" />
-                <div class="selected">ChromoMC</div>
+                <div class="select-wrapper">
+                    <div class="select" :class="optionsOpen ? 'select-open' : 'select-closed'" @click="optionsOpen = !optionsOpen">
+                        {{ activeServer ? activeServer.name : "None" }}
+                    </div>
+
+                    <div class="select-options" v-if="optionsOpen">
+                        <div v-for="server in servers" class="select-option" @click="changeServer(server._id)">{{ server.name }}</div>
+                    </div>
+                </div>
             </div>
         </nav>
     </div>
@@ -96,8 +104,98 @@
 
     background-color: $gray2;
 }
+
+.select-wrapper {
+    position: relative;
+}
+
+.select {
+    position: relative;
+
+    width: fit-content;
+
+    padding: 6px 40px 6px 20px;
+
+    border: none;
+    border-radius: 1000px;
+
+    font-size: 0.75rem;
+    background-color: rgba(white, 0.1);
+    color: $gray1;
+
+    &:hover {
+        color: white;
+        cursor: pointer;
+    }
+}
+
+.select-closed:after {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+
+    height: 0;
+    width: 0;
+
+    border: 5px solid transparent;
+    border-color: $gray1 transparent transparent transparent;
+
+    content: "";
+}
+
+.select-open:after {
+    position: absolute;
+    top: 6px;
+    right: 12px;
+
+    height: 0;
+    width: 0;
+
+    border: 5px solid transparent;
+    border-color: transparent transparent $gray1 transparent;
+
+    content: "";
+}
+
+.select-options {
+    position: absolute;
+    top: 35px;
+
+    border-radius: 5px;
+
+    background-color: $gray6;
+}
+
+.select-option {
+    width: 100%;
+
+    padding: 15px 15px;
+
+    border-bottom: 1px solid rgba(white, 0.1);
+
+    font-size: 0.75rem;
+
+    &:hover {
+        cursor: pointer;
+
+        background-color: rgba(black, 0.1);
+    }
+}
+
+.select-option:last-of-type {
+    border-bottom: none;
+}
 </style>
 
 <script setup>
+const servers = useState("servers")
+const activeServer = useState('activeServer')
 const route = ref(useRoute().path)
+
+const optionsOpen = ref()
+
+function changeServer(serverId) {
+    activeServer.value = servers.value.find(server => server._id == serverId)
+    optionsOpen.value = false
+}
 </script>

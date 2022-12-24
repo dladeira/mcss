@@ -25,8 +25,6 @@ router.post('/new', loggedIn, async (req, res) => {
 
     const existingServer = await Server.findOne({ name: serverName, owner: req.user._id })
 
-    console.log(existingServer)
-
     if (existingServer)
         return res.status(400).json({ error: "Name already in use" })
 
