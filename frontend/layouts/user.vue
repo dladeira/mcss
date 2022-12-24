@@ -36,6 +36,7 @@
 
 <script setup>
 const user = useState("user")
+const servers = useState("servers")
 
 const token = useCookie("token", {
     maxAge: 2592000,
@@ -59,8 +60,23 @@ async function getUserData() {
     user.value = data.value.user
 }
 
+async function getServerData() {
+    const { data, error } = await useFetch('/api/servers/get', {
+        method: "GET",
+        credentials: "same-origin"
+    })
+
+    if (error.value) {
+        console.log("Forbidden server data")
+        return navigateTo("/")
+    }
+
+    servers.value = data.value.servers
+}
+
 onBeforeMount(() => {
     setTimeout(() => {
         getUserData()
+        getServerData()
     }, 1)
 })</script>

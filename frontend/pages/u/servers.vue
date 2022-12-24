@@ -47,15 +47,14 @@
             </div>
 
             <div v-if="currentPanel == 'servers'" class="panel panel-servers">
-                    <ServersServer />
-                    <ServersServer />
-                </div>
-                <div v-if="currentPanel == 'settings'" class="panel panel-settings">
-                    bing
-                </div>
-                <div v-if="currentPanel == 'create'" class="panel panel-create">
-                    <ServersCreate />
-                </div>
+                <ServersServer v-for="server in servers" :name="server.name"/>
+            </div>
+            <div v-if="currentPanel == 'settings'" class="panel panel-settings">
+                bing
+            </div>
+            <div v-if="currentPanel == 'create'" class="panel panel-create">
+                <ServersCreate />
+            </div>
         </div>
     </NuxtLayout>
 </template>
@@ -95,7 +94,7 @@
     align-items: center;
 
     width: 40rem;
-    
+
     margin: 2rem auto;
 }
 
@@ -105,7 +104,7 @@
     justify-content: flex-start;
     align-items: center;
 
-    width:10rem;
+    width: 10rem;
 
     margin: 0;
 
@@ -191,6 +190,9 @@
 
 <script setup>
 const currentPanel = ref("servers")
+const servers = useState("servers")
+
+console.log(servers.value)
 
 function setPanel(panel) {
     currentPanel.value = panel

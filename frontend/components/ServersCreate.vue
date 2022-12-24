@@ -1,15 +1,19 @@
 <template>
-    <div class="container">
+    <form class="container" @submit.prevent="createServer">
         <div class="first-row">
-            <SharedFormInput class="serverName" type="text" placeholder="Server Name" label="Server Name" name="serverName" />
-            <SharedFormInput class="serverType" type="text" placeholder="Regular" label="Server Type" name="serverType" />
-            <SharedFormInput class="bungeeCord" type="text" placeholder="None" label="BungeeCord Instance" name="bungeeCord" />
+            <SharedFormInput class="serverName" type="text" placeholder="Server Name" label="Server Name" name="serverName" :disabled="connecting" />
+            <SharedFormInput class="serverType" type="text" placeholder="Regular" label="Server Type" name="serverType" disabled />
+            <SharedFormInput class="bungeeCord" type="text" placeholder="None" label="BungeeCord Instance" name="bungeeInstance" disabled />
         </div>
 
         <div class="bottom-row">
-            <SharedFormSlider type="text" placeholder="None" label="Storage Allocated" name="storage" />
+            <SharedFormSlider class="storage" type="text" placeholder="None" label="Storage Allocated" name="storage" :min="0" :max="10" :disabled="connecting" />
+            <div class="submit-wrapper">
+                <div class="error">{{ error }}</div>
+                <button class="submit" type="submit">Create Server</button>
+            </div>
         </div>
-    </div>
+    </form>
 </template>
 
 <style lang="scss" scoped>
@@ -21,7 +25,8 @@
     background-color: $gray6;
 }
 
-.first-row {
+.first-row,
+.bottom-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -39,4 +44,66 @@
 .bungeeCord {
     width: 30%;
 }
+
+.storage {
+    width: 45%;
+}
+
+.submit-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.error {
+    margin-right: 1rem;
+
+    font-size: 0.75rem;
+    color: $red;
+}
+
+.submit {
+    padding: 14px 26px;
+
+    border: none;
+    border-radius: 5px;
+    outline: none;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: rgba($green, 0.2);
+    color: $green;
+
+    &:hover {
+        background-color: darken(rgba($green, 0.2), 5);
+        cursor: pointer;
+    }
+}
 </style>
+
+<script setup>
+const connecting = ref()
+const error = ref()
+
+async function createServer(e) {
+    connecting.value = "true"
+    const { data, error: fetchError } = await useFetch('/api/servers/new', {
+        method: "POST",
+        body: {
+            serverName: e.target.serverName.value,
+            serverType: e.target.serverType.value,
+            bungeeInstance: e.target.bungeeInstance.value,
+            storageAllocated: e.target.storage.value
+        }
+    })
+
+    if (fetchError.value) {
+        connecting.value = null
+        error.value = fetchError.value.data.error
+        return
+    }
+
+    error.value = null
+    console.log("SUCCESS")
+}
+</script>

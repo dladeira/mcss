@@ -103,6 +103,10 @@ router.get('/verify-email', async (req, res) => {
 
     const { email, password } = info.body
 
+    const existingEmail = await User.findOne({ email: email })
+    if (existingEmail)
+        return res.status(400).send("Email already in use")
+
     const hash = await bcrypt.hash(password, 10)
 
     let user = await new User({

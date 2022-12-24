@@ -69,6 +69,10 @@ router.get('/verify', loggedIn, async (req, res) => {
     const newEmail = confirmations.find(i => String(i.user) == String(req.user._id) && i.old == false && i.confirmed)
 
     if (oldEmail && newEmail) {
+        const existingEmail = await User.findOne({ email: newEmail })
+        if (existingEmail)
+            return res.status(400).send("Email already in use")
+
         const user = await User.findOne({ _id: req.user._id })
         user.email = newEmail.email
         await user.save()

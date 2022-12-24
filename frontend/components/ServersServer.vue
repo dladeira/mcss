@@ -2,7 +2,7 @@
     <div class="container">
         <div class="section">
             <h1 class="title">
-                ChromoMC
+                {{name}}
             </h1>
             <p class="time">
                 5 months left
@@ -111,11 +111,11 @@
 }
 
 .time {
-    margin: 0;
+    margin: 0.25rem 0 0 0;
 
     font-size: 0.75rem;
     font-style: italic;
-    color: $gray1;
+    color: #5B5B5B;
 }
 
 .tags {
@@ -124,16 +124,17 @@
     justify-content: flex-start;
     align-items: center;
 
-    margin: 0.5rem 0 1rem 0;
+    margin: 0.75rem 0 1rem 0;
 }
 
 .tag {
     margin-right: 1rem;
-    padding: 3px 14px;
+    padding: 4px 18px;
 
     border-radius: 1000px;
 
-    font-size: 0.75rem;
+    font-size: 0.70rem;
+    font-weight: 400;
 }
 
 .tag-status {
@@ -250,3 +251,9 @@
     }
 }
 </style>
+
+<script setup>
+const props = defineProps({
+    name: String
+})
+</script>
