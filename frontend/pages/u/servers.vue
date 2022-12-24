@@ -192,8 +192,6 @@
 const currentPanel = ref("servers")
 const servers = useState("servers")
 
-console.log(servers.value)
-
 function setPanel(panel) {
     currentPanel.value = panel
 }

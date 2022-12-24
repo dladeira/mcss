@@ -41,4 +41,12 @@ router.post('/new', loggedIn, async (req, res) => {
     return res.status(200).json({ success: "Server created" })
 })
 
+router.post('/delete', loggedIn, async (req, res) => {
+    const { name } = req.body
+
+    await Server.deleteOne({ onwer: req.user._id, name: name })
+
+    return res.status(200).json({})
+})
+
 module.exports = router

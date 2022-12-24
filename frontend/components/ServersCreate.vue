@@ -104,6 +104,6 @@ async function createServer(e) {
     }
 
     error.value = null
-    console.log("SUCCESS")
+    window.location.reload(true)
 }
 </script>

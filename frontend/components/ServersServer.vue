@@ -2,7 +2,7 @@
     <div class="container">
         <div class="section">
             <h1 class="title">
-                {{name}}
+                {{ name }}
             </h1>
             <p class="time">
                 5 months left
@@ -75,7 +75,7 @@
                 Server Settings
             </div>
 
-            <div class="button button-delete">
+            <div class="button button-delete" @click="deleteServer">
                 Delete Server
             </div>
         </div>
@@ -209,7 +209,7 @@
     height: 10rem;
 
     margin: 0 3rem;
-    
+
     background-color: rgba(black, 0.2);
 }
 
@@ -256,4 +256,17 @@
 const props = defineProps({
     name: String
 })
+
+function deleteServer() {
+    if (confirm("Are you sure you want to delete this server? There is no undo option.")) {
+        useFetch('/api/servers/delete', {
+            method: "POST",
+            body: {
+                name: props.name
+            }
+        })
+
+        window.location.reload(true)
+    }
+}
 </script>
