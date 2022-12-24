@@ -17,7 +17,7 @@ function setup(server) {
     })
 
     io.on('connection', (socket) => {
-        console.log("Socket Connected")
+        // console.log("Socket Connected")
 
         socket.on('register', (token) => {
             let foundSocket = sockets.find(i => i.token == token)
@@ -45,7 +45,7 @@ function setup(server) {
         })
 
         socket.on('disconnect', () => {
-            console.log("Socket Disconnected")
+            // console.log("Socket Disconnected")
         })
     })
 }

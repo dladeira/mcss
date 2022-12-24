@@ -189,12 +189,17 @@
 
 <script setup>
 const servers = useState("servers")
-const activeServer = useState('activeServer')
 const route = ref(useRoute().path)
+const activeServerCookie = useCookie("activeServer", {
+    maxAge: 2592000,
+    sameSite: 'lax'
+})
+
+const activeServer = useState("activeServer")
 
 const optionsOpen = ref()
-
 function changeServer(serverId) {
+    activeServerCookie.value = servers.value.find(server => server._id == serverId)
     activeServer.value = servers.value.find(server => server._id == serverId)
     optionsOpen.value = false
 }

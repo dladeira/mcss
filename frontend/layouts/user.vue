@@ -43,6 +43,13 @@ const token = useCookie("token", {
     sameSite: 'lax'
 })
 
+const activeServerCookie = useCookie("activeServer", {
+    maxAge: 2592000,
+    sameSite: 'lax'
+})
+
+const activeServer = useState("activeServer")
+
 if (!token.value || token.value.length == 0)
     navigateTo("/")
 
@@ -72,6 +79,15 @@ async function getServerData() {
     }
 
     servers.value = data.value.servers
+
+    if (!activeServerCookie.value || !servers.value.find(server => activeServerCookie.value._id == server._id)) {
+        if (servers.value.length > 0) {
+            activeServer.value = servers.value[0]
+            activeServerCookie.value = servers.value[0]
+        }
+    } else {
+        activeServer.value = activeServerCookie.value
+    }
 }
 
 onBeforeMount(() => {
