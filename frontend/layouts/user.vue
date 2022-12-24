@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <UserNavbar />
-        <div class="page">
+        <div class="page" v-if="user">
             <slot />
         </div>
         <Footer />
@@ -23,9 +23,44 @@
 }
 
 .page {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
     width: 1600px;
     max-width: 90%;
 
     margin: 0 auto;
 }
 </style>
+
+<script setup>
+const user = useState("user")
+
+const token = useCookie("token", {
+    maxAge: 2592000,
+    sameSite: 'lax'
+})
+
+if (!token.value || token.value.length == 0)
+    navigateTo("/")
+
+async function getUserData() {
+    const { data, error } = await useFetch("/api/auth/user", {
+        method: "GET",
+        credentials: "same-origin"
+    })
+
+    if (error.value) {
+        console.log("Forbidden user data")
+        return navigateTo("/")
+    }
+
+    user.value = data.value.user
+}
+
+onBeforeMount(() => {
+    setTimeout(() => {
+        getUserData()
+    }, 1)
+})</script>

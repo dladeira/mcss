@@ -1,3 +1,6 @@
+// Don't touch this while server is running
+// nuxt-socket-io doesn't like that and breaks :(
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     css: [
@@ -14,16 +17,25 @@ export default defineNuxtConfig({
     },
     modules: [
         '@nuxt-alt/proxy',
-        '@nuxt/image-edge'
+        '@nuxt/image-edge',
+        'nuxt-socket-io'
     ],
     proxy: {
         proxies: {
             '/api': {
                 target: 'http://localhost:3021',
-                changeOrigin: true,
                 rewrite: path => path.replace(/^\/api/, '')
             }
         },
         fetch: true
+    },
+    io: {
+        sockets: [
+            {
+            name: 'main',
+            url: 'http://localhost:3021/',
+            default: true
+        }
+    ]
     }
 })

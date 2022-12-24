@@ -1,14 +1,14 @@
 <template>
     <div class="nav-wrapper">
         <nav class="nav">
-            <nuxt-link to="/user" class="brand">
+            <nuxt-link to="/u/servers" class="brand">
                 MCSS
             </nuxt-link>
 
             <div class="links-main">
-                <div class="link">Servers</div>
-                <div class="link">Account</div>
-                <div class="link">Plans</div>
+                <nuxt-link to="/u/servers" :class="route == '/u/servers' ? 'link-selected' : 'link'">Servers</nuxt-link>
+                <nuxt-link to="/u/account" :class="route == '/u/account' ? 'link-selected' : 'link'">Account</nuxt-link>
+                <nuxt-link to="/u/plans" :class="route == '/u/plans' ? 'link-selected' : 'link'">Plans</nuxt-link>
             </div>
 
             <div class="server">
@@ -19,7 +19,7 @@
                     <div class="link">Surveys</div>
                 </div>
                 <div class="divider" />
-                <div class="server">ChromoMC</div>
+                <div class="selected">ChromoMC</div>
             </div>
         </nav>
     </div>
@@ -46,7 +46,7 @@
 }
 
 .brand {
-    margin-right: 10px;
+    margin-right: 1rem;
 
     font-weight: 700;
     font-size: 1.5rem;
@@ -74,10 +74,17 @@
 
     margin: 0 1rem;
 
+    text-decoration: none;
     color: $gray1;
 
     &:hover {
         cursor: pointer;
+    }
+
+    &-selected {
+        @extend .link;
+
+        color: $blue;
     }
 }
 
@@ -90,3 +97,7 @@
     background-color: $gray2;
 }
 </style>
+
+<script setup>
+const route = ref(useRoute().path)
+</script>

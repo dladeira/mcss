@@ -36,3 +36,13 @@
     margin: 0 auto;
 }
 </style>
+
+<script setup>
+const token = useCookie("token", {
+    maxAge: 2592000,
+    sameSite: 'lax'
+})
+
+if (token.value && token.value.length > 0)
+    navigateTo("/u/servers")
+</script>

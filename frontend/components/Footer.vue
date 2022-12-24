@@ -142,5 +142,10 @@
     font-size: 0.75rem;
     text-align: right;
     color: $blue;
+
+    &:hover {
+        color: lighten($blue, 10);
+        cursor: pointer;
+    }
 }
 </style>

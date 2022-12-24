@@ -11,7 +11,7 @@
             <div class="link">Roadmap</div>
         </div>
 
-        <nuxt-link class="login" to="login">
+        <nuxt-link class="login" to="/login">
             Sign in
         </nuxt-link>
     </nav>
