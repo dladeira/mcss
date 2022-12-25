@@ -1,0 +1,6 @@
+main: eu.ladeira.mcss.Mcss
+name: MCSS
+version: 1.0.0
+
+commands:
+  register:

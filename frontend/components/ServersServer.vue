@@ -5,7 +5,7 @@
                 {{ name }}
             </h1>
             <p class="time">
-                5 months left
+                {{ _id }}
             </p>
 
             <div class="tags">
@@ -254,7 +254,8 @@
 
 <script setup>
 const props = defineProps({
-    name: String
+    name: String,
+    _id: String
 })
 
 function deleteServer() {
