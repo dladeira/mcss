@@ -9,12 +9,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.sun.management.OperatingSystemMXBean;
 
 public class Mcss extends JavaPlugin {
+
+	private static String secret;
+
+	public static void setSecret(String newSecret) {
+		secret = newSecret;	
+	}
 
 	private OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
 
@@ -23,12 +30,12 @@ public class Mcss extends JavaPlugin {
 //		Bukkit.getLogger().info("Plugin works!");
 
 		getCommand("register").setExecutor(new RegisterCmd());
-		
+
 		new BukkitRunnable() {
 			public void run() {
 				sendInfo();
 			}
-		}.runTaskTimer(this, 20, 20);
+		}.runTaskTimer(this, 60, 60);
 	}
 
 	@Override
@@ -50,6 +57,11 @@ public class Mcss extends JavaPlugin {
 	}
 
 	public void sendInfo() {
+		if (secret == null) {
+			Bukkit.getLogger().severe("Secret not configured! Register server with /register [secret]");
+			return;
+		}
+
 		try {
 			URL obj = new URL("http://192.168.100.100:3021/plugin/stats-update");
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -65,6 +77,7 @@ public class Mcss extends JavaPlugin {
 			// Define the fields
 			form.put("cpuUsage", String.valueOf(getCpuUsage()));
 			form.put("ramUsage", String.valueOf(getRamUsage()));
+			form.put("secret", secret);
 
 			StringJoiner sj = new StringJoiner(",");
 			for (Map.Entry<String, String> entry : form.entrySet())

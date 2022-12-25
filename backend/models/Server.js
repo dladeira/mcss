@@ -5,7 +5,8 @@ const serverSchema = new mongoose.Schema({
     type: String,
     bungeeInstance: mongoose.ObjectId,
     storage: Number,
-    owner: mongoose.ObjectId
+    owner: mongoose.ObjectId,
+    data: [Object]
 })
 
 const serverModel = mongoose.model("Server", serverSchema)

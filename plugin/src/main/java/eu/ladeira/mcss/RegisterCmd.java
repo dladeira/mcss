@@ -35,8 +35,8 @@ public class RegisterCmd implements CommandExecutor {
 			sendMessage(sender, ChatColor.RED + "ERROR: Invalid secret");
 			return false;
 		} else {
-			sendMessage(sender,
-					ChatColor.WHITE + "Registered as server " + ChatColor.BOLD + "" + ChatColor.GOLD + serverName);
+			sendMessage(sender, ChatColor.WHITE + "Registered as server " + ChatColor.BOLD + "" + ChatColor.GOLD + serverName);
+			Mcss.setSecret(secret);
 		}
 
 		return true;
@@ -83,7 +83,7 @@ public class RegisterCmd implements CommandExecutor {
 			try (OutputStream os = con.getOutputStream()) {
 				os.write(out);
 			}
-			
+
 //			int status = con.getResponseCode();
 //			System.out.println("Status is " + status);
 
@@ -93,10 +93,10 @@ public class RegisterCmd implements CommandExecutor {
 			while ((inputLine = in.readLine()) != null) {
 				content.append(inputLine);
 			}
-			
+
 			in.close();
 			con.disconnect();
-			
+
 			return content.toString();
 		} catch (Exception e) {
 			return null;

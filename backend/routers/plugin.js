@@ -19,7 +19,25 @@ router.post('/server', async (req, res) => {
 router.post('/stats-update', async (req, res) => {
     req.body.time = Date.now()
 
-    res.status(200).json({})
+    const { cpuUsage, ramUsage } = req.body
+
+    const server = await Server.findOne({ _id: req.body.secret })
+
+    if (!server)
+        return res.status(400).send("Server not found")
+
+    if (!server.data)
+        server.data = []
+
+    server.data.push({
+        time: req.body.time,
+        cpuUsage,
+        ramUsage
+    })
+
+    await server.save()
+
+    res.status(200).send()
 })
 
 module.exports = router

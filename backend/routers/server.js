@@ -8,6 +8,10 @@ const loggedIn = require('../middleware/loggedIn')
 router.get('/get', loggedIn, async (req, res) => {
     const servers = await Server.find({ owner: req.user._id })
 
+    // for (var i = 0; i < servers.length; i++) {
+    //     servers[i].data = undefined
+    // }
+
     res.status(200).json({ servers })
 })
 

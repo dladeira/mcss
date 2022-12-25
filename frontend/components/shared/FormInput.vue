@@ -59,7 +59,7 @@ input {
 
     padding: 8px 0 8px 12px;
 
-    border: 1px rgba(white, 0.2) solid;
+    border: 1px rgba(white, 0.3) solid;
     border-radius: 5px;
 
     font-size: 1rem;
@@ -71,6 +71,8 @@ input {
     }
 
     &:disabled {
+        border-color: rgba(white, 0.1);
+
         background-color: rgba(black, 0.05);
         color: $gray5;
     }

@@ -26,7 +26,7 @@
                     <div class="dial-outer">
                         <div class="dial-inner cpu-inner">
                             <div class="usage">
-                                57%
+                                {{ currentData ? currentData.cpuUsage : 0 }}%
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     <div class="dial-outer">
                         <div class="dial-inner ram-inner">
                             <div class="usage">
-                                72%
+                                {{ currentData ? currentData.ramUsage : 0 }}%
                             </div>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                     <div class="dial-outer">
                         <div class="dial-inner storage-inner">
                             <div class="usage">
-                                23%
+                                X
                             </div>
                         </div>
                     </div>
@@ -255,8 +255,18 @@
 <script setup>
 const props = defineProps({
     name: String,
-    _id: String
+    _id: String,
+    data: Object
 })
+
+var currentData
+
+if (props.data && props.data.length > 0) {
+    console.log(props.data)
+    currentData = props.data.reduce((prev, current) => {
+        return prev.time > current.time ? prev : current
+    })
+}
 
 function deleteServer() {
     if (confirm("Are you sure you want to delete this server? There is no undo option.")) {

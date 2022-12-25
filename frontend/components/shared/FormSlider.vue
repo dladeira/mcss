@@ -99,7 +99,7 @@ label {
 
     padding: 0.55rem 0.5rem;
 
-    border: 1px rgba(white, 0.2) solid;
+    border: 1px rgba(white, 0.3) solid;
     border-radius: 5px;
 
     font-size: 1rem;
@@ -111,17 +111,20 @@ label {
     }
 
     &:disabled {
+        border-color: rgba(white, 0.1);
+
         background-color: rgba(black, 0.05);
         color: $gray5;
     }
 }
 
 .text {
-    width: fit-content;
+    width: 5rem;
 
     margin-left: 1rem;
 
     font-weight: 600;
+    text-align: right;
     color: $gray1;
 
     &-bolded {

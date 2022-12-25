@@ -47,7 +47,7 @@
             </div>
 
             <div v-if="currentPanel == 'servers'" class="panel panel-servers">
-                <ServersServer v-for="server in servers" :name="server.name" :_id="server._id" />
+                <ServersServer v-for="server in servers" :name="server.name" :_id="server._id" :data="server.data" />
             </div>
             <div v-if="currentPanel == 'settings'" class="panel panel-settings">
                 bing
