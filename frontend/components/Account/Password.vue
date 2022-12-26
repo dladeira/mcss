@@ -168,7 +168,7 @@ const errorMsg = ref()
 const success = ref()
 
 async function resetPassword(e) {
-    const { error } = await useFetch('/api/auth/pwd-change', {
+    const { error } = await useFetch('http://localhost:3020/api/auth/pwd-change', {
         method: "POST",
         body: {
             old: e.target.old.value,

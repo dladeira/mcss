@@ -176,7 +176,7 @@ const token = useCookie("token", {
 
 async function register(e) {
     connecting.value = true
-    const { data, error } = await useFetch("/api/auth/register", {
+    const { data, error } = await useFetch("http://localhost:3020/api/auth/register", {
         method: "POST",
         body: {
             email: e.target.email.value,
@@ -197,7 +197,7 @@ async function register(e) {
 
 async function login(e) {
     connecting.value = true
-    const { data, error } = await useFetch("/api/auth/login", {
+    const { data, error } = await useFetch("http://localhost:3020/api/auth/login", {
         method: "POST",
         body: {
             email: e.target.email.value,

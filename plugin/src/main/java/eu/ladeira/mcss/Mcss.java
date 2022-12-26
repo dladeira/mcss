@@ -27,8 +27,13 @@ public class Mcss extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-//		Bukkit.getLogger().info("Plugin works!");
-
+		if (getConfig().isSet("secret")) {
+			secret = getConfig().getString("secret");
+			Bukkit.getLogger().info("Loaded secret from config");
+		} else {
+			Bukkit.getLogger().severe("Secret not found in config");
+		}
+		
 		getCommand("register").setExecutor(new RegisterCmd());
 
 		new BukkitRunnable() {
@@ -40,7 +45,10 @@ public class Mcss extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-//		Bukkit.getLogger().info("Plugin shutting down!");
+		if (secret != null) {
+			getConfig().set("secret", secret);
+			saveConfig();
+		}
 	}
 
 	public int getRamUsage() {

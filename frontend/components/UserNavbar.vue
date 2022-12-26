@@ -199,7 +199,7 @@ const activeServer = useState("activeServer")
 
 const optionsOpen = ref()
 function changeServer(serverId) {
-    activeServerCookie.value = servers.value.find(server => server._id == serverId)
+    activeServerCookie.value = serverId
     activeServer.value = servers.value.find(server => server._id == serverId)
     optionsOpen.value = false
 }

@@ -13,29 +13,51 @@ export default defineNuxtConfig({
                     additionalData: '@import "@/assets/styles/variables.scss";'
                 }
             }
-        }
+        },
     },
+    // nitro: {
+    //     devProxy: {
+    //         "/api": {
+    //             target: "http://localhost:3021",
+    //             changeOrigin: true,
+    //             rewrite: (path) => path.replace(/^\/api/, ""),
+    //         },
+    //     },
+    // },
     modules: [
-        '@nuxt-alt/proxy',
+        // '@nuxt-alt/proxy',
+        'nuxt-proxy',
         '@nuxt/image-edge',
         'nuxt-socket-io'
     ],
+    // proxy: {
+    //     proxies: {
+    //         '/api': {
+    //             target: 'http://localhost:3021',
+    //             rewrite: path => path.replace(/^\/api/, '')
+    //         }
+    //     },
+    //     fetch: true
+    // },
     proxy: {
-        proxies: {
-            '/api': {
-                target: 'http://localhost:3021',
-                rewrite: path => path.replace(/^\/api/, '')
-            }
-        },
-        fetch: true
+        options: [{
+            target: 'http://localhost:3021',
+            changeOrigin: true,
+            pathRewrite: {
+                '^/api': '/'
+            },
+            pathFilter: [
+                '/api'
+            ]
+        }]
     },
     io: {
-        sockets: [
-            {
+    sockets: [
+        {
             name: 'main',
             url: 'http://localhost:3021/',
             default: true
         }
     ]
-    }
+}
 })

@@ -154,7 +154,7 @@ const success = ref()
 
 async function resetPassword(e) {
     connecting.value = true
-    const { data, error: fetchError } = await useFetch("/api/auth/pwd-reset", {
+    const { data, error: fetchError } = await useFetch("http://localhost:3020/api/auth/pwd-reset", {
         method: "POST",
         body: {
             email: e.target.email.value,

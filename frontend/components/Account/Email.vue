@@ -3,7 +3,7 @@
         <h1 class="title">Change Email</h1>
         <div class="forms">
             <form class="form old-email" @submit.prevent="sendOldEmail">
-                <SharedFormInput label="Old Email" type="email" :placeholder="user.email" name="email" disabled />
+                <SharedFormInput label="Old Email" type="email" :placeholder="user.email" name="email-old" disabled />
                 <button v-if="!oldStatus" class="submit" type="submit">Send verification</button>
                 <button v-else-if="oldStatus == 'waiting' && !oldVerified" class="submit-waiting" type="submit" disabled>Awaiting verification</button>
                 <button v-else-if="oldVerified" class="submit-verified" type="submit" disabled>Verified</button>
@@ -108,7 +108,7 @@ const user = useState("user")
 
 async function sendOldEmail(e) {
     oldStatus.value = "waiting"
-    const { data, error } = await useFetch('/api/auth/reset-email/old', {
+    const { data, error } = await useFetch('http://localhost:3020/api/auth/reset-email/old', {
         method: "POST",
     })
 
@@ -118,7 +118,7 @@ async function sendOldEmail(e) {
 
 async function sendNewEmail(e) {
     newStatus.value = "waiting"
-    const { data, error } = await useFetch('/api/auth/reset-email/new', {
+    const { data, error } = await useFetch('http://localhost:3020/api/auth/reset-email/new', {
         method: "POST",
         body: {
             email: e.target.email.value

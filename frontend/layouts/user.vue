@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <UserNavbar />
-        <div class="page" v-if="user">
+        <div class="page" v-if="user && servers">
             <slot />
         </div>
         <Footer />
@@ -45,7 +45,7 @@ const token = useCookie("token", {
 
 const activeServerCookie = useCookie("activeServer", {
     maxAge: 2592000,
-    sameSite: 'lax'
+    sameSite: 'lax',
 })
 
 const activeServer = useState("activeServer")
@@ -53,24 +53,31 @@ const activeServer = useState("activeServer")
 if (!token.value || token.value.length == 0)
     navigateTo("/")
 
+
 async function getUserData() {
-    const { data, error } = await useFetch("/api/auth/user", {
-        method: "GET",
-        credentials: "same-origin"
+    const { data, error } = await useFetch("http://localhost:3020/api/auth/user", {
+        method: "POST",
+        credentials: "same-origin",
+        body: {
+            token: token.value
+        },
     })
 
     if (error.value) {
         console.log("Forbidden user data")
         return navigateTo("/")
     }
-
     user.value = data.value.user
 }
 
+
 async function getServerData() {
-    const { data, error } = await useFetch('/api/servers/get', {
-        method: "GET",
-        credentials: "same-origin"
+    const { data, error } = await useFetch('http://localhost:3020/api/servers/get', {
+        method: "POST",
+        credentials: "same-origin",
+        body: {
+            token: token.value
+        },
     })
 
     if (error.value) {
@@ -80,19 +87,20 @@ async function getServerData() {
 
     servers.value = data.value.servers
 
-    if (!activeServerCookie.value || !servers.value.find(server => activeServerCookie.value._id == server._id)) {
+    const foundActiveServer = servers.value.find(server => activeServerCookie.value == server._id)
+
+    if (!foundActiveServer) {
         if (servers.value.length > 0) {
-            activeServer.value = servers.value[0]
-            activeServerCookie.value = servers.value[0]
+            const defaultServer = servers.value[0]
+
+            activeServer.value = defaultServer
+            activeServerCookie.value = defaultServer._id
         }
     } else {
-        activeServer.value = activeServerCookie.value
+        activeServer.value = foundActiveServer
     }
 }
 
-onBeforeMount(() => {
-    setTimeout(() => {
-        getUserData()
-        getServerData()
-    }, 1)
-})</script>
+getUserData()
+getServerData()
+</script>

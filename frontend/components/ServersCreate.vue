@@ -87,7 +87,7 @@ const error = ref()
 
 async function createServer(e) {
     connecting.value = "true"
-    const { data, error: fetchError } = await useFetch('/api/servers/new', {
+    const { data, error: fetchError } = await useFetch('http://localhost:3020/api/servers/new', {
         method: "POST",
         body: {
             serverName: e.target.serverName.value,

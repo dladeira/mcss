@@ -67,7 +67,7 @@
             </div>
         </div>
         <div class="section section-buttons">
-            <div class="button button-dashboard">
+            <div class="button button-dashboard" @click="changeServer()">
                 Dashboard
             </div>
 
@@ -253,6 +253,13 @@
 </style>
 
 <script setup>
+const servers = useState("servers")
+const activeServer = useState("activeServer")
+const activeServerCookie = useCookie("activeServer", {
+    maxAge: 2592000,
+    sameSite: 'lax'
+})
+
 const props = defineProps({
     name: String,
     _id: String,
@@ -260,17 +267,19 @@ const props = defineProps({
 })
 
 var currentData
+loadCurrentData()
 
-if (props.data && props.data.length > 0) {
-    console.log(props.data)
-    currentData = props.data.reduce((prev, current) => {
-        return prev.time > current.time ? prev : current
-    })
+function loadCurrentData() {
+    if (props.data && props.data.length > 0) {
+        currentData = props.data.reduce((prev, current) => {
+            return prev.time > current.time ? prev : current
+        })
+    }
 }
 
 function deleteServer() {
     if (confirm("Are you sure you want to delete this server? There is no undo option.")) {
-        useFetch('/api/servers/delete', {
+        useFetch('http://localhost:3020/api/servers/delete', {
             method: "POST",
             body: {
                 name: props.name
@@ -279,5 +288,11 @@ function deleteServer() {
 
         window.location.reload(true)
     }
+}
+
+function changeServer() {
+    activeServerCookie.value = servers.value.find(server => server._id == props._id)
+    activeServer.value = servers.value.find(server => server._id == props._id)
+    navigateTo('/u/overview')
 }
 </script>

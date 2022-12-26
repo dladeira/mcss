@@ -16,9 +16,9 @@ const pwdResetCodes = []
 
 router.use('/reset-email', resetEmailRouter)
 
-router.get('/user', loggedIn, (req, res) => {
+router.post('/user', loggedIn, (req, res) => {
     req.user.password = undefined
-
+    
     res.status(200).json({ user: req.user })
 })
 

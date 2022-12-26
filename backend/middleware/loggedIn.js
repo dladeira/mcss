@@ -2,7 +2,11 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
 module.exports = function loggedIn(req, res, next) {
-    const { token } = req.cookies
+    var { token } = req.cookies
+
+    if (!token)
+        token = req.body.token
+
     jwt.verify(token, process.env.JWT_KEY, async (err, id) => {
         if (err) {
             console.log("Error: Failure verifying JWT")

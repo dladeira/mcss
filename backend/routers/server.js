@@ -5,7 +5,7 @@ const User = require('../models/User')
 const Server = require('../models/Server')
 const loggedIn = require('../middleware/loggedIn')
 
-router.get('/get', loggedIn, async (req, res) => {
+router.post('/get', loggedIn, async (req, res) => {
     const servers = await Server.find({ owner: req.user._id })
 
     // for (var i = 0; i < servers.length; i++) {

@@ -26,7 +26,7 @@ router.post('/old', loggedIn, async (req, res) => {
 
         let message = {
             from: 'MCSS <mcss@ladeira.eu',
-            to: `<${req.user.email}>`,
+            to: `<${req.user['email-old']}>`,
             subject: 'Email Change - Old Verification',
             html: `To change your email, you need to verify both your new and old email.<br>To verify your old email, press the link below<br><br><a href="${argv['origin']}/api/auth/reset-email/verify?code=${code}">Verify</a>`
         }
@@ -36,7 +36,7 @@ router.post('/old', loggedIn, async (req, res) => {
         confirmations.push({
             code: code,
             old: true,
-            email: req.user.email,
+            email: req.user['email-old'],
             confirmed: false,
             user: req.user._id
         })
