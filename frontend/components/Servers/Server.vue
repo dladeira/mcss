@@ -26,7 +26,7 @@
                     <div class="dial-outer">
                         <div class="dial-inner cpu-inner">
                             <div class="usage">
-                                {{ currentData ? currentData.cpuUsage : 0 }}%
+                                {{ stats.cpuUsage }}%
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     <div class="dial-outer">
                         <div class="dial-inner ram-inner">
                             <div class="usage">
-                                {{ currentData ? currentData.ramUsage : 0 }}%
+                                {{ stats.ramUsage }}%
                             </div>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                     <div class="dial-outer">
                         <div class="dial-inner storage-inner">
                             <div class="usage">
-                                X
+                                {{ stats.storageUsage }}%
                             </div>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                 Dashboard
             </div>
 
-            <div class="button button-settings">
+            <div class="button button-settings" @click="$emit('settings')">
                 Server Settings
             </div>
 
@@ -253,6 +253,8 @@
 </style>
 
 <script setup>
+
+const token = useCookie('token')
 const servers = useState("servers")
 const activeServer = useState("activeServer")
 const activeServerCookie = useCookie("activeServer", {
@@ -263,19 +265,10 @@ const activeServerCookie = useCookie("activeServer", {
 const props = defineProps({
     name: String,
     _id: String,
-    data: Object
+    stats: Object
 })
 
-var currentData
-loadCurrentData()
-
-function loadCurrentData() {
-    if (props.data && props.data.length > 0) {
-        currentData = props.data.reduce((prev, current) => {
-            return prev.time > current.time ? prev : current
-        })
-    }
-}
+const stats = props.stats
 
 function deleteServer() {
     if (confirm("Are you sure you want to delete this server? There is no undo option.")) {

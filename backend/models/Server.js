@@ -3,10 +3,14 @@ const mongoose = require('mongoose')
 const serverSchema = new mongoose.Schema({
     name: String,
     type: String,
-    bungeeInstance: mongoose.ObjectId,
+    bungeeInstance: {
+        type: mongoose.ObjectId,
+        ref: 'User'
+    },
     storage: Number,
     owner: mongoose.ObjectId,
-    data: [Object]
+    firstUpdate: Number,
+    lastUpdate: Number
 })
 
 const serverModel = mongoose.model("Server", serverSchema)

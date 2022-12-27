@@ -52,12 +52,12 @@ export default defineNuxtConfig({
         }]
     },
     io: {
-    sockets: [
-        {
-            name: 'main',
-            url: 'http://localhost:3021/',
-            default: true
-        }
-    ]
-}
+        sockets: [
+            {
+                name: 'main',
+                url: 'http://localhost:3021/',
+                default: true
+            }
+        ]
+    }
 })

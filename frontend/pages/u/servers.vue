@@ -17,7 +17,7 @@
             </div>
             <div class="stat">
                 <h1 class="stat-title">
-                    <span class="stat-green">2</span>/5
+                    <span class="stat-green">{{ servers.length }}</span>/5
                 </h1>
 
                 <h2 class="stat-subtitle">
@@ -26,7 +26,7 @@
             </div>
             <div class="stat">
                 <h1 class="stat-title">
-                    <span class="stat-blue">2.5</span>/10GB
+                    <span class="stat-blue">{{ servers.reduce((acc, obj) => acc + obj.storage, 0) }}</span>/10GB
                 </h1>
 
                 <h2 class="stat-subtitle">
@@ -47,10 +47,10 @@
             </div>
 
             <div v-if="currentPanel == 'servers'" class="panel panel-servers">
-                <ServersServer v-for="server in servers" :name="server.name" :_id="server._id" :data="server.data" />
+                <ServersServer v-for="server in servers" :name="server.name" :_id="server._id" :stats="server.stats" @settings="openSettings(server._id)" />
             </div>
             <div v-if="currentPanel == 'settings'" class="panel panel-settings">
-                bing
+                <ServersSettings :server="serverSettings" />
             </div>
             <div v-if="currentPanel == 'create'" class="panel panel-create">
                 <ServersCreate />
@@ -191,8 +191,14 @@
 <script setup>
 const currentPanel = ref("servers")
 const servers = useState("servers")
+const serverSettings = ref("")
 
 function setPanel(panel) {
     currentPanel.value = panel
+}
+
+function openSettings(serverId) {
+    serverSettings.value = servers.value.find(i => i._id == serverId)
+    setPanel("settings")
 }
 </script>

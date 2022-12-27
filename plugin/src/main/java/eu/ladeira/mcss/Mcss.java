@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.StringJoiner;
 
 import org.bukkit.Bukkit;
@@ -20,7 +21,7 @@ public class Mcss extends JavaPlugin {
 	private static String secret;
 
 	public static void setSecret(String newSecret) {
-		secret = newSecret;	
+		secret = newSecret;
 	}
 
 	private OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
@@ -33,14 +34,11 @@ public class Mcss extends JavaPlugin {
 		} else {
 			Bukkit.getLogger().severe("Secret not found in config");
 		}
-		
+
 		getCommand("register").setExecutor(new RegisterCmd());
 
-		new BukkitRunnable() {
-			public void run() {
-				sendInfo();
-			}
-		}.runTaskTimer(this, 60, 60);
+		// Start Info Loop
+		sendInfo();
 	}
 
 	@Override
@@ -62,6 +60,15 @@ public class Mcss extends JavaPlugin {
 
 	public int getCpuUsage() {
 		return (int) Math.round(osBean.getCpuLoad() * 100);
+	}
+
+	public void sendInfoIn(long ms) {
+		Bukkit.getLogger().info("Next in " + ms + "ms");
+		new BukkitRunnable() {
+			public void run() {
+				sendInfo();
+			}
+		}.runTaskLater(this, ms / 50);
 	}
 
 	public void sendInfo() {
@@ -93,17 +100,46 @@ public class Mcss extends JavaPlugin {
 
 			String finalString = "{" + sj + "}";
 
-//			Bukkit.getLogger().info(finalString);
 			byte[] out = finalString.getBytes(StandardCharsets.UTF_8);
 			int length = out.length;
 
 			con.setFixedLengthStreamingMode(length);
 			con.connect();
+
 			try (OutputStream os = con.getOutputStream()) {
 				os.write(out);
+
+				int statusCode = con.getResponseCode();
+
+				if (statusCode >= 200 && statusCode >= 400) {
+					Scanner s = new Scanner(con.getErrorStream()).useDelimiter("\\A");
+					String response = s.hasNext() ? s.next() : "";
+
+					if (statusCode == 425) {// Sending too fast
+						int wait = Integer.parseInt(response.split(":")[1]) + 250;
+//						System.out.println("Throttled");
+						sendInfoIn(wait);
+					} else {
+//						System.out.println("Request failed! (" + response + ")");
+						sendInfoIn(2000);
+					}
+				} else {
+					Scanner s = new Scanner(con.getInputStream()).useDelimiter("\\A");
+					String response = s.hasNext() ? s.next() : "";
+
+					int wait = Integer.parseInt(response.split(":")[1]) + 250;
+					System.out.println("Sent data!");
+					sendInfoIn(wait);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+//				System.out.println("Request failed! (Exception)");
+				sendInfoIn(2000);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+//			System.out.println("Request failed! (Exception)");
+			sendInfoIn(2000);
 		}
 	}
 }

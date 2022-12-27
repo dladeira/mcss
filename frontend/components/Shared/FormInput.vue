@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <input class="input" :id="name" :type=type :name="name" :placeholder="placeholder" :disabled="disabled" />
+        <input class="input" :id="name" :type=type :name="name" :placeholder="placeholder" :disabled="disabled" v-model="valueRef" />
     </div>
 </template>
 
@@ -87,7 +87,10 @@ const props = defineProps({
     name: String,
     placeholder: String,
     disabled: String,
+    value: String
 })
+
+const valueRef = ref(props.value)
 
 const emit = defineEmits(['helper'])
 </script>
