@@ -92,6 +92,7 @@ public class Mcss extends JavaPlugin {
 			// Define the fields
 			form.put("cpuUsage", String.valueOf(getCpuUsage()));
 			form.put("ramUsage", String.valueOf(getRamUsage()));
+			form.put("players", String.valueOf(Bukkit.getOnlinePlayers().size()));
 			form.put("secret", secret);
 
 			StringJoiner sj = new StringJoiner(",");

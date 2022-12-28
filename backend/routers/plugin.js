@@ -22,14 +22,14 @@ router.post('/server', async (req, res) => {
 
 router.post('/stats-update', async (req, res) => {
 
-    const { cpuUsage, ramUsage } = req.body
+    const { cpuUsage, ramUsage, players } = req.body
 
     const server = await Server.findOne({ _id: req.body.secret })
 
     if (!server)
         return res.status(404).send("Server not found")
 
-    const dataPackets = await Data.findOne({ server: req.body.secret })
+    const dataPackets = await Data.find({ server: req.body.secret })
 
 
     if (!server.firstUpdate) {
@@ -47,7 +47,7 @@ router.post('/stats-update', async (req, res) => {
         return res.status(425).send("Throttle:" + throttle)
     }
 
-    const storageUsage = getDataSize(dataPackets)
+    const storageUsage = getStorageUsage(dataPackets, server.storage)
 
     const data = new Data({
         owner: server.owner,
@@ -55,6 +55,7 @@ router.post('/stats-update', async (req, res) => {
         cpuUsage,
         ramUsage,
         storageUsage,
+        players,
         time: Date.now()
     })
 
@@ -68,7 +69,7 @@ router.post('/stats-update', async (req, res) => {
     res.status(200).send("SendIn:" + sendIn)
 })
 
-function getDataSize(data) { // KiloBytes
+function getStorageUsage(data, storage) { // KiloBytes
     var total = 0
     var samples = 50
     for (var i = 0; i < samples; i++)
@@ -76,7 +77,7 @@ function getDataSize(data) { // KiloBytes
 
     var averageSize = total / samples
 
-    return averageSize * data.length / 1024
+    return Math.round(averageSize * data.length / 1024 / (storage * 1024) * 100)
 }
 
 module.exports = router

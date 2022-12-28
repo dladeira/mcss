@@ -26,7 +26,7 @@
                     <div class="dial-outer">
                         <div class="dial-inner cpu-inner">
                             <div class="usage">
-                                {{ stats.cpuUsage }}%
+                                {{ stats.live.cpuUsage }}%
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     <div class="dial-outer">
                         <div class="dial-inner ram-inner">
                             <div class="usage">
-                                {{ stats.ramUsage }}%
+                                {{ stats.live.ramUsage }}%
                             </div>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                     <div class="dial-outer">
                         <div class="dial-inner storage-inner">
                             <div class="usage">
-                                {{ stats.storageUsage }}%
+                                {{ stats.cache.storageUsage }}%
                             </div>
                         </div>
                     </div>

@@ -2,7 +2,7 @@
     <div class="container">
         <div class="header">
             <h2 class="title">
-                Server Usage
+                Players
             </h2>
 
             <div class="selector">
@@ -32,8 +32,6 @@
 
     height: 50%;
     width: 100%;
-
-    margin-bottom: 1rem;
 
     background-color: $gray6;
 }
@@ -142,7 +140,6 @@ let options = {
             }
         },
         y: {
-            max: 100,
             min: 0,
             grid: {
                 display: false,
@@ -152,10 +149,6 @@ let options = {
                 width: 1
             },
             ticks: {
-                stepSize: 20,
-                callback: function (value) {
-                    return value + '%'
-                },
                 font: {
                     size: 12
                 },
@@ -180,11 +173,11 @@ function getLabels() {
     }
 }
 
-function getDataset(index, timeFrame) {
+function getDataset(timeFrame) {
     const values = []
 
-    for (var timeFrame of activeServer.value.stats.cache.graphs.usage[timeFrame]) {
-        var value = timeFrame[index] / timeFrame.dataCount
+    for (var timeData of activeServer.value.stats.cache.graphs.usage[timeFrame]) {
+        var value = timeData['players'] / timeData.count
         values.push(isNaN(value) || value == Infinity ? 0 : value)
     }
 
@@ -196,33 +189,13 @@ function getData() {
         labels: getLabels(),
         datasets: [
             {
-                label: 'CPU Usage',
-                backgroundColor: '#00C2FF',
-                borderColor: "#00C2FF",
-                data: getDataset('cpu', selected.value),
+                label: 'Average Players',
+                backgroundColor: '#FFC700',
+                borderColor: "#FFC700",
+                data: getDataset(selected.value),
                 fill: {
                     target: 'origin',
-                    above: '#00C2FF44',   // Area will be red above the origin
-                }
-            },
-            {
-                label: 'RAM Usage',
-                backgroundColor: '#00FF75',
-                borderColor: "#00FF75",
-                data: getDataset('ram', selected.value),
-                fill: {
-                    target: 'origin',
-                    above: '#00FF7544',   // Area will be red above the origin
-                }
-            },
-            {
-                label: 'Storage Usage',
-                backgroundColor: '#FF3030',
-                borderColor: "#FF3030",
-                data: getDataset('storage', selected.value),
-                fill: {
-                    target: 'origin',
-                    above: '#FF303044',   // Area will be red above the origin
+                    above: '#FFC70044',   // Area will be red above the origin
                 }
             }
         ]

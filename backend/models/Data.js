@@ -11,8 +11,9 @@ const dataSchema = new mongoose.Schema({
     },
     cpuUsage: Number,
     ramUsage: Number,
-    storageusage: Number,
-    time: Number
+    storageUsage: Number,
+    time: Number,
+    players: Number
 })
 
 const data = mongoose.model('Data', dataSchema)

@@ -3,17 +3,15 @@
         <div class="page">
 
             <div class="dials">
-                <OverviewDial name="CPU" :value="activeServer.stats.cpuUsage + '%'" color="#00C2FF" />
-                <OverviewDial name="RAM" :value="activeServer.stats.ramUsage + '%'" color="#00FF75" />
-                <OverviewDial name="Storage" :value="activeServer.stats.storageUsage + '%'" color="#FF3030" />
-                <OverviewDial name="Uptime" :value="activeServer.stats.uptime + '%'" color="#FFC700" />
+                <OverviewDial name="CPU" :value="activeServer.stats.live.cpuUsage + '%'" color="#00C2FF" />
+                <OverviewDial name="RAM" :value="activeServer.stats.live.ramUsage + '%'" color="#00FF75" />
+                <OverviewDial name="Storage" :value="activeServer.stats.cache.storageUsage + '%'" color="#FF3030" />
+                <OverviewDial name="Uptime" :value="activeServer.stats.cache.uptime + '%'" color="#FFC700" />
             </div>
 
             <div class="graphs">
                 <OverviewUsage />
-                <div class="panel players">
-                    {{ activeServer.stats.graphs.days }}
-                </div>
+                <OverviewPlayers />
             </div>
 
             <div class="misc">
