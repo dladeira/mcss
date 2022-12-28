@@ -13,8 +13,8 @@
 
             <div class="server">
                 <div class="links-server">
-                    <nuxt-link to="/u/overview" :class="route == '/u/overview' ? 'link-selected' : 'link'">Overview</nuxt-link>
-                    <div class="link">Players</div>
+                    <nuxt-link to="/u/server/overview" :class="route == '/u/server/overview' ? 'link-selected' : 'link'">Overview</nuxt-link>
+                    <nuxt-link to="/u/server/players" :class="route == '/u/server/players' ? 'link-selected' : 'link'">Players</nuxt-link>
                     <div class="link">Statistics</div>
                     <div class="link">Surveys</div>
                 </div>

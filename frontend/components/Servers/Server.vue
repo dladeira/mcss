@@ -67,7 +67,7 @@
             </div>
         </div>
         <div class="section section-buttons">
-            <div class="button button-dashboard" @click="changeServer()">
+            <div class="button button-dashboard" @click="openDashboard">
                 Dashboard
             </div>
 
@@ -283,9 +283,9 @@ function deleteServer() {
     }
 }
 
-function changeServer() {
+function openDashboard() {
     activeServerCookie.value = servers.value.find(server => server._id == props._id)
     activeServer.value = servers.value.find(server => server._id == props._id)
-    navigateTo('/u/overview')
+    navigateTo('/u/server/overview')
 }
 </script>

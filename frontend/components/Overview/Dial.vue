@@ -24,6 +24,12 @@
     width: 100%;
 
     padding: 0.75rem 0;
+
+    margin-bottom: 1rem;
+
+    &:last-child {
+        margin: 0;
+    }
 }
 
 .dial-title {
