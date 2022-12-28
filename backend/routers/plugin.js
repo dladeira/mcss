@@ -22,7 +22,7 @@ router.post('/server', async (req, res) => {
 
 router.post('/stats-update', async (req, res) => {
 
-    const { cpuUsage, ramUsage, players } = req.body
+    const { cpuUsage, ramUsage, players, messages, whispers } = req.body
 
     const server = await Server.findOne({ _id: req.body.secret })
 
@@ -35,11 +35,6 @@ router.post('/stats-update', async (req, res) => {
     if (!server.firstUpdate) {
         server.firstUpdate = Date.now()
     }
-
-    // console.log(Date.now() + ' - this update')
-    // console.log((Date.now() - (Date.now() % (updateInterval * 1000))) + ' should have been')
-    // console.log((Date.now() % (updateInterval * 1000)) + ' ms late')
-    // console.log(server.lastUpdate % (updateInterval * 1000) + 'ms late last')
 
     if (server.lastUpdate && Date.now() - (server.lastUpdate - (server.lastUpdate % (updateInterval * 1000))) < updateInterval * 1000) {
         const throttle = (updateInterval * 1000) - (Date.now() - (server.lastUpdate - (server.lastUpdate % (updateInterval * 1000))))
@@ -56,7 +51,9 @@ router.post('/stats-update', async (req, res) => {
         ramUsage,
         storageUsage,
         players,
-        time: Date.now()
+        time: Date.now(),
+        messages,
+        whispers
     })
 
     const sendIn = (updateInterval * 1000) - (Date.now() % (updateInterval * 1000))

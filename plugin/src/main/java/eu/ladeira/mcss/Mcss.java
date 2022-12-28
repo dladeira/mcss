@@ -11,14 +11,20 @@ import java.util.Scanner;
 import java.util.StringJoiner;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.sun.management.OperatingSystemMXBean;
 
+import eu.ladeira.mcss.events.MessagesListener;
+
 public class Mcss extends JavaPlugin {
 
 	private static String secret;
+	
+	public static int messages;
+	public static int whispers;
 
 	public static void setSecret(String newSecret) {
 		secret = newSecret;
@@ -36,9 +42,16 @@ public class Mcss extends JavaPlugin {
 		}
 
 		getCommand("register").setExecutor(new RegisterCmd());
-
-		// Start Info Loop
-		sendInfo();
+		
+		registerEvents(new MessagesListener());
+		
+		sendInfo(); // Start Info Loop
+	}
+	
+	public void registerEvents(Listener... listeners) {
+		for (Listener listener : listeners) {
+			this.getServer().getPluginManager().registerEvents(listener, this);
+		}
 	}
 
 	@Override
@@ -71,6 +84,25 @@ public class Mcss extends JavaPlugin {
 		}.runTaskLater(this, ms / 50);
 	}
 
+	public Map<String, String> getForm() {
+		Map<String, String> form = new HashMap<>();
+
+		// Define the fields
+		form.put("cpuUsage", String.valueOf(getCpuUsage()));
+		form.put("ramUsage", String.valueOf(getRamUsage()));
+		form.put("players", String.valueOf(Bukkit.getOnlinePlayers().size()));
+		
+		form.put("messages", String.valueOf(messages));
+		form.put("whispers", String.valueOf(whispers));
+		
+		form.put("secret", secret);
+		
+		Mcss.messages = 0;
+		Mcss.whispers = 0;
+		
+		return form;
+	}
+	
 	public void sendInfo() {
 		if (secret == null) {
 			Bukkit.getLogger().severe("Secret not configured! Register server with /register [secret]");
@@ -87,13 +119,7 @@ public class Mcss extends JavaPlugin {
 			con.setRequestProperty("Accept", "application/json");
 			con.setDoOutput(true);
 
-			Map<String, String> form = new HashMap<>();
-
-			// Define the fields
-			form.put("cpuUsage", String.valueOf(getCpuUsage()));
-			form.put("ramUsage", String.valueOf(getRamUsage()));
-			form.put("players", String.valueOf(Bukkit.getOnlinePlayers().size()));
-			form.put("secret", secret);
+			Map<String, String> form = getForm();
 
 			StringJoiner sj = new StringJoiner(",");
 			for (Map.Entry<String, String> entry : form.entrySet())

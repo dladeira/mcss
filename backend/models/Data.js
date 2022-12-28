@@ -13,7 +13,9 @@ const dataSchema = new mongoose.Schema({
     ramUsage: Number,
     storageUsage: Number,
     time: Number,
-    players: Number
+    players: Number,
+    messages: Number,
+    whispers: Number
 })
 
 const data = mongoose.model('Data', dataSchema)

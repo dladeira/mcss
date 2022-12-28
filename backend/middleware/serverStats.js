@@ -102,6 +102,8 @@ async function generateServerCache(server, data) {
         ram: 0,
         storage: 0,
         players: 0,
+        messages: 0,
+        whispers: 0,
         count: 0,
         dataCount: 0
     }
@@ -125,34 +127,32 @@ async function generateServerCache(server, data) {
         promises.push(registerPacketStats(i))
     }
 
+    function registerToGraph(packet, graphTime, graphIndex) {
+        graphs.usage[graphTime][graphIndex].cpu += packet.cpuUsage
+        graphs.usage[graphTime][graphIndex].ram += packet.ramUsage
+        graphs.usage[graphTime][graphIndex].storage += packet.storageUsage
+        graphs.usage[graphTime][graphIndex].players += packet.players ? packet.players : 0
+        graphs.usage[graphTime][graphIndex].messages += packet.messages ? packet.messages : 0
+        graphs.usage[graphTime][graphIndex].whispers += packet.whispers ? packet.whispers : 0
+        graphs.usage[graphTime][graphIndex].dataCount += 1
+        graphs.usage[graphTime][graphIndex].count += 1
+    }
+
     async function registerPacketStats(time) {
         var date = new Date(time)
         const packet = await Data.findOne({ time: { $gt: time - 1, $lt: time + (updateInterval * 1000) + 1 } })
 
         if (packet) {
             if (date.getUTCFullYear() == now.getUTCFullYear()) {
-                graphs.usage.year[date.getUTCMonth()].cpu += packet.cpuUsage
-                graphs.usage.year[date.getUTCMonth()].ram += packet.ramUsage
-                graphs.usage.year[date.getUTCMonth()].storage += packet.storageUsage
-                graphs.usage.year[date.getUTCMonth()].players += packet.players ? packet.players : 0
-                graphs.usage.year[date.getUTCMonth()].dataCount += 1
-                graphs.usage.year[date.getUTCMonth()].count += 1
+                registerToGraph(packet, 'year', date.getUTCMonth())
 
                 if (date.getUTCMonth() == now.getUTCMonth()) {
-                    graphs.usage.month[date.getUTCDate() - 1].cpu += packet.cpuUsage
-                    graphs.usage.month[date.getUTCDate() - 1].ram += packet.ramUsage
-                    graphs.usage.month[date.getUTCDate() - 1].storage += packet.storageUsage
-                    graphs.usage.month[date.getUTCDate() - 1].players += packet.players ? packet.players : 0
-                    graphs.usage.month[date.getUTCDate() - 1].dataCount += 1
-                    graphs.usage.month[date.getUTCDate() - 1].count += 1
+                    registerToGraph(packet, 'month', date.getUTCDate())
+
 
                     if (date.getUTCDate() == now.getUTCDate()) {
-                        graphs.usage.day[date.getUTCHours()].cpu += packet.cpuUsage
-                        graphs.usage.day[date.getUTCHours()].ram += packet.ramUsage
-                        graphs.usage.day[date.getUTCHours()].storage += packet.storageUsage
-                        graphs.usage.day[date.getUTCHours()].players += packet.players ? packet.players : 0
-                        graphs.usage.day[date.getUTCHours()].dataCount += 1
-                        graphs.usage.day[date.getUTCHours()].count += 1
+                        registerToGraph(packet, 'day', date.getHours())
+
                     }
                 }
             }
@@ -163,7 +163,7 @@ async function generateServerCache(server, data) {
                 graphs.usage.year[date.getUTCMonth()].count += 1
 
                 if (date.getUTCMonth() == now.getUTCMonth()) {
-                    graphs.usage.month[date.getUTCDate()].count += 1
+                    graphs.usage.month[date.getUTCDate() - 1].count += 1
 
                     if (date.getUTCDate() == now.getUTCDate()) {
                         graphs.usage.day[date.getUTCHours()].count += 1
