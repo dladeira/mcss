@@ -196,7 +196,8 @@ function getData() {
                 fill: {
                     target: 'origin',
                     above: '#FFC70044',   // Area will be red above the origin
-                }
+                },
+                lineTension: 0.1
             },
             {
                 label: 'Chat Messages',
@@ -206,7 +207,8 @@ function getData() {
                 fill: {
                     target: 'origin',
                     above: '#FF303044',   // Area will be red above the origin
-                }
+                },
+                lineTension: 0.1
             }
         ]
     }

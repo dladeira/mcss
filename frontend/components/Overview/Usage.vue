@@ -203,7 +203,8 @@ function getData() {
                 fill: {
                     target: 'origin',
                     above: '#00C2FF44',   // Area will be red above the origin
-                }
+                },
+                lineTension: 0.1
             },
             {
                 label: 'RAM Usage',
@@ -213,7 +214,8 @@ function getData() {
                 fill: {
                     target: 'origin',
                     above: '#00FF7544',   // Area will be red above the origin
-                }
+                },
+                lineTension: 0.1
             },
             {
                 label: 'Storage Usage',
@@ -224,6 +226,7 @@ function getData() {
                     target: 'origin',
                     above: '#FF303044',   // Area will be red above the origin
                 },
+                lineTension: 0.1,
                 spanGaps: true
             }
         ]

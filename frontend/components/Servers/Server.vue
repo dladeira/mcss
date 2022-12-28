@@ -62,9 +62,7 @@
             </div>
         </div>
         <div class="section section-graph">
-            <div class="graph">
-
-            </div>
+            <Line :data="data" :options="options" />
         </div>
         <div class="section section-buttons">
             <div class="button button-dashboard" @click="openDashboard">
@@ -206,11 +204,9 @@
 .section-graph {
     flex-grow: 1;
 
-    height: 10rem;
+    height: 11rem;
 
-    margin: 0 3rem;
-
-    background-color: rgba(black, 0.2);
+    margin: auto 3rem 0 3rem;
 }
 
 .button {
@@ -253,6 +249,27 @@
 </style>
 
 <script setup>
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+} from 'chart.js'
+import { Line } from 'vue-chartjs'
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+)
 
 const token = useCookie('token')
 const servers = useState("servers")
@@ -267,6 +284,95 @@ const props = defineProps({
     _id: String,
     stats: Object
 })
+
+let options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            display: false
+        }
+    },
+    pointRadius: 0,
+    pointHoverRadius: 0,
+    scales: {
+        x: {
+            grid: {
+                display: false,
+            },
+            border: {
+                color: 'rgba(255, 255, 255, 0.2)',
+                width: 1
+            },
+            ticks: {
+                font: {
+                    size: 0
+                },
+                color: '#A3A3A3'
+            }
+        },
+        y: {
+            max: 100,
+            min: 0,
+            grid: {
+                display: false,
+            },
+            border: {
+                color: 'rgba(255, 255, 255, 0.2)',
+                width: 1
+            },
+            ticks: {
+                stepSize: 50,
+                callback: function (value) {
+                    return value + '%'
+                },
+                font: {
+                    size: 0
+                },
+                color: '#A3A3A3'
+            }
+        }
+    }
+}
+
+function getDataset(index) {
+    const values = []
+
+    for (var timeData of props.stats.cache.graphs.day) {
+        var value = timeData[index] / timeData.dataCount
+        values.push(isNaN(value) && index != 'storage' || value == Infinity ? 0 : value)
+    }
+
+    return values
+}
+
+const data = {
+    labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'],
+    datasets: [
+        {
+            label: 'CPU Usage',
+            backgroundColor: '#00C2FF',
+            borderColor: "#00C2FF",
+            data: getDataset('cpu'),
+            lineTension: 0.3
+        },
+        {
+            label: 'RAM Usage',
+            backgroundColor: '#00FF75',
+            borderColor: "#00FF75",
+            data: getDataset('ram'),
+            lineTension: 0.3
+        },
+        {
+            label: 'Storage Usage',
+            backgroundColor: '#FF3030',
+            borderColor: "#FF3030",
+            data: getDataset('storage'),
+            lineTension: 0.3,
+            spanGaps: true
+        }
+    ]
+}
 
 const stats = props.stats
 

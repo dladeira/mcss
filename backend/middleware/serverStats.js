@@ -37,13 +37,7 @@ async function middleware(req, res, next) {
                     storageUsage: 0,
                     uptime: 0,
                     storageUsed: 0,
-                    graphs: {
-                        usage: {
-                            day: [],
-                            month: [],
-                            year: []
-                        }
-                    }
+                    graphs: getDefaultGraphs()
                 }
             }
         }
@@ -89,30 +83,10 @@ async function loadCache(server, data) {
 
 async function generateServerCache(server, data) {
     const uptimeInfo = [0, 0]
-    const graphs = { day: [], month: [], year: [] }
+    const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0] // [3m, 6m, 1y
     const dataSize = getDataSize(data)
     const averagePacket = getDataSize(data) / data.length
-
-    const defaultTime = {
-        cpu: 0,
-        ram: 0,
-        storage: 0,
-        players: 0,
-        messages: 0,
-        whispers: 0,
-        count: 0,
-        dataCount: 0
-    }
-
-    for (var i = 0; i < 24; i++)
-        graphs.day.push({ ...defaultTime })
-
-    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate(); i++)
-        graphs.month.push({ ...defaultTime })
-
-    for (var i = 0; i < 12; i++)
-        graphs.year.push({ ...defaultTime })
 
     var now = new Date()
     const month = 30 * 24 * 60 * 60 * 1000
@@ -145,7 +119,7 @@ async function generateServerCache(server, data) {
             if (now.getTime() - date.getTime() > server.dataLifetime * month) {
                 deletePackets.push(packet._id)
             } else
-            dontdelete++
+                dontdelete++
 
             if (date.getUTCFullYear() == now.getUTCFullYear()) {
                 registerToGraph(packet, 'year', date.getUTCMonth())
@@ -191,8 +165,8 @@ async function generateServerCache(server, data) {
 
     await Promise.all(promises)
 
-    await Promise.all(deletePackets.map(async packet =>{
-        await Data.deleteOne({ _id: packet})
+    await Promise.all(deletePackets.map(async packet => {
+        await Data.deleteOne({ _id: packet })
     }))
 
     const firstDateYear = new Date(server.firstUpdate)
@@ -218,6 +192,32 @@ async function generateServerCache(server, data) {
             months12: Math.round((dataAge[0] + dataAge[1] + dataAge[2]) * averagePacket / 1024 * 10) / 10
         }
     }
+}
+
+function getDefaultGraphs() {
+    const graphs = { day: [], month: [], year: [] }
+
+    const defaultTime = {
+        cpu: 0,
+        ram: 0,
+        storage: 0,
+        players: 0,
+        messages: 0,
+        whispers: 0,
+        count: 0,
+        dataCount: 0
+    }
+
+    for (var i = 0; i < 24; i++)
+        graphs.day.push({ ...defaultTime })
+
+    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate(); i++)
+        graphs.month.push({ ...defaultTime })
+
+    for (var i = 0; i < 12; i++)
+        graphs.year.push({ ...defaultTime })
+
+    return graphs
 }
 
 function getDataSize(data) { // KiloBytes

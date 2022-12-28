@@ -196,7 +196,8 @@ function getData() {
                 fill: {
                     target: 'origin',
                     above: '#FFC70044',   // Area will be red above the origin
-                }
+                },
+                lineTension: 0.1
             }
         ]
     }
