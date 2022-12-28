@@ -183,9 +183,9 @@ function getLabels() {
 function getDataset(index, timeFrame) {
     const values = []
 
-    for (var timeFrame of activeServer.value.stats.cache.graphs.usage[timeFrame]) {
+    for (var timeFrame of activeServer.value.stats.cache.graphs[timeFrame]) {
         var value = timeFrame[index] / timeFrame.dataCount
-        values.push(isNaN(value) || value == Infinity ? 0 : value)
+        values.push(isNaN(value) && index != 'storage' || value == Infinity ? 0 : value)
     }
 
     return values
@@ -223,7 +223,8 @@ function getData() {
                 fill: {
                     target: 'origin',
                     above: '#FF303044',   // Area will be red above the origin
-                }
+                },
+                spanGaps: true
             }
         ]
     }

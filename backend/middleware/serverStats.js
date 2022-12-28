@@ -89,13 +89,10 @@ async function loadCache(server, data) {
 
 async function generateServerCache(server, data) {
     const uptimeInfo = [0, 0]
-    const graphs = {
-        usage: {
-            day: [],
-            month: [],
-            year: []
-        }
-    }
+    const graphs = { day: [], month: [], year: [] }
+    const dataAge = [0, 0, 0] // [3m, 6m, 1y
+    const dataSize = getDataSize(data)
+    const averagePacket = getDataSize(data) / data.length
 
     const defaultTime = {
         cpu: 0,
@@ -108,18 +105,17 @@ async function generateServerCache(server, data) {
         dataCount: 0
     }
 
-    for (var i = 0; i < 24; i++) {
-        graphs.usage.day.push({ ...defaultTime })
-    }
+    for (var i = 0; i < 24; i++)
+        graphs.day.push({ ...defaultTime })
 
-    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate(); i++) {
-        graphs.usage.month.push({ ...defaultTime })
-    }
+    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate(); i++)
+        graphs.month.push({ ...defaultTime })
 
-    for (var i = 0; i < 12; i++) {
-        graphs.usage.year.push({ ...defaultTime })
-    }
+    for (var i = 0; i < 12; i++)
+        graphs.year.push({ ...defaultTime })
+
     var now = new Date()
+    const month = 30 * 24 * 60 * 60 * 1000
 
     const promises = []
 
@@ -128,21 +124,29 @@ async function generateServerCache(server, data) {
     }
 
     function registerToGraph(packet, graphTime, graphIndex) {
-        graphs.usage[graphTime][graphIndex].cpu += packet.cpuUsage
-        graphs.usage[graphTime][graphIndex].ram += packet.ramUsage
-        graphs.usage[graphTime][graphIndex].storage += packet.storageUsage
-        graphs.usage[graphTime][graphIndex].players += packet.players ? packet.players : 0
-        graphs.usage[graphTime][graphIndex].messages += packet.messages ? packet.messages : 0
-        graphs.usage[graphTime][graphIndex].whispers += packet.whispers ? packet.whispers : 0
-        graphs.usage[graphTime][graphIndex].dataCount += 1
-        graphs.usage[graphTime][graphIndex].count += 1
+        graphs[graphTime][graphIndex].cpu += packet.cpuUsage
+        graphs[graphTime][graphIndex].ram += packet.ramUsage
+        graphs[graphTime][graphIndex].storage += packet.storageUsage
+        graphs[graphTime][graphIndex].players += packet.players ? packet.players : 0
+        graphs[graphTime][graphIndex].messages += packet.messages ? packet.messages : 0
+        graphs[graphTime][graphIndex].whispers += packet.whispers ? packet.whispers : 0
+        graphs[graphTime][graphIndex].dataCount += 1
+        graphs[graphTime][graphIndex].count += 1
     }
+
+    const deletePackets = []
+    var dontdelete = 0
 
     async function registerPacketStats(time) {
         var date = new Date(time)
         const packet = await Data.findOne({ time: { $gt: time - 1, $lt: time + (updateInterval * 1000) + 1 } })
 
         if (packet) {
+            if (now.getTime() - date.getTime() > server.dataLifetime * month) {
+                deletePackets.push(packet._id)
+            } else
+            dontdelete++
+
             if (date.getUTCFullYear() == now.getUTCFullYear()) {
                 registerToGraph(packet, 'year', date.getUTCMonth())
 
@@ -157,16 +161,27 @@ async function generateServerCache(server, data) {
                 }
             }
 
+            const timeSince = now.getTime() - date.getTime()
+            if (timeSince < 12 * month) {
+                if (timeSince > 6 * month) {
+                    dataAge[2]++
+                } else if (timeSince > 3 * month) {
+                    dataAge[1]++
+                } else {
+                    dataAge[0]++
+                }
+            }
+
             uptimeInfo[0]++
         } else {
             if (date.getUTCFullYear() == now.getUTCFullYear()) {
-                graphs.usage.year[date.getUTCMonth()].count += 1
+                graphs.year[date.getUTCMonth()].count += 1
 
                 if (date.getUTCMonth() == now.getUTCMonth()) {
-                    graphs.usage.month[date.getUTCDate() - 1].count += 1
+                    graphs.month[date.getUTCDate() - 1].count += 1
 
                     if (date.getUTCDate() == now.getUTCDate()) {
-                        graphs.usage.day[date.getUTCHours()].count += 1
+                        graphs.day[date.getUTCHours()].count += 1
                     }
                 }
             }
@@ -175,6 +190,10 @@ async function generateServerCache(server, data) {
     }
 
     await Promise.all(promises)
+
+    await Promise.all(deletePackets.map(async packet =>{
+        await Data.deleteOne({ _id: packet})
+    }))
 
     const firstDateYear = new Date(server.firstUpdate)
     const firstDateMonth = new Date(server.firstUpdate)
@@ -185,14 +204,19 @@ async function generateServerCache(server, data) {
     var skippedYear = Math.floor((server.firstUpdate - firstDateYear.getTime()) / (updateInterval * 1000))
     var skippedMonth = Math.floor((server.firstUpdate - firstDateMonth.getTime()) / (updateInterval * 1000))
 
-    graphs.usage.year[firstDateYear.getMonth()].count += skippedYear
-    graphs.usage.month[firstDateMonth.getDate()].count += skippedMonth
+    graphs.year[firstDateYear.getMonth()].count += skippedYear
+    graphs.month[firstDateMonth.getDate()].count += skippedMonth
 
     return {
-        storageUsage: Math.round(getDataSize(data) / (server.storage * 1024) * 100),
-        storageUsed: Math.ceil(getDataSize(data) / 1024 * 2) / 2,
+        storageUsage: Math.round(dataSize / (server.storage * 1024) * 100),
+        storageUsed: Math.ceil(dataSize / 1024 * 10) / 10,
         uptime: Math.round(uptimeInfo[0] / (uptimeInfo[0] + uptimeInfo[1]) * 100),
-        graphs
+        graphs,
+        dataAge: {
+            months3: Math.round((dataAge[0]) * averagePacket / 1024 * 10) / 10,
+            months6: Math.round((dataAge[0] + dataAge[1]) * averagePacket / 1024 * 10) / 10,
+            months12: Math.round((dataAge[0] + dataAge[1] + dataAge[2]) * averagePacket / 1024 * 10) / 10
+        }
     }
 }
 

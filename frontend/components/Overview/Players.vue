@@ -176,7 +176,7 @@ function getLabels() {
 function getDataset(timeFrame) {
     const values = []
 
-    for (var timeData of activeServer.value.stats.cache.graphs.usage[timeFrame]) {
+    for (var timeData of activeServer.value.stats.cache.graphs[timeFrame]) {
         var value = timeData['players'] / timeData.count
         values.push(isNaN(value) || value == Infinity ? 0 : value)
     }

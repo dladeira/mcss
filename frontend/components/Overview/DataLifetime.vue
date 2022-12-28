@@ -1,46 +1,46 @@
 <template>
-<div class="container">
-    <div class="header">
-        <h1 class="title">
-            Data Lifetime
-        </h1>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">
+                Data Lifetime
+            </h1>
+        </div>
 
-    <div class="lifetime">
-            <div class="option">
+        <div class="lifetime">
+            <div @click="setLifetime(3)" :class="activeServer.dataLifetime == 3 ? 'option-selected' : 'option'">
                 <h1 class="time">
                     3 months
                 </h1>
                 <p class="size">
-                    2.0GB
+                    {{ activeServer.stats.cache.dataAge.months3 }}MB
                 </p>
             </div>
-            <div class="option">
+            <div @click="setLifetime(6)" :class="activeServer.dataLifetime == 6 ? 'option-selected' : 'option'">
                 <h1 class="time">
                     6 months
                 </h1>
                 <p class="size">
-                    2.0GB
+                    {{ activeServer.stats.cache.dataAge.months6 }}MB
                 </p>
             </div>
-            <div class="option">
+            <div @click="setLifetime(12)" :class="activeServer.dataLifetime == 12 ? 'option-selected' : 'option'">
                 <h1 class="time">
                     1 year
                 </h1>
                 <p class="size">
-                    2.7GB
+                    {{ activeServer.stats.cache.dataAge.months12 }}MB
                 </p>
             </div>
-            <div class="option-selected">
+            <div @click="setLifetime(0)" :class="activeServer.dataLifetime == 0 ? 'option-selected' : 'option'">
                 <h1 class="time">
                     Forever
                 </h1>
                 <p class="size">
-                    2.7GB
+                    {{ activeServer.stats.cache.storageUsed }}MB
                 </p>
             </div>
         </div>
-</div>
+    </div>
 </template>
 
 <style lang="scss" scoped>
@@ -142,4 +142,21 @@
 
 <script setup>
 const activeServer = useState('activeServer')
+
+async function setLifetime(time) {
+    if (confirm('Are you sure you want to change data lifetime? This leads to data loss')) {
+        const { data, error } = await useFetch('http://localhost:3020/api/servers/lifetime', {
+            method: 'POST',
+            body: {
+                _id: activeServer.value._id,
+                lifetime: time
+            }
+        })
+
+        if (error.value)
+            return console.log(error.value)
+
+        activeServer.value.dataLifetime = time
+    }
+}
 </script>
