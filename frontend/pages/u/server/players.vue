@@ -4,9 +4,7 @@
             <div class="top">
                 <PlayersUsage />
                 
-                <div class="list panel">
-
-                </div>
+                <PlayersList />
             </div>
             <div class="bottom">
                 <div class="players panel">
@@ -56,11 +54,6 @@
 
 .bottom {
     height: 45%;
-}
-
-.graph, .list {
-    height: 100%;
-    width: calc(50% - ($gap / 2));
 }
 
 .players, .chat, .adv {

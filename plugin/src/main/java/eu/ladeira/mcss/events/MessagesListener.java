@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.StringJoiner;
 
 import org.bukkit.Bukkit;
@@ -17,12 +16,15 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import eu.ladeira.mcss.Mcss;
+import eu.ladeira.mcss.StatsPlayer;
 
 public class MessagesListener implements Listener {
 	
 	@EventHandler
 	public void onMsgSent(AsyncPlayerChatEvent e) {
 		sendMsg(e.getPlayer(), e.getMessage());
+		StatsPlayer stats = Mcss.getStatsPlayer(e.getPlayer().getUniqueId());
+		stats.messages++;
 		Mcss.messages++;
 	}
 	

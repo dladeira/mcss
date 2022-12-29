@@ -63,8 +63,10 @@ async function generateServerCache(server, data) {
     if (!data)
         data = await Data.find({ server: server._id })
 
+    var latestData = data.reduce((prev, current) => prev.time > current.time ? prev : current)
+
     process.stdout.write('Cache GEN operation: ')
-        
+
     cachedStats = cachedStats.filter(i => i.server.toString() != server._id.toString())
 
     const uptimeInfo = [0, 0]
@@ -94,6 +96,7 @@ async function generateServerCache(server, data) {
     }
 
     const deletePackets = []
+    const players = []
     var dontdelete = 0
 
     async function registerPacketStats(time) {
@@ -118,6 +121,28 @@ async function generateServerCache(server, data) {
 
                     }
                 }
+            }
+
+            main:
+            for (var stats of packet.players) {
+                for (var player of players) {
+                    if (stats.uuid == player.uuid) {
+                        player.username = stats.username
+                        player.playtime += parseInt(stats.playtime) / 20
+                        player.messages += parseInt(stats.messages)
+                        continue main
+                    }
+                }
+                const latestPlayer = latestData.players.find(i => i.uuid == stats.uuid)
+
+                players.push({
+                    uuid: stats.uuid,
+                    username: stats.username,
+                    playtime: parseInt(stats.playtime) / 20,
+                    messages: parseInt(stats.messages),
+                    location: latestPlayer ? latestPlayer.location : "---",
+                    online: latestPlayer ? true : false
+                })
             }
 
             const timeSince = now.getTime() - date.getTime()
@@ -175,7 +200,8 @@ async function generateServerCache(server, data) {
             months3: Math.round((dataAge[0]) * averagePacket / 1024 * 10) / 10,
             months6: Math.round((dataAge[0] + dataAge[1]) * averagePacket / 1024 * 10) / 10,
             months12: Math.round((dataAge[0] + dataAge[1] + dataAge[2]) * averagePacket / 1024 * 10) / 10
-        }
+        },
+        players
     }
 
     cachedStats.push({

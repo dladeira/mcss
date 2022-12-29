@@ -381,7 +381,7 @@ function deleteServer() {
         useFetch('http://localhost:3020/api/servers/delete', {
             method: "POST",
             body: {
-                name: props.name
+                _id: props._id
             }
         })
 

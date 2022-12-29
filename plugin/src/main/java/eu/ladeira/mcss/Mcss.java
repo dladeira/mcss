@@ -6,11 +6,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -18,16 +21,39 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.sun.management.OperatingSystemMXBean;
 
 import eu.ladeira.mcss.events.MessagesListener;
+import eu.ladeira.mcss.events.PlayerListener;
 
 public class Mcss extends JavaPlugin {
 
 	public static String secret;
-	
+
 	public static int messages;
 	public static int whispers;
 
+	public static HashSet<StatsPlayer> players = new HashSet<>();
+
 	public static void setSecret(String newSecret) {
 		secret = newSecret;
+	}
+
+	public static StatsPlayer getStatsPlayer(UUID uuid) {
+		for (StatsPlayer stats : players) {
+			if (stats.uuid == uuid) {
+				return stats;
+			}
+		}
+
+		StatsPlayer newPlayer = new StatsPlayer(uuid);
+		players.add(newPlayer);
+		return newPlayer;
+	}
+	
+	public static void removeStatsPlayer(UUID uuid) {
+		for (StatsPlayer stats : players) {
+			if (stats.uuid == uuid) {
+				players.remove(stats);
+			}
+		}
 	}
 
 	private OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
@@ -42,12 +68,17 @@ public class Mcss extends JavaPlugin {
 		}
 
 		getCommand("register").setExecutor(new RegisterCmd());
+
+		registerEvents(new MessagesListener(), new PlayerListener());
+
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			getStatsPlayer(player.getUniqueId());
+		}
 		
-		registerEvents(new MessagesListener());
-		
-		sendInfo(); // Start Info Loop
+		sendInfo(); // Is infinite loop, only run once
+		startTimeLoop();
 	}
-	
+
 	public void registerEvents(Listener... listeners) {
 		for (Listener listener : listeners) {
 			this.getServer().getPluginManager().registerEvents(listener, this);
@@ -60,6 +91,20 @@ public class Mcss extends JavaPlugin {
 			getConfig().set("secret", secret);
 			saveConfig();
 		}
+	}
+
+	public void startTimeLoop() {
+		final int ticks = 40;
+
+		new BukkitRunnable() {
+			public void run() {
+				for (StatsPlayer stats : players) {
+					if (Bukkit.getPlayer(stats.uuid) != null) {
+						stats.playtime += ticks;
+					}
+				}
+			}
+		}.runTaskTimer(this, ticks, ticks);
 	}
 
 	public int getRamUsage() {
@@ -90,19 +135,19 @@ public class Mcss extends JavaPlugin {
 		// Define the fields
 		form.put("cpuUsage", String.valueOf(getCpuUsage()));
 		form.put("ramUsage", String.valueOf(getRamUsage()));
-		form.put("players", String.valueOf(Bukkit.getOnlinePlayers().size()));
-		
+		form.put("players", StatsPlayer.stringifyPlayers(players));
+
 		form.put("messages", String.valueOf(messages));
 		form.put("whispers", String.valueOf(whispers));
-		
+
 		form.put("secret", secret);
-		
+
 		Mcss.messages = 0;
 		Mcss.whispers = 0;
-		
+
 		return form;
 	}
-	
+
 	public void sendInfo() {
 		if (secret == null) {
 			Bukkit.getLogger().severe("Secret not configured! Register server with /register [secret]");

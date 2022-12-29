@@ -13,7 +13,7 @@ const dataSchema = new mongoose.Schema({
     ramUsage: Number,
     storageUsage: Number,
     time: Number,
-    players: Number,
+    players: [Object],
     messages: Number,
     whispers: Number
 })

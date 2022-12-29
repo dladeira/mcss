@@ -53,9 +53,10 @@ router.post('/new', loggedIn, async (req, res) => {
 })
 
 router.post('/delete', loggedIn, async (req, res) => {
-    const { name } = req.body
+    const { _id } = req.body
 
-    await Server.deleteOne({ onwer: req.user._id, name: name })
+    await Server.deleteOne({ owner: req.user._id, _id: _id })
+    await Data.deleteMany({ server: req.body._id })
 
     return res.status(200).json({})
 })

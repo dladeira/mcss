@@ -6,7 +6,7 @@ const socket = require('../socket')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 
-const updateInterval = 30
+const updateInterval = 5
 
 const { generateServerCache } = require('../middleware/serverStats')
 
@@ -53,7 +53,7 @@ router.post('/stats-update', async (req, res) => {
         cpuUsage,
         ramUsage,
         storageUsage,
-        players,
+        players: JSON.parse(players),
         time: Date.now(),
         messages,
         whispers
