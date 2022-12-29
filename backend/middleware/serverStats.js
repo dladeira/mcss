@@ -63,6 +63,8 @@ async function generateServerCache(server, data) {
     if (!data)
         data = await Data.find({ server: server._id })
 
+    process.stdout.write('Cache GEN operation: ')
+        
     cachedStats = cachedStats.filter(i => i.server.toString() != server._id.toString())
 
     const uptimeInfo = [0, 0]
@@ -182,7 +184,7 @@ async function generateServerCache(server, data) {
         server: server._id
     })
 
-    console.log(`Cache GEN operation: ${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets)`)
+    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets)`)
 
     return cache
 }
