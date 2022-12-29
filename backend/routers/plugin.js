@@ -6,7 +6,9 @@ const socket = require('../socket')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 
-const updateInterval = 10
+const updateInterval = 30
+
+const { generateServerCache } = require('../middleware/serverStats')
 
 router.post('/server', async (req, res) => {
     let server
@@ -63,8 +65,9 @@ router.post('/stats-update', async (req, res) => {
     await server.save()
     await data.save()
 
-    // console.log('Success: ' + sendIn)
     res.status(200).send("SendIn:" + sendIn)
+
+    generateServerCache(server)
 })
 
 router.post('/chat-msg', async (req, res) => {

@@ -6,10 +6,10 @@ const Server = require('../models/Server')
 const Data = require('../models/Data')
 
 const loggedIn = require('../middleware/loggedIn')
-const serverStats = require('../middleware/serverStats')
+const { serverStatsMw } = require('../middleware/serverStats')
 
 
-router.post('/get', loggedIn, serverStats, async (req, res) => {
+router.post('/get', loggedIn, serverStatsMw, async (req, res) => {
     res.status(200).json({ servers: req.servers })
 })
 
@@ -122,7 +122,7 @@ router.post('/lifetime', loggedIn, async (req, res) => {
     server.dataLifetime = lifetime
     await server.save()
 
-    return res.status(200).json({success: 'Server lifetime updated'})
+    return res.status(200).json({ success: 'Server lifetime updated' })
 })
 
 function getDataSize(data) { // KiloBytes

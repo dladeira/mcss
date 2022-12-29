@@ -6,17 +6,15 @@ const Data = require('../models/Data')
 const updateInterval = 10
 
 const cacheEnabled = true
-const cacheLife = 30 * 1000
+const cacheLife = 60 * 1000
 
 var cachedStats = []
 
-async function middleware(req, res, next) {
+async function serverStatsMw(req, res, next) {
     const servers = await Server.find({ owner: req.user._id }).lean()
-    const start = Date.now()
 
     for (var server of servers) {
         const data = await Data.find({ server: server._id })
-
         if (data.length > 0) {
             var latestData = data.reduce((prev, current) => prev.time > current.time ? prev : current)
 
@@ -43,45 +41,30 @@ async function middleware(req, res, next) {
         }
     }
 
-    console.log(`Stats operation: ${Math.round((Date.now() - start) / 1000 * 10) / 10}s`)
-
     req.servers = servers
     next()
 }
 
 async function loadCache(server, data) {
-    const now = Date.now()
     const cached = cachedStats.find(i => i.server.toString() == server._id.toString())
-
     if (cached && cacheEnabled) {
-        if (cached.life > now) {
-            cache = cached.cache
+        if (cached.life > Date.now()) {
+            console.log("VALID")
+            return cached.cache
         } else {
-            cachedStats = cachedStats.filter(i => i.server.toString() != server._id.toString())
-            var cache = await generateServerCache(server, data)
-            cachedStats.push({
-                cache,
-                life: now + cacheLife,
-                server: server._id
-            })
-
-            return cache
+            return await generateServerCache(server, data)
         }
     } else if (cacheEnabled) {
-        var cache = await generateServerCache(server, data)
-        cachedStats.push({
-            cache,
-            life: now + cacheLife,
-            server: server._id
-        })
-
-        return cache
+        return await generateServerCache(server, data)
     }
-
-    return cache
 }
 
 async function generateServerCache(server, data) {
+    if (!data)
+        data = await Data.find({ server: server._id })
+
+    cachedStats = cachedStats.filter(i => i.server.toString() != server._id.toString())
+
     const uptimeInfo = [0, 0]
     const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0] // [3m, 6m, 1y
@@ -181,7 +164,7 @@ async function generateServerCache(server, data) {
     graphs.year[firstDateYear.getMonth()].count += skippedYear
     graphs.month[firstDateMonth.getDate()].count += skippedMonth
 
-    return {
+    const cache = {
         storageUsage: Math.round(dataSize / (server.storage * 1024) * 100),
         storageUsed: Math.ceil(dataSize / 1024 * 10) / 10,
         uptime: Math.round(uptimeInfo[0] / (uptimeInfo[0] + uptimeInfo[1]) * 100),
@@ -192,6 +175,16 @@ async function generateServerCache(server, data) {
             months12: Math.round((dataAge[0] + dataAge[1] + dataAge[2]) * averagePacket / 1024 * 10) / 10
         }
     }
+
+    cachedStats.push({
+        cache,
+        life: now.getTime() + cacheLife,
+        server: server._id
+    })
+
+    console.log(`Cache GEN operation: ${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets)`)
+
+    return cache
 }
 
 function getDefaultGraphs() {
@@ -231,4 +224,7 @@ function getDataSize(data) { // KiloBytes
     return averageSize * data.length / 1024
 }
 
-module.exports = middleware
+module.exports = {
+    serverStatsMw,
+    generateServerCache,
+}
