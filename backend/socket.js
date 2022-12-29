@@ -47,6 +47,12 @@ function setup(server) {
         socket.on('disconnect', () => {
             // console.log("Socket Disconnected")
         })
+
+        socket.on('loadMsgs', (server) => {
+            for (var history of serverHistory)
+                if (String(history.server) == String(server))
+                    socket.emit('loadMsgs', history.msgs)
+        })
     })
 }
 
@@ -80,9 +86,39 @@ function confirmEmailChange(userId) {
     socket.emit("confirmEmailChange")
 }
 
+const serverHistory = []
+const messagesStored = 60
+function sendChatMessage(userId, data) {
+    const socketData = sockets.find(i => String(i.user._id) == String(userId))
+
+    var serverFound = false
+    for (var history of serverHistory) {
+        if (String(history.server) == String(data.server)) {
+            serverFound = true
+            history.msgs.push(data)
+
+            if (history.msgs.length > messagesStored)
+                history.msgs.shift()
+        }
+    }
+
+    if (!serverFound)
+        serverHistory.push({
+            server: String(data.server),
+            msgs: [data]
+        })
+
+    if (!socketData)
+        return console.log(`Socket ${userId} not connected (msg: ${data.msg})`)
+
+    const socket = io.sockets.sockets.get(socketData.id)
+    socket.emit('chatMsg', data)
+}
+
 module.exports = {
     setup,
     verifyOldEmail,
     verifyNewEmail,
-    confirmEmailChange
+    confirmEmailChange,
+    sendChatMessage
 }

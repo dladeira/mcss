@@ -15,13 +15,9 @@
             </div>
 
             <div class="misc">
-                <div class="panel live-chat">
+                <OverviewChat />
 
-                </div>
-
-                <div class="panel storage">
-
-                </div>
+                <OverviewStorage />
 
                 
                 <OverviewDataLifetime />
@@ -71,20 +67,6 @@
 
 .misc {
     width: 30%;
-}
-
-.live-chat {
-    height: 50%;
-    width: 100%;
-
-    margin-bottom: $gap;
-}
-
-.storage {
-    height: calc(30% - ($gap / 2));
-    width: 100%;
-
-    margin-bottom: $gap;
 }
 </style>
 

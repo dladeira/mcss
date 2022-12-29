@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const bson = require('bson')
+const socket = require('../socket')
 
 const Server = require('../models/Server')
 const Data = require('../models/Data')
@@ -22,14 +23,14 @@ router.post('/server', async (req, res) => {
 
 router.post('/stats-update', async (req, res) => {
 
-    const { cpuUsage, ramUsage, players, messages, whispers } = req.body
+    const { cpuUsage, ramUsage, players, messages, whispers, secret } = req.body
 
-    const server = await Server.findOne({ _id: req.body.secret })
+    const server = await Server.findOne({ _id: secret })
 
     if (!server)
         return res.status(404).send("Server not found")
 
-    const dataPackets = await Data.find({ server: req.body.secret })
+    const dataPackets = await Data.find({ server: secret })
 
 
     if (!server.firstUpdate) {
@@ -64,6 +65,18 @@ router.post('/stats-update', async (req, res) => {
 
     // console.log('Success: ' + sendIn)
     res.status(200).send("SendIn:" + sendIn)
+})
+
+router.post('/chat-msg', async (req, res) => {
+    const { msg, secret, sender } = req.body
+
+    const server = await Server.findOne({ _id: secret })
+
+    if (!server)
+        return res.status(404).send("Server not found")
+
+    socket.sendChatMessage(server.owner, { msg, sender, server: server._id })
+    return res.status(200).send("Success")
 })
 
 function getStorageUsage(data, storage) { // KiloBytes

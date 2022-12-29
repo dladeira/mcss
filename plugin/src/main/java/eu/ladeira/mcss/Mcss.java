@@ -21,7 +21,7 @@ import eu.ladeira.mcss.events.MessagesListener;
 
 public class Mcss extends JavaPlugin {
 
-	private static String secret;
+	public static String secret;
 	
 	public static int messages;
 	public static int whispers;
