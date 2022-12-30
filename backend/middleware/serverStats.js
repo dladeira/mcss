@@ -198,9 +198,6 @@ async function generateServerCache(server, data) {
         await Data.deleteOne({ _id: packet })
     }))
 
-    console.log(dataAge)
-    console.log(data.length)
-
     for (var player of players) {
         totalPlaytime += player.playtime
     }
