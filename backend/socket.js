@@ -1,14 +1,15 @@
 const argv = require('minimist')(process.argv.slice(2))
-const { Server } = require('socket.io')
+const { Server: SocketServer } = require('socket.io')
 const jwt = require('jsonwebtoken')
 
 const User = require('./models/User')
+const Server = require('./models/Server')
 
 const sockets = []
 
 
 function setup(server) {
-    io = new Server(server, {
+    io = new SocketServer(server, {
         cors: {
             origin: argv['origin'],
             methods: ["GET", "POST"],
@@ -48,10 +49,9 @@ function setup(server) {
             // console.log("Socket Disconnected")
         })
 
-        socket.on('loadMsgs', (server) => {
-            for (var history of serverHistory)
-                if (String(history.server) == String(server))
-                    socket.emit('loadMsgs', history.msgs)
+        socket.on('loadMsgs', async (server) => {
+            var server = await Server.findOne({ _id: server })
+            socket.emit('loadMsgs', server.recentMessages)
         })
     })
 }
@@ -59,8 +59,8 @@ function setup(server) {
 function verifyOldEmail(userId) {
     const socketData = sockets.find(i => String(i.user._id) == String(userId))
 
-    if (!socketData)
-        return console.log("Socket not connected")
+    if (!socketData || !io.sockets.sockets.get(socketData.id))
+        return
 
     const socket = io.sockets.sockets.get(socketData.id)
     socket.emit("oldVerified")
@@ -69,8 +69,8 @@ function verifyOldEmail(userId) {
 function verifyNewEmail(userId) {
     const socketData = sockets.find(i => String(i.user._id) == String(userId))
 
-    if (!socketData)
-        return console.log("Socket not connected")
+    if (!socketData || !io.sockets.sockets.get(socketData.id))
+        return
 
     const socket = io.sockets.sockets.get(socketData.id)
     socket.emit("newVerified")
@@ -79,39 +79,32 @@ function verifyNewEmail(userId) {
 function confirmEmailChange(userId) {
     const socketData = sockets.find(i => String(i.user._id) == String(userId))
 
-    if (!socketData)
-        return console.log("Socket not connected")
+    if (!socketData || !io.sockets.sockets.get(socketData.id))
+        return
 
     const socket = io.sockets.sockets.get(socketData.id)
     socket.emit("confirmEmailChange")
 }
 
-const serverHistory = []
-const messagesStored = 60
-function sendChatMessage(userId, data) {
+const messageStorageLength = 60
+async function sendChatMessage(userId, data) {
     const socketData = sockets.find(i => String(i.user._id) == String(userId))
+    var server = await Server.findOne({ _id: data.server })
 
-    var serverFound = false
-    for (var history of serverHistory) {
-        if (String(history.server) == String(data.server)) {
-            serverFound = true
-            history.msgs.push(data)
+    server.recentMessages.push(data)
 
-            if (history.msgs.length > messagesStored)
-                history.msgs.shift()
-        }
-    }
+    if (server.recentMessages.length > messageStorageLength)
+        server.recentMessages.shift()
 
-    if (!serverFound)
-        serverHistory.push({
-            server: String(data.server),
-            msgs: [data]
-        })
+    await server.save()
 
-    if (!socketData)
-        return console.log(`Socket ${userId} not connected (msg: ${data.msg})`)
+
+
+    if (!socketData || !io.sockets.sockets.get(socketData.id))
+        return
 
     const socket = io.sockets.sockets.get(socketData.id)
+
     socket.emit('chatMsg', data)
 }
 

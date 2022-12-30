@@ -3,7 +3,7 @@ const bson = require('bson')
 const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
-const updateInterval = 5
+const updateInterval = 2
 
 const cacheEnabled = true
 const cacheLife = 60 * 1000
@@ -53,7 +53,6 @@ async function loadCache(server, data) {
     const cached = cachedStats.find(i => i.server.toString() == server._id.toString())
     if (cached && cacheEnabled) {
         if (cached.life > Date.now()) {
-            console.log("VALID")
             return cached.cache
         } else {
             return await generateServerCache(server, data)
@@ -77,6 +76,7 @@ async function generateServerCache(server, data) {
     const dataAge = [0, 0, 0] // [3m, 6m, 1y
     const dataSize = getDataSize(data)
     const averagePacket = getDataSize(data) / data.length
+    const start = data[0].time
 
     var now = new Date()
     const month = 30 * 24 * 60 * 60 * 1000
@@ -95,89 +95,86 @@ async function generateServerCache(server, data) {
         graphs[graphTime][graphIndex].cpu += packet.cpuUsage
         graphs[graphTime][graphIndex].ram += packet.ramUsage
         graphs[graphTime][graphIndex].storage += packet.storageUsage
-        graphs[graphTime][graphIndex].players += packet.players ? packet.players : 0
+        graphs[graphTime][graphIndex].players += packet.players ? packet.players.length : 0
         graphs[graphTime][graphIndex].messages += packet.messages ? packet.messages : 0
         graphs[graphTime][graphIndex].whispers += packet.whispers ? packet.whispers : 0
         graphs[graphTime][graphIndex].dataCount += 1
-        graphs[graphTime][graphIndex].count += 1
+        // graphs[graphTime][graphIndex].count += 1
     }
 
     const deletePackets = []
 
-    for (var i = server.firstUpdate; i < Date.now(); i += updateInterval * 1000) {
-        promises.push(registerPacketStats(i))
-    }
+    for (var time = start; time < Date.now(); time += updateInterval * 1000) {
+        promises.push(new Promise(async (resolve) => {
+            var date = new Date(time)
+            const packet = await Data.findOne({ time: { $gt: time - 1, $lt: time + (updateInterval * 1000) + 1 } })
 
-    async function registerPacketStats(time) {
-        var date = new Date(time)
-        const packet = await Data.findOne({ time: { $gt: time - 1, $lt: time + (updateInterval * 1000) + 1 } })
+            if (packet) {
+                if (server.dataLifetime != 0 && now.getTime() - date.getTime() > server.dataLifetime * month)
+                    return deletePackets.push(packet._id)
 
-        if (packet) {
-            if (now.getTime() - date.getTime() > server.dataLifetime * month)
-                return deletePackets.push(packet._id)
+                if (date.getUTCFullYear() == now.getUTCFullYear()) {
+                    registerToGraph(packet, 'year', date.getUTCMonth())
 
+                    if (date.getUTCMonth() == now.getUTCMonth()) {
+                        registerToGraph(packet, 'month', date.getUTCDate() - 1)
 
-            if (date.getUTCFullYear() == now.getUTCFullYear()) {
-                registerToGraph(packet, 'year', date.getUTCMonth())
-
-                if (date.getUTCMonth() == now.getUTCMonth()) {
-                    registerToGraph(packet, 'month', date.getUTCDate() - 1)
-
-
-                    if (date.getUTCDate() == now.getUTCDate()) {
-                        registerToGraph(packet, 'day', date.getUTCHours() - 1)
-
+                        if (date.getUTCDate() == now.getUTCDate()) {
+                            registerToGraph(packet, 'day', date.getUTCHours() - 1)
+                        }
                     }
                 }
-            }
+                
 
-            blocks[0] += packet.blocksBroken ? packet.blocksBroken : 0
-            blocks[1] += packet.blocksPlaced ? packet.blocksPlaced : 0
-            blocks[2] += packet.blocksTraveled ? packet.blocksTraveled : 0
-            deaths += packet.deaths ? packet.deaths : 0
-            playerPeak = packet.players.length > playerPeak ? packet.players.length : playerPeak
+                blocks[0] += packet.blocksBroken ? packet.blocksBroken : 0
+                blocks[1] += packet.blocksPlaced ? packet.blocksPlaced : 0
+                blocks[2] += packet.blocksTraveled ? packet.blocksTraveled : 0
+                deaths += packet.deaths ? packet.deaths : 0
+                playerPeak = packet.players.length > playerPeak ? packet.players.length : playerPeak
 
-            chat[0] += packet.messages ? packet.messages : 0
-            chat[1] += packet.characters ? packet.characters : 0
-            chat[2] += packet.whispers ? packet.whispers : 0
-            chat[3] += packet.commands ? packet.commands : 0
+                chat[0] += packet.messages ? packet.messages : 0
+                chat[1] += packet.characters ? packet.characters : 0
+                chat[2] += packet.whispers ? packet.whispers : 0
+                chat[3] += packet.commands ? packet.commands : 0
 
+                main:
+                for (var stats of packet.players) {
+                    for (var player of players) {
+                        if (stats.uuid == player.uuid) {
+                            player.username = stats.username
+                            player.playtime += parseInt(stats.playtime) / 20
+                            player.messages += parseInt(stats.messages)
+                            continue main
+                        }
+                    }
+                    const latestPlayer = latestData.players.find(i => i.uuid == stats.uuid)
 
-            main:
-            for (var stats of packet.players) {
-                for (var player of players) {
-                    if (stats.uuid == player.uuid) {
-                        player.username = stats.username
-                        player.playtime += parseInt(stats.playtime) / 20
-                        player.messages += parseInt(stats.messages)
-                        continue main
+                    players.push({
+                        uuid: stats.uuid,
+                        username: stats.username,
+                        playtime: parseInt(stats.playtime) / 20,
+                        messages: parseInt(stats.messages),
+                        location: latestPlayer ? latestPlayer.location : "---",
+                        online: latestPlayer ? true : false
+                    })
+                }
+
+                const timeSince = now.getTime() - date.getTime()
+                if (timeSince < 12 * month) {
+                    if (timeSince > 6 * month) {
+                        dataAge[2]++
+                    } else if (timeSince > 3 * month) {
+                        dataAge[1]++
+                    } else {
+                        dataAge[0]++
                     }
                 }
-                const latestPlayer = latestData.players.find(i => i.uuid == stats.uuid)
 
-                players.push({
-                    uuid: stats.uuid,
-                    username: stats.username,
-                    playtime: parseInt(stats.playtime) / 20,
-                    messages: parseInt(stats.messages),
-                    location: latestPlayer ? latestPlayer.location : "---",
-                    online: latestPlayer ? true : false
-                })
+                uptimeInfo[0]++
+            } else {
+                uptimeInfo[1]++
             }
 
-            const timeSince = now.getTime() - date.getTime()
-            if (timeSince < 12 * month) {
-                if (timeSince > 6 * month) {
-                    dataAge[2]++
-                } else if (timeSince > 3 * month) {
-                    dataAge[1]++
-                } else {
-                    dataAge[0]++
-                }
-            }
-
-            uptimeInfo[0]++
-        } else {
             if (date.getUTCFullYear() == now.getUTCFullYear()) {
                 graphs.year[date.getUTCMonth()].count += 1
 
@@ -185,12 +182,13 @@ async function generateServerCache(server, data) {
                     graphs.month[date.getUTCDate() - 1].count += 1
 
                     if (date.getUTCDate() == now.getUTCDate()) {
-                        graphs.day[date.getUTCHours()].count += 1
+                        graphs.day[date.getUTCHours() - 1].count += 1
                     }
                 }
             }
-            uptimeInfo[1]++
-        }
+
+            resolve()
+        }))
     }
 
     await Promise.all(promises)
@@ -202,8 +200,6 @@ async function generateServerCache(server, data) {
     for (var player of players) {
         totalPlaytime += player.playtime
     }
-
-    console.log(totalPlaytime)
 
     const firstDateYear = new Date(server.firstUpdate)
     const firstDateMonth = new Date(server.firstUpdate)
@@ -247,7 +243,7 @@ async function generateServerCache(server, data) {
         server: server._id
     })
 
-    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets) (searched ${(Math.round((Date.now() - server.firstUpdate) / (updateInterval * 1000)))})`)
+    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets) (searched ${(Math.round((Date.now() - start) / (updateInterval * 1000)))})`)
 
     return cache
 }

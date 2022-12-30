@@ -6,7 +6,7 @@ const socket = require('../socket')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 
-const updateInterval = 5
+const updateInterval = 2
 
 const { generateServerCache } = require('../middleware/serverStats')
 

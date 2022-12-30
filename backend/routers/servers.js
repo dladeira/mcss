@@ -45,7 +45,9 @@ router.post('/new', loggedIn, async (req, res) => {
         name: serverName,
         type: "regular",
         storage: parseFloat(storageAllocated),
-        owner: req.user._id
+        owner: req.user._id,
+        dataLifetime: 0,
+        recentMessages: []
     })
     await newServer.save()
 
