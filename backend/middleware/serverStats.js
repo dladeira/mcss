@@ -74,8 +74,7 @@ async function generateServerCache(server, data) {
 
     const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0] // [3m, 6m, 1y
-    const dataSize = getDataSize(data)
-    const averagePacket = getDataSize(data) / data.length
+    const averagePacket = getAverageDataSize(data)
     const start = data[0].time
 
     var now = new Date()
@@ -160,6 +159,8 @@ async function generateServerCache(server, data) {
                 }
 
                 const timeSince = now.getTime() - date.getTime()
+
+
                 if (timeSince < 12 * month) {
                     if (timeSince > 6 * month) {
                         dataAge[2]++
@@ -197,6 +198,9 @@ async function generateServerCache(server, data) {
         await Data.deleteOne({ _id: packet })
     }))
 
+    console.log(dataAge)
+    console.log(data.length)
+
     for (var player of players) {
         totalPlaytime += player.playtime
     }
@@ -214,8 +218,8 @@ async function generateServerCache(server, data) {
     graphs.month[firstDateMonth.getDate()].count += skippedMonth
 
     const cache = {
-        storageUsage: Math.round(dataSize / (server.storage * 1024) * 100),
-        storageUsed: Math.ceil(dataSize / 1024 * 10) / 10,
+        storageUsage: Math.round(averagePacket * data.length / (server.storage * 1024) * 100),
+        storageUsed: Math.ceil(averagePacket * data.length / 1024 * 10) / 10,
         uptime: Math.round(uptimeInfo[0] / (uptimeInfo[0] + uptimeInfo[1]) * 100),
         graphs,
         dataAge: {
@@ -274,7 +278,7 @@ function getDefaultGraphs() {
     return graphs
 }
 
-function getDataSize(data) { // KiloBytes
+function getAverageDataSize(data) { // KiloBytes
     var total = 0
     var samples = 50
     for (var i = 0; i < samples; i++)
@@ -282,7 +286,7 @@ function getDataSize(data) { // KiloBytes
 
     var averageSize = total / samples
 
-    return averageSize * data.length / 1024
+    return averageSize / 1024
 }
 
 module.exports = {
