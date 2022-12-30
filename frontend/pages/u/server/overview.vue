@@ -16,10 +16,7 @@
 
             <div class="misc">
                 <OverviewChat />
-
                 <OverviewStorage />
-
-                
                 <OverviewDataLifetime />
             </div>
         </div>

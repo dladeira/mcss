@@ -3,7 +3,7 @@
         <div class="header">
             <h1 class="title">
                 Live Chat
-                <input type="hidden" id="activeServer-id" :value="activeServer._id" />
+                <input type="hidden" id="activeServer-id" :value="JSON.stringify(activeServer.recentMessages)" />
             </h1>
         </div>
 
@@ -113,9 +113,11 @@ export default {
             msgs: ""
         }
     },
+    setup() {
+        const activeServer = useState('')
+        return activeServer
+    },
     mounted() {
-        const msgs = useState('msgs')
-
         let socket = this.$nuxtSocket({
             name: 'main'
         })
@@ -125,12 +127,8 @@ export default {
             sameSite: 'lax'
         }).value)
 
-        console.log('server id ' + document.getElementById('activeServer-id').value)
-        socket.emit('loadMsgs', document.getElementById('activeServer-id').value)
-
-        socket.on('loadMsgs', (msgs) => {
-            for (var data of msgs) {
-                this.msgs += `
+        for (var data of JSON.parse(document.getElementById('activeServer-id').value)) {
+            this.msgs += `
             <div class="msg">
                 <div class="time">19min</div>
                 <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
@@ -140,16 +138,95 @@ export default {
                 </p>
             </div>
             `
-            }
+            this.msgs += `
+            <div class="msg">
+                <div class="time">19min</div>
+                <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
+                <p class="content">
+                    <span class="sender">${data.sender}</span>
+                    <span class="text">: ${data.msg}</span>
+                </p>
+            </div>
+            `
+            this.msgs += `
+            <div class="msg">
+                <div class="time">19min</div>
+                <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
+                <p class="content">
+                    <span class="sender">${data.sender}</span>
+                    <span class="text">: ${data.msg}</span>
+                </p>
+            </div>
+            `
+            this.msgs += `
+            <div class="msg">
+                <div class="time">19min</div>
+                <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
+                <p class="content">
+                    <span class="sender">${data.sender}</span>
+                    <span class="text">: ${data.msg}</span>
+                </p>
+            </div>
+            `
+            this.msgs += `
+            <div class="msg">
+                <div class="time">19min</div>
+                <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
+                <p class="content">
+                    <span class="sender">${data.sender}</span>
+                    <span class="text">: ${data.msg}</span>
+                </p>
+            </div>
+            `
+            this.msgs += `
+            <div class="msg">
+                <div class="time">19min</div>
+                <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
+                <p class="content">
+                    <span class="sender">${data.sender}</span>
+                    <span class="text">: ${data.msg}</span>
+                </p>
+            </div>
+            `
+            this.msgs += `
+            <div class="msg">
+                <div class="time">19min</div>
+                <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
+                <p class="content">
+                    <span class="sender">${data.sender}</span>
+                    <span class="text">: ${data.msg}</span>
+                </p>
+            </div>
+            `
+            this.msgs += `
+            <div class="msg">
+                <div class="time">19min</div>
+                <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
+                <p class="content">
+                    <span class="sender">${data.sender}</span>
+                    <span class="text">: ${data.msg}</span>
+                </p>
+            </div>
+            `
+            this.msgs += `
+            <div class="msg">
+                <div class="time">19min</div>
+                <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
+                <p class="content">
+                    <span class="sender">${data.sender}</span>
+                    <span class="text">: ${data.msg}</span>
+                </p>
+            </div>
+            `
+        }
 
-            setTimeout(() => {
-                document.getElementById('msgs').scrollTo({
-                    top: document.getElementById('msgs').scrollHeight,
-                    left: 0,
-                    behavior: 'smooth'
-                })
-            }, 0)
-        })
+        setTimeout(() => {
+            document.getElementById('msgs').scrollTo({
+                top: document.getElementById('msgs').scrollHeight,
+                left: 0,
+                behavior: 'smooth'
+            })
+        }, 0)
 
         socket.on('chatMsg', (data) => {
             if (document.getElementById('activeServer-id').value == data.server) {
