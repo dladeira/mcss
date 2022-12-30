@@ -23,6 +23,8 @@ router.post('/server', async (req, res) => {
     res.status(200).send(server.name)
 })
 
+var count = 0
+
 router.post('/stats-update', async (req, res) => {
 
     const { cpuUsage, ramUsage, players, messages, characters, whispers, commands, blocksBroken, blocksPlaced, blocksTraveled, deaths, secret } = req.body
@@ -73,7 +75,10 @@ router.post('/stats-update', async (req, res) => {
 
     res.status(200).send("SendIn:" + sendIn)
 
-    generateServerCache(server)
+    if (++count > 5) {
+        generateServerCache(server)
+        count = 0
+    }
 })
 
 router.post('/chat-msg', async (req, res) => {

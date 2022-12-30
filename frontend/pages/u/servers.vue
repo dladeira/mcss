@@ -1,9 +1,9 @@
 <template>
     <NuxtLayout name="user">
-        <!-- <div class="plan">
+        <div class="plan">
             <span class="plan-premium">Premium</span> Plan
         </div>
-        <nuxt-link class="plan-upgrade" to="/u/plans">Upgrade</nuxt-link> -->
+        <nuxt-link class="plan-upgrade" to="/u/plans">Upgrade</nuxt-link>
 
         <div class="stats">
             <div class="stat">
@@ -63,8 +63,8 @@
 .plan {
     width: fit-content;
 
-    margin: 3rem auto 1rem auto;
-    padding: 1rem 2rem;
+    margin: 2rem auto 0.5rem auto;
+    padding: 0.75rem 2rem;
 
     border-radius: 1000px;
 
@@ -107,8 +107,6 @@
     width: 10rem;
 
     margin: 0;
-
-    font-size: 1.5rem;
 
     &-title {
         margin: 0;
