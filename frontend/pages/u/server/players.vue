@@ -7,12 +7,8 @@
                 <PlayersList />
             </div>
             <div class="bottom">
-                <div class="players panel">
-
-                </div>
-                <div class="chat panel">
-
-                </div>
+                <PlayersPlayerStats />
+                <PlayersChatStats />
                 <div class="adv panel">
 
                 </div>

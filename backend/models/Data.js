@@ -15,7 +15,13 @@ const dataSchema = new mongoose.Schema({
     time: Number,
     players: [Object],
     messages: Number,
-    whispers: Number
+    characters: Number,
+    whispers: Number,
+    commands: Number,
+    blocksPlaced: Number,
+    blocksBroken: Number,
+    blocksTraveled: Number,
+    deaths: Number
 })
 
 const data = mongoose.model('Data', dataSchema)

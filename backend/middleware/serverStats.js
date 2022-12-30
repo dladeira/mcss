@@ -3,7 +3,7 @@ const bson = require('bson')
 const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
-const updateInterval = 10
+const updateInterval = 5
 
 const cacheEnabled = true
 const cacheLife = 60 * 1000
@@ -29,12 +29,16 @@ async function serverStatsMw(req, res, next) {
             server.stats = {
                 live: {
                     cpuUsage: 0,
-                    ramUsage: 0,
+                    ramUsage: 0
                 },
                 cache: {
                     storageUsage: 0,
                     uptime: 0,
                     storageUsed: 0,
+                    blocksBroken: 0,
+                    blocksPlaced: 0,
+                    blocksTraveld: 0,
+                    deaths: 0,
                     graphs: getDefaultGraphs()
                 }
             }
@@ -69,7 +73,6 @@ async function generateServerCache(server, data) {
 
     cachedStats = cachedStats.filter(i => i.server.toString() != server._id.toString())
 
-    const uptimeInfo = [0, 0]
     const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0] // [3m, 6m, 1y
     const dataSize = getDataSize(data)
@@ -80,9 +83,13 @@ async function generateServerCache(server, data) {
 
     const promises = []
 
-    for (var i = server.firstUpdate; i < Date.now(); i += updateInterval * 1000) {
-        promises.push(registerPacketStats(i))
-    }
+    const uptimeInfo = [0, 0]
+    const players = []
+    const blocks = [0, 0, 0] // [broken, placed, traveled]
+    const chat = [0, 0, 0, 0] // [messages, characters, whispers, commands]
+    var deaths = 0
+    var playerPeak = 0
+    var totalPlaytime = 0
 
     function registerToGraph(packet, graphTime, graphIndex) {
         graphs[graphTime][graphIndex].cpu += packet.cpuUsage
@@ -96,32 +103,45 @@ async function generateServerCache(server, data) {
     }
 
     const deletePackets = []
-    const players = []
-    var dontdelete = 0
+
+    for (var i = server.firstUpdate; i < Date.now(); i += updateInterval * 1000) {
+        promises.push(registerPacketStats(i))
+    }
 
     async function registerPacketStats(time) {
         var date = new Date(time)
         const packet = await Data.findOne({ time: { $gt: time - 1, $lt: time + (updateInterval * 1000) + 1 } })
 
         if (packet) {
-            if (now.getTime() - date.getTime() > server.dataLifetime * month) {
-                deletePackets.push(packet._id)
-            } else
-                dontdelete++
+            if (now.getTime() - date.getTime() > server.dataLifetime * month)
+                return deletePackets.push(packet._id)
+
 
             if (date.getUTCFullYear() == now.getUTCFullYear()) {
                 registerToGraph(packet, 'year', date.getUTCMonth())
 
                 if (date.getUTCMonth() == now.getUTCMonth()) {
-                    registerToGraph(packet, 'month', date.getUTCDate())
+                    registerToGraph(packet, 'month', date.getUTCDate() - 1)
 
 
                     if (date.getUTCDate() == now.getUTCDate()) {
-                        registerToGraph(packet, 'day', date.getHours())
+                        registerToGraph(packet, 'day', date.getUTCHours() - 1)
 
                     }
                 }
             }
+
+            blocks[0] += packet.blocksBroken ? packet.blocksBroken : 0
+            blocks[1] += packet.blocksPlaced ? packet.blocksPlaced : 0
+            blocks[2] += packet.blocksTraveled ? packet.blocksTraveled : 0
+            deaths += packet.deaths ? packet.deaths : 0
+            playerPeak = packet.players.length > playerPeak ? packet.players.length : playerPeak
+
+            chat[0] += packet.messages ? packet.messages : 0
+            chat[1] += packet.characters ? packet.characters : 0
+            chat[2] += packet.whispers ? packet.whispers : 0
+            chat[3] += packet.commands ? packet.commands : 0
+
 
             main:
             for (var stats of packet.players) {
@@ -179,6 +199,12 @@ async function generateServerCache(server, data) {
         await Data.deleteOne({ _id: packet })
     }))
 
+    for (var player of players) {
+        totalPlaytime += player.playtime
+    }
+
+    console.log(totalPlaytime)
+
     const firstDateYear = new Date(server.firstUpdate)
     const firstDateMonth = new Date(server.firstUpdate)
 
@@ -201,7 +227,18 @@ async function generateServerCache(server, data) {
             months6: Math.round((dataAge[0] + dataAge[1]) * averagePacket / 1024 * 10) / 10,
             months12: Math.round((dataAge[0] + dataAge[1] + dataAge[2]) * averagePacket / 1024 * 10) / 10
         },
-        players
+        players,
+        blocksBroken: blocks[0],
+        blocksPlaced: blocks[1],
+        blocksTraveled: blocks[2],
+        messages: chat[0],
+        characters: chat[1],
+        whispers: chat[2],
+        commands: chat[3],
+        deaths,
+        totalPlaytime,
+        playerPeak,
+        runningTime: server.lastUpdate - server.firstUpdate
     }
 
     cachedStats.push({
@@ -210,7 +247,7 @@ async function generateServerCache(server, data) {
         server: server._id
     })
 
-    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets)`)
+    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets) (searched ${(Math.round((Date.now() - server.firstUpdate) / (updateInterval * 1000)))})`)
 
     return cache
 }
@@ -232,7 +269,7 @@ function getDefaultGraphs() {
     for (var i = 0; i < 24; i++)
         graphs.day.push({ ...defaultTime })
 
-    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate(); i++)
+    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++)
         graphs.month.push({ ...defaultTime })
 
     for (var i = 0; i < 12; i++)

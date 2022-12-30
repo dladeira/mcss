@@ -15,6 +15,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -27,10 +28,18 @@ public class Mcss extends JavaPlugin {
 
 	public static String secret;
 
-	public static int messages;
-	public static int whispers;
+	public static int messages = 0;
+	public static int characters = 0;
+	public static int whispers = 0;
+	public static int commands = 0;
+	public static int deaths = 0;
+	public static int blocksBroken = 0;
+	public static int blocksPlaced = 0;
+	public static int blocksTraveled = 0;
 
 	public static HashSet<StatsPlayer> players = new HashSet<>();
+	
+	public static Plugin plugin;
 
 	public static void setSecret(String newSecret) {
 		secret = newSecret;
@@ -47,7 +56,7 @@ public class Mcss extends JavaPlugin {
 		players.add(newPlayer);
 		return newPlayer;
 	}
-	
+
 	public static void removeStatsPlayer(UUID uuid) {
 		for (StatsPlayer stats : players) {
 			if (stats.uuid == uuid) {
@@ -60,6 +69,8 @@ public class Mcss extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		Mcss.plugin = this;
+		
 		if (getConfig().isSet("secret")) {
 			secret = getConfig().getString("secret");
 			Bukkit.getLogger().info("Loaded secret from config");
@@ -74,7 +85,7 @@ public class Mcss extends JavaPlugin {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			getStatsPlayer(player.getUniqueId());
 		}
-		
+
 		sendInfo(); // Is infinite loop, only run once
 		startTimeLoop();
 	}
@@ -91,6 +102,8 @@ public class Mcss extends JavaPlugin {
 			getConfig().set("secret", secret);
 			saveConfig();
 		}
+		
+		Mcss.plugin = null;
 	}
 
 	public void startTimeLoop() {
@@ -138,12 +151,26 @@ public class Mcss extends JavaPlugin {
 		form.put("players", StatsPlayer.stringifyPlayers(players));
 
 		form.put("messages", String.valueOf(messages));
+		form.put("characters", String.valueOf(characters));
 		form.put("whispers", String.valueOf(whispers));
+		form.put("commands", String.valueOf(commands));
+		
+		form.put("deaths", String.valueOf(deaths));
+		form.put("blocksBroken", String.valueOf(blocksBroken));
+		form.put("blocksPlaced", String.valueOf(blocksPlaced));
+		form.put("blocksTraveled", String.valueOf(blocksTraveled));
 
 		form.put("secret", secret);
 
 		Mcss.messages = 0;
+		Mcss.characters = 0;
 		Mcss.whispers = 0;
+		Mcss.commands = 0;
+		
+		Mcss.blocksBroken = 0;
+		Mcss.blocksPlaced = 0;
+		Mcss.blocksTraveled = 0;
+		Mcss.deaths = 0;
 
 		return form;
 	}

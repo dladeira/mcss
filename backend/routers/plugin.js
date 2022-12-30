@@ -25,7 +25,7 @@ router.post('/server', async (req, res) => {
 
 router.post('/stats-update', async (req, res) => {
 
-    const { cpuUsage, ramUsage, players, messages, whispers, secret } = req.body
+    const { cpuUsage, ramUsage, players, messages, characters, whispers, commands, blocksBroken, blocksPlaced, blocksTraveled, deaths, secret } = req.body
 
     const server = await Server.findOne({ _id: secret })
 
@@ -56,7 +56,13 @@ router.post('/stats-update', async (req, res) => {
         players: JSON.parse(players),
         time: Date.now(),
         messages,
-        whispers
+        characters,
+        whispers,
+        commands,
+        blocksBroken,
+        blocksPlaced,
+        blocksTraveled,
+        deaths
     })
 
     const sendIn = (updateInterval * 1000) - (Date.now() % (updateInterval * 1000))

@@ -26,13 +26,22 @@ public class MessagesListener implements Listener {
 		StatsPlayer stats = Mcss.getStatsPlayer(e.getPlayer().getUniqueId());
 		stats.messages++;
 		Mcss.messages++;
+		
+		stats.characters += e.getMessage().length();
+		Mcss.characters += e.getMessage().length();
 	}
 	
 	@EventHandler
 	public void onWhisper(PlayerCommandPreprocessEvent e) {
 		String msg = e.getMessage();
 		if (msg.startsWith("/tell") || msg.startsWith("/w") || msg.startsWith("/whisper") || msg.startsWith("/msg")) {
+			StatsPlayer stats = Mcss.getStatsPlayer(e.getPlayer().getUniqueId());
+			stats.whispers++;
 			Mcss.whispers++;
+		} else {
+			StatsPlayer stats = Mcss.getStatsPlayer(e.getPlayer().getUniqueId());
+			stats.commands++;
+			Mcss.commands++;
 		}
 	}
 	
