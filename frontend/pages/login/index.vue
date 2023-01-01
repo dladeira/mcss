@@ -179,6 +179,7 @@ async function register(e) {
     const { data, error } = await useFetch("http://localhost:3020/api/auth/register", {
         method: "POST",
         body: {
+            // mode: 'no-cors',
             email: e.target.email.value,
             password: e.target.password.value,
             password2: e.target.password2.value
@@ -200,6 +201,7 @@ async function login(e) {
     const { data, error } = await useFetch("http://localhost:3020/api/auth/login", {
         method: "POST",
         body: {
+            // mode: 'no-cors',
             email: e.target.email.value,
             password: e.target.password.value,
         }

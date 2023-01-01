@@ -75,7 +75,10 @@ async function generateServerCache(server, data) {
     const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0] // [3m, 6m, 1y
     const averagePacket = getAverageDataSize(data)
-    const start = data[0].time
+    var start = data[data.length - 5].time
+    // var start = Date.now() - 55492000
+    // var startDelay = start % (updateInterval * 1000)
+    // console.log(startDelay)
 
     var now = new Date()
     const month = 30 * 24 * 60 * 60 * 1000
@@ -98,6 +101,16 @@ async function generateServerCache(server, data) {
         graphs[graphTime][graphIndex].messages += packet.messages ? packet.messages : 0
         graphs[graphTime][graphIndex].whispers += packet.whispers ? packet.whispers : 0
         graphs[graphTime][graphIndex].dataCount += 1
+
+
+        // graphs[graphTime][graphIndex].cpu += Math.random() * 100
+        // graphs[graphTime][graphIndex].ram += Math.random() * 100
+        // graphs[graphTime][graphIndex].storage += Math.random() * 10
+        // graphs[graphTime][graphIndex].players += Math.random() * 50
+        // graphs[graphTime][graphIndex].messages += Math.random() * 1000
+        // graphs[graphTime][graphIndex].whispers += Math.random() * 50
+        // graphs[graphTime][graphIndex].dataCount += 1
+
         // graphs[graphTime][graphIndex].count += 1
     }
 
@@ -107,6 +120,11 @@ async function generateServerCache(server, data) {
         promises.push(new Promise(async (resolve) => {
             var date = new Date(time)
             const packet = await Data.findOne({ time: { $gt: time - 1, $lt: time + (updateInterval * 1000) + 1 } })
+
+
+            // if (date.getUTCDate() == now.getUTCDate()) {
+            //     registerToGraph(packet, 'day', date.getUTCHours())
+            // }
 
             if (packet) {
                 if (server.dataLifetime != 0 && now.getTime() - date.getTime() > server.dataLifetime * month)
@@ -123,7 +141,7 @@ async function generateServerCache(server, data) {
                         }
                     }
                 }
-                
+
 
                 blocks[0] += packet.blocksBroken ? packet.blocksBroken : 0
                 blocks[1] += packet.blocksPlaced ? packet.blocksPlaced : 0
@@ -183,7 +201,7 @@ async function generateServerCache(server, data) {
                     graphs.month[date.getUTCDate() - 1].count += 1
 
                     if (date.getUTCDate() == now.getUTCDate()) {
-                        graphs.day[date.getUTCHours() - 1].count += 1
+                        graphs.day[date.getUTCHours()].count += 1
                     }
                 }
             }
@@ -277,7 +295,7 @@ function getDefaultGraphs() {
 
 function getAverageDataSize(data) { // KiloBytes
     var total = 0
-    var samples = 50
+    var samples = 200
     for (var i = 0; i < samples; i++)
         total += bson.serialize(data[Math.floor(Math.random() * data.length)]).length
 

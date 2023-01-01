@@ -3,7 +3,8 @@
         <div class="header">
             <h1 class="title">
                 Live Chat
-                <input type="hidden" id="activeServer-id" :value="JSON.stringify(activeServer.recentMessages)" />
+                <input type="hidden" id="activeServer-id" :value="activeServer._id" />
+                <input type="hidden" id="activeServer-recentMessages" :value="JSON.stringify(activeServer.recentMessages)" />
             </h1>
         </div>
 
@@ -127,7 +128,7 @@ export default {
             sameSite: 'lax'
         }).value)
 
-        for (var data of JSON.parse(document.getElementById('activeServer-id').value)) {
+        for (var data of JSON.parse(document.getElementById('activeServer-recentMessages').value)) {
             this.msgs += `
             <div class="msg">
                 <div class="time">19min</div>
@@ -140,13 +141,7 @@ export default {
             `
         }
 
-        setTimeout(() => {
-            document.getElementById('msgs').scrollTo({
-                top: document.getElementById('msgs').scrollHeight,
-                left: 0,
-                behavior: 'smooth'
-            })
-        }, 0)
+        this.scrollToBottom()
 
         socket.on('chatMsg', (data) => {
             if (document.getElementById('activeServer-id').value == data.server) {
@@ -160,10 +155,22 @@ export default {
                 </p>
             </div>
             `
+                this.scrollToBottom()
             } else {
                 console.log(`wanted ${document.getElementById('activeServer-id').value} | received ${data.server}`)
             }
         })
+    },
+    methods: {
+        scrollToBottom() {
+            setTimeout(() => {
+                document.getElementById('msgs').scrollTo({
+                    top: document.getElementById('msgs').scrollHeight,
+                    left: 0,
+                    behavior: 'smooth'
+                })
+            }, 0)
+        }
     }
 }
 </script>

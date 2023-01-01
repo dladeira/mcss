@@ -1,9 +1,9 @@
 <template>
     <NuxtLayout name="user">
-        <div class="plan">
+        <!-- <div class="plan">
             <span class="plan-premium">Premium</span> Plan
-        </div>
-        <nuxt-link class="plan-upgrade" to="/u/plans">Upgrade</nuxt-link>
+        </div> -->
+        <!-- <nuxt-link class="plan-upgrade" to="/u/plans">Upgrade</nuxt-link> -->
 
         <div class="stats">
             <div class="stat">

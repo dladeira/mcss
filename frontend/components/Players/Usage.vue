@@ -159,28 +159,34 @@ let options = {
 }
 
 function getLabels() {
+    var values = []
     switch (selected.value) {
         case "day":
-            return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24']
+            for (var i = 0; i < 24; i++) {
+                values.push(i)
+            }
+            return values
         case "month":
-            const values = []
-            for (var i = 0; i <= new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++) {
+            for (var i = 1; i <= new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++) {
                 values.push(i)
             }
             return values
         case "year":
-            return ['Jan', 'Feb', 'Mar', 'Apr', 'Mar', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            values = ['Jan', 'Feb', 'Mar', 'Apr', 'Mar', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     }
+
+    return values
 }
 
 function getDataset(timeFrame, stat) {
     const values = []
 
     // Timezone offset
-    if (timeFrame == 'day')
+    if (timeFrame == 'day') {
         for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
             values.push(undefined)
         }
+    }
 
     for (var timeData of activeServer.value.stats.cache.graphs[timeFrame]) {
         var value = timeData[stat] / timeData.count

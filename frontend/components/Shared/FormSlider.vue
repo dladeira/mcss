@@ -11,7 +11,7 @@
         </div>
 
         <div class="input">
-            <input class="slider" :min="min" :max="max" :id="name" type="range" :name="name" :placeholder="placeholder" :disabled="disabled" @input="sliderChange" step="0.5" :value="value" />
+            <input class="slider" :min="min" :max="max" :id="name" type="range" :name="name" :placeholder="placeholder" :disabled="disabled" @input="sliderChange" :step="step" :value="value" />
             <div class="text">
                 <span class="text-bolded">{{ Number.parseFloat(value).toFixed(1) }}</span>/10MB
             </div>
@@ -138,15 +138,17 @@ const props = defineProps({
     type: String,
     name: String,
     placeholder: String,
-    disabled: String,
+    disabled: Boolean,
     max: Number,
     min: Number,
-    value: Number
+    value: Number,
+    step: Number
 })
 
 const emit = defineEmits(['helper'])
 
 const value = ref(props.value ? props.value : props.max / 2)
+const step = ref(props.step ? props.step : 0.5)
 
 function sliderChange(e) {
     value.value = e.target.value

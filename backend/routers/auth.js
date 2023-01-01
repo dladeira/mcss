@@ -44,6 +44,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     const { email, password, password2 } = req.body
+    console.log("trying register")
 
     if (password != password2) {
         return res.status(400).json({ error: "Passwords do not match" })
@@ -60,6 +61,8 @@ router.post('/register', async (req, res) => {
 
     if (existingSent)
         return res.status(400).json({ error: "Email already sent" })
+
+    console.log("trying")
 
     try {
         let transporter = nodemailer.createTransport({
@@ -83,6 +86,8 @@ router.post('/register', async (req, res) => {
     } catch (e) {
         return res.status(400).json({ error: "Invalid email address" })
     }
+
+    console.log("sent")
 
     let emailSent = new EmailSent({
         body: req.body,

@@ -26,7 +26,6 @@ router.post('/server', async (req, res) => {
 var count = 0
 
 router.post('/stats-update', async (req, res) => {
-
     const { cpuUsage, ramUsage, players, messages, characters, whispers, commands, blocksBroken, blocksPlaced, blocksTraveled, deaths, secret } = req.body
 
     const server = await Server.findOne({ _id: secret })
@@ -35,7 +34,6 @@ router.post('/stats-update', async (req, res) => {
         return res.status(404).send("Server not found")
 
     const dataPackets = await Data.find({ server: secret })
-
 
     if (!server.firstUpdate) {
         server.firstUpdate = Date.now()
@@ -47,7 +45,9 @@ router.post('/stats-update', async (req, res) => {
         return res.status(425).send("Throttle:" + throttle)
     }
 
-    const storageUsage = getStorageUsage(dataPackets, server.storage)
+    const storageUsage = getAverageDataSize(dataPackets) * dataPackets.length / 1024 / server.storage * 100
+    console.log(storageUsage)
+
 
     const data = new Data({
         owner: server.owner,
@@ -56,7 +56,7 @@ router.post('/stats-update', async (req, res) => {
         ramUsage,
         storageUsage,
         players: JSON.parse(players),
-        time: Date.now(),
+        time: Date.now() - (Date.now() % (updateInterval * 1000)),
         messages,
         characters,
         whispers,
@@ -75,10 +75,10 @@ router.post('/stats-update', async (req, res) => {
 
     res.status(200).send("SendIn:" + sendIn)
 
-    if (++count > 5) {
-        generateServerCache(server)
-        count = 0
-    }
+    // if (++count >= 100) {
+        // new Promise((resolve) => { generateServerCache(server); resolve() })
+        // count = 0
+    // }
 })
 
 router.post('/chat-msg', async (req, res) => {
@@ -93,15 +93,15 @@ router.post('/chat-msg', async (req, res) => {
     return res.status(200).send("Success")
 })
 
-function getStorageUsage(data, storage) { // KiloBytes
+function getAverageDataSize(data) { // KiloBytes
     var total = 0
-    var samples = 50
+    var samples = 200
     for (var i = 0; i < samples; i++)
         total += bson.serialize(data[Math.floor(Math.random() * data.length)]).length
 
     var averageSize = total / samples
 
-    return Math.round(averageSize * data.length / 1024 / (storage * 1024) * 100)
+    return averageSize / 1024
 }
 
 module.exports = router

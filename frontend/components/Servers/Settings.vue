@@ -7,7 +7,8 @@
         </div>
 
         <div class="bottom-row">
-            <SharedFormSlider class="storage" label="Storage Allocated" name="storage" :value="server.storage" :min="server.stats.cache.storageUsed" :max="10" :disabled="connecting" />
+            {{ server.stats.cache.storageUsed }}
+            <SharedFormSlider class="storage" label="Storage Allocated" name="storage" :value="server.stats.cache.storageUsed" :min="server.stats.cache.storageUsed" :max="10" :disabled="connecting" :step="0.1" />
             <SharedFormInput class="secret" type="text" label="Server Secret" :disabled="true" name="_id" :value="server._id" />
             <div class="submit-wrapper">
                 <div class="error">{{ error }}</div>

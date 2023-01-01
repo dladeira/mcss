@@ -168,7 +168,7 @@ function getLabels() {
     var values = []
     switch (selected.value) {
         case "day":
-            for (var i = 1; i <= 24; i++) {
+            for (var i = 0; i < 24; i++) {
                 values.push(i)
             }
             return values

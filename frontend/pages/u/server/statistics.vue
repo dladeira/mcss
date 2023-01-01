@@ -6,18 +6,6 @@
                     <h2 class="title">
                         Player List
                     </h2>
-
-                    <div class="selector">
-                        <div :class="selected == 'day' ? 'option-active' : 'option'" @click="selected = 'day'">
-                            Day
-                        </div>
-                        <div :class="selected == 'month' ? 'option-active' : 'option'" @click="selected = 'month'">
-                            Month
-                        </div>
-                        <div :class="selected == 'year' ? 'option-active' : 'option'" @click="selected = 'year'">
-                            Year
-                        </div>
-                    </div>
                 </div>
 
                 <div class="chart">
@@ -27,10 +15,48 @@
                 <div class="axes">
                     <div class="axis">
                         <h1 class="axis-title">X Axis</h1>
+                        <div class="selections">
+                            <div class="selection-group">
+                                <div :class="selected == 'day' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'day'">Daily</div>
+                                <div :class="selected == 'month' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'month'">Weekly</div>
+                                <div :class="selected == 'year' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'year'">Monthly</div>
+                            </div>
+                            <div class="selection-group">
+                                <div :class="selected == 'average' ? 'selection-average-selected' : 'selection-average'" @click="selected = 'average'">Average Day</div>
+                                <div :class="selected == 'peak' ? 'selection-peak-selected' : 'selection-peak'" @click="selected = 'peak'">Peak Day</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="axis">
                         <h1 class="axis-title">Y Axis</h1>
-                        
+                        <div class="options">
+                            <div class="option-column">
+                                <div class="option" @click="toggleYSelected('cpu')">
+                                    <div :class="isYSelected('cpu') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        CPU Usage
+                                    </div>
+                                </div>
+                                <div class="option" @click="toggleYSelected('ram')">
+                                    <div :class="isYSelected('ram') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        RAM Usage
+                                    </div>
+                                </div>
+                                <div class="option" @click="toggleYSelected('storage')">
+                                    <div :class="isYSelected('storage') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Storage Usage
+                                    </div>
+                                </div>
+                                <div class="option" @click="toggleYSelected('players')">
+                                    <div :class="isYSelected('players') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Player Count
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,34 +104,7 @@
     font-weight: 700;
 
 
-    margin: 10px 0 0 18px;
-}
-
-.selector {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.option {
-    margin-right: 1.25rem;
-    padding: 0.25rem;
-
-    border-bottom: 1px solid $gray2;
-
-    font-size: 0.75rem;
-    color: $gray2;
-
-    &:hover {
-        cursor: pointer;
-    }
-
-    &-active {
-        @extend .option;
-        color: white;
-        border-color: white;
-    }
+    margin: 10px 0 1rem 18px;
 }
 
 .chart {
@@ -121,7 +120,7 @@
     justify-content: space-between;
     align-items: flex-start;
 
-    height: 14rem;
+    height: 22rem;
     width: 100%;
 
     padding: 1.25rem;
@@ -150,6 +149,117 @@
 
     font-size: 1.5rem;
 }
+
+.selections {
+    margin-top: 1.25rem;
+}
+
+.selection-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 80%;
+
+    margin: 0 auto 1rem auto;
+}
+
+.selection {
+    width: 30%;
+
+    padding: 10px 0;
+
+    border-radius: 5px;
+
+    text-align: center;
+    color: white;
+
+    &-regular {
+        @extend .selection;
+
+        background-color: rgba($green, 0.2);
+
+        &-selected {
+            @extend .selection;
+
+            background-color: rgba($green, 0.5);
+        }
+    }
+
+    &-average {
+        @extend .selection;
+
+        width: 48%;
+
+        background-color: rgba($red, 0.2);
+
+        &-selected {
+            @extend .selection-average;
+
+            background-color: rgba($red, 0.5);
+        }
+    }
+
+    &-peak {
+        @extend .selection;
+
+        width: 48%;
+
+        background-color: rgba($blue, 0.2);
+
+        &-selected {
+            @extend .selection-peak;
+
+            background-color: rgba($blue, 0.5);
+        }
+    }
+}
+
+.options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+
+    margin: 0 1.5rem;
+}
+
+.option {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    margin-bottom: 0.5rem;
+}
+
+.option-button {
+    height: 1rem;
+    width: 1rem;
+
+    margin-right: 0.5rem;
+
+    border-radius: 5px;
+
+    background-color: rgba(#d9d9d9, 0.3);
+
+    &:hover {
+        background-color: rgba(#d9d9d9, 0.5);
+    }
+
+    &-selected {
+        @extend .option-button;
+
+        background-color: white;
+
+        &:hover {
+            background-color: rgba(white, 0.8);
+        }
+    }
+}
 </style>
 
 <script setup>
@@ -166,9 +276,6 @@ import {
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 
-const activeServer = useState('activeServer')
-const selected = useState('selectedTime', () => "day")
-
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -179,6 +286,71 @@ ChartJS.register(
     Legend,
     Filler
 )
+
+const activeServer = useState('activeServer')
+const selected = useState('selectedTime', () => "day")
+const ySelected = useState('yAxis-selected', () => [])
+
+
+function toggleYSelected(index) {
+    if (ySelected.value.indexOf(index) == -1) {
+        ySelected.value.push(index)
+    } else {
+        ySelected.value = ySelected.value.filter(i => i != index)
+    }
+}
+
+function isYSelected(index) {
+    return ySelected.value.indexOf(index) != -1
+}
+
+function yIndexToText(index) {
+    switch (index) {
+        case 'cpu':
+            return 'CPU Usage'
+        case 'ram':
+            return 'Ram Usage'
+        case 'storage':
+            return 'Storage Usage'
+        case 'players':
+            return 'Player Count'
+    }
+}
+
+function getColor(index) {
+    switch (index) {
+        case 0:
+            return '#00C2FF'
+        case 1:
+            return '#00FF75'
+        case 2:
+            return '#FF3030'
+        case 3:
+            return '#FFC700'
+    }
+}
+
+function getDatasets() {
+    const datasets = []
+    var index = 0
+    for (var y of ySelected.value) {
+        datasets.push({
+            label: yIndexToText(y),
+            backgroundColor: getColor(index),
+            borderColor: getColor(index),
+            data: getDataset(y, selected.value),
+            fill: {
+                target: 'origin',
+                above: getColor(index) + '44'
+            },
+            lineTension: 0.1
+        })
+
+        index++
+    }
+
+    return datasets
+}
 
 let options = {
     responsive: true,
@@ -200,8 +372,6 @@ let options = {
             }
         },
         y: {
-            max: 100,
-            min: 0,
             grid: {
                 display: false,
             },
@@ -210,10 +380,6 @@ let options = {
                 width: 1
             },
             ticks: {
-                stepSize: 20,
-                callback: function (value) {
-                    return value + '%'
-                },
                 font: {
                     size: 12
                 },
@@ -227,7 +393,7 @@ function getLabels() {
     var values = []
     switch (selected.value) {
         case "day":
-            for (var i = 1; i <= 24; i++) {
+            for (var i = 0; i < 24; i++) {
                 values.push(i)
             }
             return values
@@ -263,42 +429,7 @@ function getDataset(index, timeFrame) {
 function getData() {
     return {
         labels: getLabels(),
-        datasets: [
-            {
-                label: 'CPU Usage',
-                backgroundColor: '#00C2FF',
-                borderColor: "#00C2FF",
-                data: getDataset('cpu', selected.value),
-                fill: {
-                    target: 'origin',
-                    above: '#00C2FF44',   // Area will be red above the origin
-                },
-                lineTension: 0.1
-            },
-            {
-                label: 'RAM Usage',
-                backgroundColor: '#00FF75',
-                borderColor: "#00FF75",
-                data: getDataset('ram', selected.value),
-                fill: {
-                    target: 'origin',
-                    above: '#00FF7544',   // Area will be red above the origin
-                },
-                lineTension: 0.1
-            },
-            {
-                label: 'Storage Usage',
-                backgroundColor: '#FF3030',
-                borderColor: "#FF3030",
-                data: getDataset('storage', selected.value),
-                fill: {
-                    target: 'origin',
-                    above: '#FF303044',   // Area will be red above the origin
-                },
-                lineTension: 0.1,
-                spanGaps: true
-            }
-        ]
+        datasets: getDatasets()
     }
 }
 </script>
