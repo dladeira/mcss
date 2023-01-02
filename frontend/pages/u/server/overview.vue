@@ -1,4 +1,9 @@
 <template>
+
+    <Head>
+        <Title>{{ activeServer.name }} - Overview</Title>
+    </Head>
+
     <NuxtLayout name="server">
         <div class="page">
 

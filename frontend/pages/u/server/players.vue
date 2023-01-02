@@ -1,9 +1,14 @@
 <template>
+
+    <Head>
+        <Title>{{ activeServer.name }} - Players</Title>
+    </Head>
+
     <NuxtLayout name="server">
         <div class="page">
             <div class="top">
                 <PlayersUsage />
-                
+
                 <PlayersList />
             </div>
             <div class="bottom">
@@ -33,7 +38,8 @@
     background-color: $gray6;
 }
 
-.top, .bottom {
+.top,
+.bottom {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -52,7 +58,9 @@
     height: 45%;
 }
 
-.players, .chat, .adv {
+.players,
+.chat,
+.adv {
     height: 100%;
     width: calc((100% / 3) - ($gap * 2 / 3))
 }

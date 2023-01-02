@@ -3,16 +3,16 @@
         <h1 class="title">Change Email</h1>
         <div class="forms">
             <form class="form old-email" @submit.prevent="sendOldEmail">
-                <SharedFormInput label="Old Email" type="email" :placeholder="user.email" name="email-old" disabled />
-                <button v-if="!oldStatus" class="submit" type="submit">Send verification</button>
+                <SharedFormInput class="input" label="Old Email" type="email" :value="user.email" name="email-old" disabled />
+                <button v-if="oldStatus != 'waiting' && !oldVerified" class="submit" type="submit">{{oldStatus}}</button>
                 <button v-else-if="oldStatus == 'waiting' && !oldVerified" class="submit-waiting" type="submit" disabled>Awaiting verification</button>
                 <button v-else-if="oldVerified" class="submit-verified" type="submit" disabled>Verified</button>
             </form>
 
             <form class="form new-email" @submit.prevent="sendNewEmail">
-                <SharedFormInput label="New Email" type="email" :placeholder="user.email" name="email" />
+                <SharedFormInput class="input" label="New Email" type="email" name="email" />
 
-                <button v-if="!newStatus" class="submit" type="submit">Send verification</button>
+                <button v-if="newStatus != 'waiting' && !newVerified" class="submit" type="submit">{{newStatus}}</button>
                 <button v-else-if="newStatus == 'waiting' && !newVerified" class="submit-waiting" type="submit" disabled>Awaiting verification</button>
                 <button v-else-if="newVerified" class="submit-verified" type="submit" disabled>Verified</button>
             </form>
@@ -25,7 +25,7 @@
     display: flex;
     flex-direction: column;
 
-    height: 12rem;
+    height: fit-content;
 
     margin-bottom: 20px;
 
@@ -49,12 +49,13 @@
 }
 
 .form {
-    max-width: 48%;
+    max-width: 47%;
 }
 
 .submit {
     width: 100%;
 
+    margin-bottom: 10px;
     padding: 9px 0;
 
     border: none;
@@ -67,18 +68,18 @@
     outline: none;
 
     &:hover {
-        background-color: darken(rgba($green, 0.2), 4);
+        background-color: darken(rgba($green, 0.1), 4);
         cursor: pointer;
     }
 
     &-waiting {
         @extend .submit;
 
-        background-color: rgba($green, 0.1);
+        background-color: rgba($green, 0.05);
         color: rgba($green, 0.5);
 
         &:hover {
-            background-color: rgba($green, 0.1);
+            background-color: rgba($green, 0.05);
             color: rgba($green, 0.5);
 
             cursor: default
@@ -88,27 +89,32 @@
     &-verified {
         @extend .submit;
 
-        background-color: rgba($blue, 0.2);
+        background-color: rgba($blue, 0.1);
         color: rgba($blue, 1);
 
         &:hover {
-            background-color: rgba($blue, 0.2);
+            background-color: rgba($blue, 0.1);
             color: rgba($blue, 1);
 
             cursor: default
         }
     }
 }
+
+.input {
+    margin-bottom: 1.5rem !important;
+}
 </style>
 
 <script setup>
-const oldStatus = ref()
-const newStatus = ref()
+const oldStatus = ref('Send verification')
+const newStatus = ref('Send verification')
 const user = useState("user")
+const config = useRuntimeConfig()
 
 async function sendOldEmail(e) {
     oldStatus.value = "waiting"
-    const { data, error } = await useFetch('http://localhost:3020/api/auth/reset-email/old', {
+    const { data, error } = await useFetch(config.public.origin + '/api/auth/reset-email/old', {
         method: "POST",
     })
 
@@ -118,7 +124,7 @@ async function sendOldEmail(e) {
 
 async function sendNewEmail(e) {
     newStatus.value = "waiting"
-    const { data, error } = await useFetch('http://localhost:3020/api/auth/reset-email/new', {
+    const { data, error } = await useFetch(config.public.origin + '/api/auth/reset-email/new', {
         method: "POST",
         body: {
             email: e.target.email.value
@@ -126,7 +132,7 @@ async function sendNewEmail(e) {
     })
 
     if (error.value)
-        return console.log(error.value.data)
+        return newStatus.value = 'Enter valid email'
 }
 </script>
 

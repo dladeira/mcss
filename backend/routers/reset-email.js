@@ -26,9 +26,9 @@ router.post('/old', loggedIn, async (req, res) => {
 
         let message = {
             from: 'MCSS <mcss@ladeira.eu',
-            to: `<${req.user['email-old']}>`,
+            to: `<${req.user.email}>`,
             subject: 'Email Change - Old Verification',
-            html: `To change your email, you need to verify both your new and old email.<br>To verify your old email, press the link below<br><br><a href="${argv['origin']}/api/auth/reset-email/verify?code=${code}">Verify</a>`
+            html: `To change your email, you need to verify both your new and old email.<br>To verify your old email, press the link below<br><br><a href="${process.env.ORIGIN}/api/auth/reset-email/verify?code=${code}">Verify</a>`
         }
 
         await transporter.sendMail(message)
@@ -36,7 +36,7 @@ router.post('/old', loggedIn, async (req, res) => {
         confirmations.push({
             code: code,
             old: true,
-            email: req.user['email-old'],
+            email: req.user.email,
             confirmed: false,
             user: req.user._id
         })
@@ -69,7 +69,7 @@ router.get('/verify', loggedIn, async (req, res) => {
     const newEmail = confirmations.find(i => String(i.user) == String(req.user._id) && i.old == false && i.confirmed)
 
     if (oldEmail && newEmail) {
-        const existingEmail = await User.findOne({ email: newEmail })
+        const existingEmail = await User.findOne({ email: newEmail.email })
         if (existingEmail)
             return res.status(400).send("Email already in use")
 
@@ -110,7 +110,7 @@ router.post('/new', loggedIn, async (req, res) => {
             from: 'MCSS <mcss@ladeira.eu',
             to: `<${email}>`,
             subject: 'Email Change - New Verification',
-            html: `To change your email, you need to verify both your new and old email.<br>To verify your new email, press the link below<br><br><a href="${argv['origin']}/api/auth/reset-email/verify?code=${code}">Verify</a>`
+            html: `To change your email, you need to verify both your new and old email.<br>To verify your new email, press the link below<br><br><a href="${process.env.ORIGIN}/api/auth/reset-email/verify?code=${code}">Verify</a>`
         }
 
         await transporter.sendMail(message)

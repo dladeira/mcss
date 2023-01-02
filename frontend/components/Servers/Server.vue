@@ -13,7 +13,7 @@
                     Online
                 </div>
                 <div class="tag tag-level">
-                    Level 1 - Server
+                    Server
                 </div>
             </div>
 
@@ -271,7 +271,7 @@ ChartJS.register(
     Legend,
 )
 
-const token = useCookie('token')
+const config = useRuntimeConfig()
 const servers = useState("servers")
 const activeServer = useState("activeServer")
 const activeServerCookie = useCookie("activeServer", {
@@ -378,7 +378,7 @@ const stats = props.stats
 
 function deleteServer() {
     if (confirm("Are you sure you want to delete this server? There is no undo option.")) {
-        useFetch('http://localhost:3020/api/servers/delete', {
+        useFetch(config.public.origin + '/api/servers/delete', {
             method: "POST",
             body: {
                 _id: props._id

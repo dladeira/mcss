@@ -1,4 +1,9 @@
 <template>
+
+    <Head>
+        <Title>{{ activeServer.name }} - Statistics</Title>
+    </Head>
+
     <NuxtLayout name="server">
         <div class="page">
             <div class="container">
@@ -227,10 +232,18 @@
     text-align: center;
     color: white;
 
+    &:hover {
+        cursor: pointer;
+    }
+
     &-regular {
         @extend .selection;
 
         background-color: rgba($green, 0.2);
+
+        &:hover {
+            background-color: rgba($green, 0.25);
+        }
 
         &-selected {
             @extend .selection;
@@ -246,8 +259,14 @@
 
         background-color: rgba($red, 0.2);
 
+        &:hover {
+            background-color: rgba($red, 0.25);
+        }
+
         &-selected {
-            @extend .selection-average;
+            @extend .selection;
+
+            width: 48%;
 
             background-color: rgba($red, 0.5);
         }
@@ -260,8 +279,14 @@
 
         background-color: rgba($blue, 0.2);
 
+        &:hover {
+            background-color: rgba($blue, 0.25);
+        }
+
         &-selected {
-            @extend .selection-peak;
+            @extend .selection;
+
+            width: 48%;
 
             background-color: rgba($blue, 0.5);
         }
@@ -286,6 +311,10 @@
     align-items: center;
 
     margin-bottom: 0.5rem;
+
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 .option-button {
@@ -321,7 +350,7 @@ import {
     LinearScale,
     PointElement,
     LineElement,
-    Title,
+    Title as TitleChartJS,
     Tooltip,
     Legend,
     Filler
@@ -333,7 +362,7 @@ ChartJS.register(
     LinearScale,
     PointElement,
     LineElement,
-    Title,
+    TitleChartJS,
     Tooltip,
     Legend,
     Filler
@@ -494,7 +523,7 @@ function getDataset(index, timeFrame) {
     const values = []
     console.log(activeServer.value.stats.cache.graphs['peak'])
     // Timezone offset
-    if (timeFrame == 'day')
+    if (timeFrame == 'day' || timeFrame == 'average' || timeFrame == 'peak')
         for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
             values.push(undefined)
         }

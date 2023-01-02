@@ -7,7 +7,7 @@
         </div>
 
         <div class="bottom-row">
-            <SharedFormSlider class="storage" type="text" placeholder="None" label="Storage Allocated" name="storage" :min="0" :max="10" :disabled="connecting" />
+            <SharedFormSlider class="storage" type="text" placeholder="None" label="Storage Allocated" name="storage" :min="0" :max="user.plan.storage" :disabled="connecting" />
             <div class="submit-wrapper">
                 <div class="error">{{ error }}</div>
                 <button class="submit" type="submit">Create Server</button>
@@ -82,12 +82,14 @@
 </style>
 
 <script setup>
+const user = useState('user')
 const connecting = ref()
 const error = ref()
+const config = useRuntimeConfig()
 
 async function createServer(e) {
     connecting.value = "true"
-    const { data, error: fetchError } = await useFetch('http://localhost:3020/api/servers/new', {
+    const { data, error: fetchError } = await useFetch(config.public.origin + '/api/servers/new', {
         method: "POST",
         body: {
             serverName: e.target.serverName.value,

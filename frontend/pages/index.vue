@@ -1,4 +1,9 @@
 <template>
+
+    <Head>
+        <Title>All-in-one minecraft server statistics plugin</Title>
+    </Head>
+
     <NuxtLayout name="landing">
         <LandingSecMain />
         <LandingSecFeatures />

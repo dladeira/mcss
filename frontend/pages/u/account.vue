@@ -1,4 +1,8 @@
 <template>
+    <Head>
+        <Title>Account</Title>
+    </Head>
+
     <NuxtLayout name="user">
         <div class="title">Account</div>
 

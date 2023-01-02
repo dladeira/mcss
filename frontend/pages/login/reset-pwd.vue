@@ -1,4 +1,8 @@
 <template>
+    <Head>
+        <Title>Reset Password</Title>
+    </Head>
+
     <NuxtLayout name="landing">
         <h1 class="title">Welcome <span class="title-green">back</span></h1>
 
@@ -148,13 +152,14 @@
 </style>
 
 <script setup>
+const config = useRuntimeConfig()
 const connecting = ref()
 const error = ref()
 const success = ref()
 
 async function resetPassword(e) {
     connecting.value = true
-    const { data, error: fetchError } = await useFetch("http://localhost:3020/api/auth/pwd-reset", {
+    const { data, error: fetchError } = await useFetch(config.public.origin + "/api/auth/pwd-reset", {
         method: "POST",
         body: {
             email: e.target.email.value,

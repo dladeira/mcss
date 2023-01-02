@@ -1,5 +1,5 @@
 <template>
-    <section class="main">
+    <section class="main" id="pricing">
         <h1 class="title">
             <span class="title-green">Pricing</span>
         </h1>
@@ -21,7 +21,7 @@
                         - <span class="desc-bold">2GB</span> storage
                     </div>
                     <div class="desc-point">
-                        - <span class="desc-bold">6 months</span> server life
+                        - <span class="desc-bold">3 months</span> storage life
                     </div>
                     <div class="desc-point">
                         - Server pinged every <span class="desc-bold">1h</span>
@@ -58,9 +58,9 @@
                         - Server pinged every <span class="desc-bold">30min</span>
                     </div>
                 </div>
-                <nuxt-link class="plan-button button-blue" to="login">
-                    Choose Plan
-                </nuxt-link>
+                <div class="plan-button button-blue not-released">
+                    Coming Soon
+                </div>
             </div>
 
             <div class="plan plan-professional">
@@ -89,9 +89,9 @@
                         - Server pinged every <span class="desc-bold">15min</span>
                     </div>
                 </div>
-                <nuxt-link class="plan-button button-red" to="login">
-                    Choose Plan
-                </nuxt-link>
+                <div class="plan-button button-red not-released">
+                    Coming Soon
+                </div>
             </div>
         </div>
 
@@ -100,14 +100,14 @@
             <div class="custom-price">$X / month</div>
             <div class="custom-description">None of these plans fit you?<br />Contact sales and we're work out a custom
                 plan</div>
-            <div class="custom-button">Contact Sales</div>
+            <div class="custom-button not-released">Coming Soon</div>
         </div>
     </section>
 </template>
 
 <style lang="scss" scoped>
 .main {
-    height: 100vh;
+    height: 110vh;
     min-height: 900px;
 
     padding-top: 20px;
@@ -221,12 +221,14 @@
 }
 
 .button-blue {
-    background-color: rgba($blue, 0.1);
+    // background-color: rgba($blue, 0.1);
+    background-color: transparent;
     color: $blue;
 }
 
 .button-red {
-    background-color: rgba($red, 0.1);
+    // background-color: rgba($red, 0.1);
+    background-color: transparent;
     color: $red;
 }
 
@@ -268,7 +270,13 @@
     border-radius: 10px;
 
     text-decoration: none;
-    background-color: rgba($green, 0.1);
+    // background-color: rgba($green, 0.1);
     color: $green;
+}
+
+.not-released {
+    &:hover {
+        cursor: not-allowed;
+    }
 }
 </style>

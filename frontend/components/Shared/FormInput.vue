@@ -67,14 +67,14 @@ input {
     color: white;
 
     &::placeholder {
-        color: lighten($gray5, 20);
+        color: lighten($gray5, 0);
     }
 
     &:disabled {
         border-color: rgba(white, 0.1);
 
         background-color: rgba(black, 0.05);
-        color: $gray5;
+        color: lighten($gray5, 25);
     }
 }
 </style>

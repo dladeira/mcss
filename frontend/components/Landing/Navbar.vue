@@ -6,9 +6,9 @@
         </nuxt-link>
 
         <div class="links">
-            <div class="link">Features</div>
-            <div class="link">Pricing</div>
-            <div class="link">Roadmap</div>
+            <a class="link" href="#features">Features</a>
+            <a class="link" href="#pricing">Pricing</a>
+            <a class="link" href="#roadmap">Roadmap</a>
         </div>
 
         <nuxt-link class="login" to="/login">
@@ -50,6 +50,7 @@
 
     margin: 0 1.5rem;
 
+    text-decoration: none;
     color: $gray1;
 
     &:hover {

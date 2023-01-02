@@ -62,6 +62,8 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+
+    margin-top: 0.5rem;
 }
 
 .option {

@@ -7,8 +7,7 @@
         </div>
 
         <div class="bottom-row">
-            {{ server.stats.cache.storageUsed }}
-            <SharedFormSlider class="storage" label="Storage Allocated" name="storage" :value="server.stats.cache.storageUsed" :min="server.stats.cache.storageUsed" :max="10" :disabled="connecting" :step="0.1" />
+            <SharedFormSlider class="storage" label="Storage Allocated" name="storage" :value="server.stats.cache.storageUsed" :min="server.stats.cache.storageUsed" :max="user.plan.storage" :disabled="connecting" :step="0.1" />
             <SharedFormInput class="secret" type="text" label="Server Secret" :disabled="true" name="_id" :value="server._id" />
             <div class="submit-wrapper">
                 <div class="error">{{ error }}</div>
@@ -91,6 +90,9 @@
 </style>
 
 <script setup>
+const user = useState('user')
+const config = useRuntimeConfig()
+
 const props = defineProps({
     server: Object
 })
@@ -100,7 +102,7 @@ const error = ref()
 
 async function modifyServer(e) {
     connecting.value = "true"
-    const { data, error: fetchError } = await useFetch('http://localhost:3020/api/servers/update', {
+    const { data, error: fetchError } = await useFetch(config.public.origin + '/api/servers/update', {
         method: "POST",
         body: {
             serverName: e.target.serverName.value,

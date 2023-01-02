@@ -14,7 +14,7 @@
 const activeServer = useState('activeServer')
 
 onBeforeMount(() => {
-    if (!activeServer)
+    if (!activeServer.value)
         navigateTo("/u/servers")
 })
 </script>

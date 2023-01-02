@@ -51,6 +51,7 @@
     width: 95%;
 
     margin: 20px auto;
+    padding-left: 0.25em;
 
     overflow-y: scroll;
 }

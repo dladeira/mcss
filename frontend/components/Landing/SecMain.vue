@@ -15,12 +15,12 @@
                     and player behaviors
                 </h2>
 
-                <nuxt-link class="cta" to="login">
-                    Get Started
-                </nuxt-link>
+                    <nuxt-link class="cta" to="login">
+                        Get Started
+                    </nuxt-link>
 
             </div>
-            <nuxt-img class="image" src="/product-preview.png" />
+            <div class="image" />
         </div>
         <div class="icons">
             <div class="icon">
@@ -82,6 +82,8 @@
     &-green {
         color: $green;
     }
+
+    animation: fade-in 2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .subtitle {
@@ -91,31 +93,71 @@
     font-size: 2rem;
     font-weight: 400;
     color: $gray1;
+
+    animation: fade-in 2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .cta {
-    width: fit-content;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    padding: 1.5rem 4rem;
+
+    height: 5rem;
+    width: 20rem;
 
     border-radius: 1000px;
 
     font-size: 2rem;
     font-weight: 500;
+    text-decoration: none;
     background-color: rgba($green, 0.1);
     color: $green;
-
-    text-decoration: none;
-
+    
     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    z-index: 0;
+
+    &::after {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        left: 6px;
+        top: 6px;
+        width: calc(100% - 12px);
+        height: calc(100% - 12px);
+        background: #113a3d;
+        border-radius: 1000px;
+
+        opacity: 0;
+    }
+
+    &:hover {
+        &:after {
+            opacity: 1;
+        }
+    }
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(1turn);
+    }
 }
 
 .image {
     position: absolute;
     left: 60vw;
     height: 33rem;
+    width: 52.9rem;
 
     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 60%, rgb(11, 4, 4)), url("/product-preview.png");
+    background-size: contain;
+
+    animation: slide-from-right 1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .icons {
@@ -149,6 +191,36 @@
         font-size: 1rem;
         font-weight: 500;
         color: $gray2;
+    }
+}
+
+@keyframes slide-from-right {
+    0% {
+        left: 100vw;
+    }
+
+    100% {
+        left: 60vw;
+    }
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes grow-height {
+    0% {
+        height: 0px;
+    }
+
+    100% {
+        height: 5rem;
     }
 }
 </style>

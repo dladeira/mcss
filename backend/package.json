@@ -15,7 +15,8 @@
   "homepage": "https://github.com/dladeira/mcss-backend#readme",
   "private": true,
   "scripts": {
-    "dev": "nodemon index.js --port=3021 --origin=http://localhost:3020"
+    "dev": "nodemon index.js --port=3021",
+    "start": "node index.js --port=3021"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",

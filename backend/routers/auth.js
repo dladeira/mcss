@@ -18,7 +18,7 @@ router.use('/reset-email', resetEmailRouter)
 
 router.post('/user', loggedIn, (req, res) => {
     req.user.password = undefined
-    
+
     res.status(200).json({ user: req.user })
 })
 
@@ -44,11 +44,12 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     const { email, password, password2 } = req.body
-    console.log("trying register")
 
-    if (password != password2) {
+    if (password != password2)
         return res.status(400).json({ error: "Passwords do not match" })
-    }
+
+    if (validatePassword(password))
+        return res.status(400).send({ error: validatePassword(password) })
 
     let code = Math.round(Math.random() * 1000000)
 
@@ -116,7 +117,12 @@ router.get('/verify-email', async (req, res) => {
 
     let user = await new User({
         email: email,
-        password: hash
+        password: hash,
+        plan: {
+            storage: 6,
+            serverSlots: 6,
+            maxDataLife: 3
+        }
     }).save()
 
     const token = jwt.sign(user._id.toString(), process.env.JWT_KEY)
@@ -135,14 +141,17 @@ router.post('/pwd-change', loggedIn, async (req, res) => {
     const { old, new1, new2 } = req.body
 
     if (new1 != new2) {
-        return res.status(400).json({ no_match: true })
+        return res.status(400).json({ error: "Passwords do not match" })
     }
 
     const correct = await bcrypt.compare(old, req.user.password)
 
     if (!correct) {
-        return res.status(400).json({ incorrect: true })
+        return res.status(400).json({ error: "Old password incorrect" })
     }
+
+    if (validatePassword(new1))
+        return res.status(400).send({ error: validatePassword(new1) })
 
     const hash = await bcrypt.hash(new1, 10)
 
@@ -180,7 +189,7 @@ router.post('/pwd-reset', async (req, res) => {
             subject: 'Account Retrieval - Password Reset',
             html: `To reset your password, click the link and follow the steps<br><br><a href="${argv["origin"]}/login/reset-pwd-link?code=${code}">Reset Password</a>`
         }
-bcrypt.hash
+        bcrypt.hash
         await transporter.sendMail(message)
     } catch (e) {
         return res.status(400).json({ error: "Invalid email address" })
@@ -202,11 +211,20 @@ router.post('/pwd-reset-link', async (req, res) => {
     if (!reset)
         return res.status(400).send({ error: "Invalid code" })
 
+    if (validatePassword(password))
+        return res.status(400).send({ error: validatePassword(password) })
+
     const user = await User.findOne({ _id: reset.user._id })
     user.password = await bcrypt.hash(password, 10)
     await user.save()
 
     return res.status(200).send({ success: "Password changed, please sign in again" })
 })
+
+function validatePassword(password) {
+    if (password.length < 4) {
+        return "Password too short"
+    }
+}
 
 module.exports = router

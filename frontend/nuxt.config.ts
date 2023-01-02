@@ -15,49 +15,35 @@ export default defineNuxtConfig({
             }
         },
     },
-    // nitro: {
-    //     devProxy: {
-    //         "/api": {
-    //             target: "http://localhost:3021",
-    //             changeOrigin: true,
-    //             rewrite: (path) => path.replace(/^\/api/, ""),
-    //         },
-    //     },
-    // },
     modules: [
-        // '@nuxt-alt/proxy',
         'nuxt-proxy',
         '@nuxt/image-edge',
         'nuxt-socket-io'
     ],
-    // proxy: {
-    //     proxies: {
-    //         '/api': {
-    //             target: 'http://localhost:3021',
-    //             rewrite: path => path.replace(/^\/api/, '')
-    //         }
-    //     },
-    //     fetch: true
-    // },
-    proxy: {
-        options: [{
-            target: 'http://localhost:3021',
-            changeOrigin: true,
-            pathRewrite: {
-                '^/api': '/'
-            },
-            pathFilter: [
-                '/api'
-            ]
-        }]
-    },
     io: {
         sockets: [
             {
                 name: 'main',
-                url: 'http://localhost:3021/',
+                url: process.env.SOCKET_SERVER,
                 default: true
             }
         ]
+    },
+    runtimeConfig: {
+        proxy: {
+            options: [{
+                target: process.env.API_SERVER,
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/api': '/'
+                },
+                pathFilter: [
+                    '/api'
+                ]
+            }]
+        },
+        public: {
+            origin: process.env.ORIGIN
+        }
     }
 })

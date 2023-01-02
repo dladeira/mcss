@@ -1,5 +1,5 @@
 <template>
-    <section class="main">
+    <section class="main" id="roadmap">
         <h1 class="title">
             <span class="title-green">Future Roadmap</span>
         </h1>
@@ -60,7 +60,7 @@
                     <div class="points">
                         <div class="point">- <span class="point-bold">Pricing</span> & plans</div>
                         <div class="point">- <span class="point-bold">Customer</span> support</div>
-                        <div class="point">- Ads and<span class="point-bold">branding</span></div>
+                        <div class="point">- Ads and <span class="point-bold">branding</span></div>
                         <div class="point">Support <span class="point-bold">200</span> servers</div>
                     </div>
                 </div>

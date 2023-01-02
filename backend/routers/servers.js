@@ -16,6 +16,11 @@ router.post('/get', loggedIn, serverStatsMw, async (req, res) => {
 router.post('/new', loggedIn, async (req, res) => {
     const { serverName, serverType, bungeeInstance, storageAllocated } = req.body
 
+    const userServers = await Server.find({ owner: req.user._id })
+
+    if (userServers.length + 1 > req.user.plan.serverSlots)
+        return res.status(400).json({ error: 'No more server slots' })
+
     if (!serverName)
         return res.status(400).json({ error: "Server name not specified" })
 
@@ -46,7 +51,7 @@ router.post('/new', loggedIn, async (req, res) => {
         type: "regular",
         storage: parseFloat(storageAllocated),
         owner: req.user._id,
-        dataLifetime: 0,
+        dataLifetime: 3,
         recentMessages: []
     })
     await newServer.save()
@@ -93,8 +98,8 @@ router.post('/update', loggedIn, async (req, res) => {
             storageUsed += server.storage
     }
 
-    if (storageUsed + parseFloat(storageAllocated) > 10)
-        return res.status(400).json({ error: `Not enough storage (${10 - storageUsed}MB left)` })
+    if (storageUsed + parseFloat(storageAllocated) > req.user.plan.storage)
+        return res.status(400).json({ error: `Not enough storage (${req.user.plan.storage - storageUsed}MB left)` })
 
     if (existingServers.length > 1)
         return res.status(404).json({ error: "Name already in use" })
@@ -118,6 +123,9 @@ router.post('/lifetime', loggedIn, async (req, res) => {
     const { _id, lifetime } = req.body
 
     const server = await Server.findOne({ owner: req.user._id, _id: _id })
+
+    if (lifetime > req.user.plan.maxDataLife)
+        return res.status(400).json({ error: 'Over max' })
 
     if (!server)
         return res.status(404).json({ error: 'Server not found' })

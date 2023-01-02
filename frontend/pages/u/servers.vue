@@ -1,14 +1,19 @@
 <template>
+
+    <Head>
+        <Title>Servers</Title>
+    </Head>
+
     <NuxtLayout name="user">
         <!-- <div class="plan">
             <span class="plan-premium">Premium</span> Plan
-        </div> -->
-        <!-- <nuxt-link class="plan-upgrade" to="/u/plans">Upgrade</nuxt-link> -->
+        </div>
+        <nuxt-link class="plan-upgrade" to="/u/plans">Upgrade</nuxt-link> -->
 
         <div class="stats">
             <div class="stat">
                 <h1 class="stat-title">
-                    <span class="stat-green">0</span>/1
+                    <span class="stat-green">0</span>/{{ 0 }}
                 </h1>
 
                 <h2 class="stat-subtitle">
@@ -17,7 +22,7 @@
             </div>
             <div class="stat">
                 <h1 class="stat-title">
-                    <span class="stat-green">{{ servers.length }}</span>/5
+                    <span class="stat-green">{{ servers.length }}</span>/{{ user.plan.serverSlots }}
                 </h1>
 
                 <h2 class="stat-subtitle">
@@ -26,7 +31,7 @@
             </div>
             <div class="stat">
                 <h1 class="stat-title">
-                    <span class="stat-blue">{{ servers.reduce((acc, obj) => acc + obj.storage, 0) }}</span>/10GB
+                    <span class="stat-blue">{{ servers.reduce((acc, obj) => acc + obj.storage, 0) }}</span>/{{ user.plan.storage }}MB
                 </h1>
 
                 <h2 class="stat-subtitle">
@@ -95,7 +100,7 @@
 
     width: 40rem;
 
-    margin: 2rem auto;
+    margin: 3rem auto;
 }
 
 .stat {
@@ -111,7 +116,7 @@
     &-title {
         margin: 0;
 
-        font-size: 1.5rem;
+        font-size: 2rem;
         font-weight: 400;
         color: $gray2;
     }
@@ -187,8 +192,9 @@
 </style>
 
 <script setup>
-const currentPanel = ref("servers")
+const user = useState('user')
 const servers = useState("servers")
+const currentPanel = ref("servers")
 const serverSettings = ref("")
 
 function setPanel(panel) {

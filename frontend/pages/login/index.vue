@@ -1,4 +1,9 @@
 <template>
+
+    <Head>
+        <Title>Login</Title>
+    </Head>
+
     <NuxtLayout name="landing">
         <h1 class="title">Welcome <span class="title-green">back</span></h1>
 
@@ -165,6 +170,7 @@
 </style>
 
 <script setup>
+const config = useRuntimeConfig()
 const connecting = ref()
 const registerError = ref()
 const registerSuccess = ref()
@@ -176,7 +182,7 @@ const token = useCookie("token", {
 
 async function register(e) {
     connecting.value = true
-    const { data, error } = await useFetch("http://localhost:3020/api/auth/register", {
+    const { data, error } = await useFetch(config.public.origin + "/api/auth/register", {
         method: "POST",
         body: {
             // mode: 'no-cors',
@@ -198,7 +204,7 @@ async function register(e) {
 
 async function login(e) {
     connecting.value = true
-    const { data, error } = await useFetch("http://localhost:3020/api/auth/login", {
+    const { data, error } = await useFetch(config.public.origin + "/api/auth/login", {
         method: "POST",
         body: {
             // mode: 'no-cors',

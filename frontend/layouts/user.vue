@@ -37,6 +37,7 @@
 <script setup>
 const user = useState("user")
 const servers = useState("servers")
+const config = useRuntimeConfig()
 
 const token = useCookie("token", {
     maxAge: 2592000,
@@ -53,9 +54,8 @@ const activeServer = useState("activeServer")
 if (!token.value || token.value.length == 0)
     navigateTo("/")
 
-
 async function getUserData() {
-    const { data, error } = await useFetch("http://localhost:3020/api/auth/user", {
+    const { data, error } = await useFetch(config.public.origin + '/api/auth/user', {
         method: "POST",
         credentials: "same-origin",
         body: {
@@ -72,7 +72,7 @@ async function getUserData() {
 
 
 async function getServerData() {
-    const { data, error } = await useFetch('http://localhost:3020/api/servers/get', {
+    const { data, error } = await useFetch(config.public.origin + '/api/servers/get', {
         method: "POST",
         credentials: "same-origin",
         body: {

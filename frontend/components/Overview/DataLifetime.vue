@@ -7,7 +7,7 @@
         </div>
 
         <div class="lifetime">
-            <div @click="setLifetime(3)" :class="activeServer.dataLifetime == 3 ? 'option-selected' : 'option'">
+            <div @click="setLifetime(3)" :class="activeServer.dataLifetime == 3 ? 'option-selected' : user.plan.maxDataLife >= 3 ? 'option' : 'option-blocked'">
                 <h1 class="time">
                     3 months
                 </h1>
@@ -15,7 +15,7 @@
                     {{ activeServer.stats.cache.dataAge.months3 }}MB
                 </p>
             </div>
-            <div @click="setLifetime(6)" :class="activeServer.dataLifetime == 6 ? 'option-selected' : 'option'">
+            <div @click="setLifetime(6)" :class="activeServer.dataLifetime == 6 ? 'option-selected' : user.plan.maxDataLife >= 6 ? 'option' : 'option-blocked'">
                 <h1 class="time">
                     6 months
                 </h1>
@@ -23,7 +23,7 @@
                     {{ activeServer.stats.cache.dataAge.months6 }}MB
                 </p>
             </div>
-            <div @click="setLifetime(12)" :class="activeServer.dataLifetime == 12 ? 'option-selected' : 'option'">
+            <div @click="setLifetime(12)" :class="activeServer.dataLifetime == 12 ? 'option-selected' : user.plan.maxDataLife >= 12 ? 'option' : 'option-blocked'">
                 <h1 class="time">
                     1 year
                 </h1>
@@ -31,7 +31,7 @@
                     {{ activeServer.stats.cache.dataAge.months12 }}MB
                 </p>
             </div>
-            <div @click="setLifetime(0)" :class="activeServer.dataLifetime == 0 ? 'option-selected' : 'option'">
+            <div @click="setLifetime(0)" :class="activeServer.dataLifetime == 0 ? 'option-selected' : user.plan.maxDataLife > 12 ? 'option' : 'option-blocked'">
                 <h1 class="time">
                     Forever
                 </h1>
@@ -119,6 +119,19 @@
 
         &:hover {
             background-color: rgba($blue, 0.2);
+
+            cursor: default;
+        }
+    }
+
+    &-blocked {
+        @extend .option;
+
+        &:hover {
+            background-color: rgba(black, 0.20);
+
+            cursor: not-allowed;
+            user-select: none;
         }
     }
 }
@@ -141,22 +154,26 @@
 </style>
 
 <script setup>
+const user = useState('user')
 const activeServer = useState('activeServer')
+const config = useRuntimeConfig()
 
 async function setLifetime(time) {
-    if (confirm('Are you sure you want to change data lifetime? This leads to data loss')) {
-        const { data, error } = await useFetch('http://localhost:3020/api/servers/lifetime', {
-            method: 'POST',
-            body: {
-                _id: activeServer.value._id,
-                lifetime: time
-            }
-        })
+    if (user.value.plan.maxDataLife >= (time == 0 ? 24 : time) && time != activeServer.value.dataLifetime) {
+        if (confirm('Are you sure you want to change data lifetime? This leads to data loss')) {
+            const { data, error } = await useFetch(config.public.origin + '/api/servers/lifetime', {
+                method: 'POST',
+                body: {
+                    _id: activeServer.value._id,
+                    lifetime: time
+                }
+            })
 
-        if (error.value)
-            return console.log(error.value)
+            if (error.value)
+                return console.log(error.value)
 
-        activeServer.value.dataLifetime = time
+            activeServer.value.dataLifetime = time
+        }
     }
 }
 </script>

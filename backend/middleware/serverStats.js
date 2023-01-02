@@ -39,7 +39,25 @@ async function serverStatsMw(req, res, next) {
                     blocksPlaced: 0,
                     blocksTraveld: 0,
                     deaths: 0,
-                    graphs: getDefaultGraphs()
+                    graphs: getDefaultGraphs(),
+                    dataAge: {
+                        months3: 0,
+                        months6: 0,
+                        months12: 0
+                    },
+                    players: [],
+                    playerPeak: 0,
+                    totalPlaytime: 0,
+                    runningTime: 0,
+                    blocksBroken: 0,
+                    blocksPlaced: 0,
+                    blocksTraveled: 0,
+                    itemsCrafted: 0,
+                    messages: 0,
+                    characters: 0,
+                    whispers: 0,
+                    commands: 0,
+                    deaths: 0,
                 }
             }
         }
@@ -72,6 +90,7 @@ async function generateServerCache(server, data) {
 
     cachedStats = cachedStats.filter(i => i.server.toString() != server._id.toString())
 
+    const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0] // [3m, 6m, 1y
     const averagePacket = getAverageDataSize(data)
     var start = data[data.length - 5].time
@@ -93,23 +112,6 @@ async function generateServerCache(server, data) {
     var playerPeak = 0
     var playerpeak = 0
     var totalPlaytime = 0
-
-    const defaultTime = {
-        cpu: 0,
-        ram: 0,
-        storage: 0,
-        players: 0,
-        messages: 0,
-        characters: 0,
-        whispers: 0,
-        commands: 0,
-        count: 0,
-        dataCount: 0,
-        blocksBrokenPerPlayer: 0,
-        blocksPlacedPerPlayer: 0,
-        blocksTraveledPerPlayer: 0,
-        itemsCraftedPerPlayer: 0
-    }
 
     function registerToGraph(packet, graphTime, graphIndex) {
         var blocksBroken = 0
@@ -177,25 +179,6 @@ async function generateServerCache(server, data) {
 
     const deletePackets = []
 
-    function getDefaultGraphs() {
-        const graphs = { day: [], month: [], year: [], average: [], peak: [] }
-
-        for (var i = 0; i < 24; i++) {
-            graphs.day.push({ ...defaultTime })
-            graphs.average.push({ ...defaultTime })
-            graphs.peak.push({ ...defaultTime })
-        }
-
-        for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++)
-            graphs.month.push({ ...defaultTime })
-
-        for (var i = 0; i < 12; i++)
-            graphs.year.push({ ...defaultTime })
-
-        return graphs
-    }
-    const graphs = getDefaultGraphs()
-
     for (var time = start; time < Date.now(); time += updateInterval * 1000) {
         promises.push(new Promise(async (resolve) => {
             var date = new Date(time)
@@ -232,6 +215,7 @@ async function generateServerCache(server, data) {
                 if (packet.players.length > playerPeak) {
                     playerpeak = date.getUTCDate()
                     playerPeak = packet.players.length
+                    clearGraph('peak')
                 }
 
                 if (playerpeak == date.getUTCDate())
@@ -354,6 +338,41 @@ async function generateServerCache(server, data) {
     console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets) (searched ${(Math.round((Date.now() - start) / (updateInterval * 1000)))})`)
 
     return cache
+}
+
+function getDefaultGraphs() {
+    const defaultTime = {
+        cpu: 0,
+        ram: 0,
+        storage: 0,
+        players: 0,
+        messages: 0,
+        characters: 0,
+        whispers: 0,
+        commands: 0,
+        count: 0,
+        dataCount: 0,
+        blocksBrokenPerPlayer: 0,
+        blocksPlacedPerPlayer: 0,
+        blocksTraveledPerPlayer: 0,
+        itemsCraftedPerPlayer: 0
+    }
+
+    const graphs = { day: [], month: [], year: [], average: [], peak: [] }
+
+    for (var i = 0; i < 24; i++) {
+        graphs.day.push({ ...defaultTime })
+        graphs.average.push({ ...defaultTime })
+        graphs.peak.push({ ...defaultTime })
+    }
+
+    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++)
+        graphs.month.push({ ...defaultTime })
+
+    for (var i = 0; i < 12; i++)
+        graphs.year.push({ ...defaultTime })
+
+    return graphs
 }
 
 function getAverageDataSize(data) { // KiloBytes

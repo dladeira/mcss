@@ -13,7 +13,7 @@
         <div class="input">
             <input class="slider" :min="min" :max="max" :id="name" type="range" :name="name" :placeholder="placeholder" :disabled="disabled" @input="sliderChange" :step="step" :value="value" />
             <div class="text">
-                <span class="text-bolded">{{ Number.parseFloat(value).toFixed(1) }}</span>/10MB
+                <span class="text-bolded">{{ Number.parseFloat(value).toFixed(1) }}</span>/{{max}}MB
             </div>
         </div>
     </div>
@@ -147,7 +147,7 @@ const props = defineProps({
 
 const emit = defineEmits(['helper'])
 
-const value = ref(props.value ? props.value : props.max / 2)
+const value = ref(props.value ? props.value : Math.floor(props.max / 2))
 const step = ref(props.step ? props.step : 0.5)
 
 function sliderChange(e) {

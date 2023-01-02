@@ -1,5 +1,5 @@
 <template>
-    <section class="main">
+    <section class="main" id="features">
         <h1 class="title">
             <span class="title-blue">Bundled </span>
             with the most popular
@@ -36,18 +36,16 @@
                 </h2>
 
                 <p class="desc">
-                    <span class="desc-blue">CPU </span>
-                    and
-                    <span class="desc-green">RAM </span>
-                    usage
+                    <span class="desc-blue">Player </span>
+                    Chatting Patterns
                 </p>
                 <p class="desc">
-                    Server
-                    <span class="desc-red">health </span>
-                    report
+                    Command frequency
                 </p>
                 <p class="desc">
-                    Chunks and worlds loaded
+                    Realtime
+                    <span class="desc-green">chat </span>
+                    access
                 </p>
             </div>
 
@@ -58,18 +56,16 @@
                 </h2>
 
                 <p class="desc">
-                    <span class="desc-blue">CPU </span>
-                    and
-                    <span class="desc-green">RAM </span>
-                    usage
+                    <span class="desc-blue">Player </span>
+                    session information
                 </p>
                 <p class="desc">
-                    Server
-                    <span class="desc-red">health </span>
-                    report
+                    Individual statistics
                 </p>
                 <p class="desc">
-                    Chunks and worlds loaded
+                    Peak
+                    <span class="desc-blue">player </span>
+                    count
                 </p>
             </div>
         </div>
@@ -82,10 +78,8 @@
 
 <style lang="scss" scoped>
 .main {
-    height: 100vh;
+    height: 110vh;
     min-height: 900px;
-
-    padding-top: 20px;
 }
 
 .title {

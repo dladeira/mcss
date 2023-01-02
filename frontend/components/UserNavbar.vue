@@ -8,7 +8,7 @@
             <div class="links-main">
                 <nuxt-link to="/u/servers" :class="route == '/u/servers' ? 'link-selected' : 'link'">Servers</nuxt-link>
                 <nuxt-link to="/u/account" :class="route == '/u/account' ? 'link-selected' : 'link'">Account</nuxt-link>
-                <nuxt-link to="/u/plans" :class="route == '/u/plans' ? 'link-selected' : 'link'">Plans</nuxt-link>
+                <!-- <nuxt-link to="/u/plans" :class="route == '/u/plans' ? 'link-selected' : 'link'">Plans</nuxt-link> -->
             </div>
 
             <div class="server">
@@ -16,7 +16,7 @@
                     <nuxt-link to="/u/server/overview" :class="route == '/u/server/overview' ? 'link-selected' : 'link'">Overview</nuxt-link>
                     <nuxt-link to="/u/server/players" :class="route == '/u/server/players' ? 'link-selected' : 'link'">Players</nuxt-link>
                     <nuxt-link to="/u/server/statistics" :class="route == '/u/server/statistics' ? 'link-selected' : 'link'">Statistics</nuxt-link>
-                    <div class="link">Surveys</div>
+                    <!-- <div class="link">Surveys</div> -->
                 </div>
                 <div class="divider" />
                 <div class="select-wrapper">
