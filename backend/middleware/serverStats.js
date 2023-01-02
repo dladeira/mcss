@@ -3,7 +3,7 @@ const bson = require('bson')
 const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
-const updateInterval = 2
+const updateInterval = 5
 
 const cacheEnabled = true
 const cacheLife = 60 * 1000
@@ -72,7 +72,6 @@ async function generateServerCache(server, data) {
 
     cachedStats = cachedStats.filter(i => i.server.toString() != server._id.toString())
 
-    const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0] // [3m, 6m, 1y
     const averagePacket = getAverageDataSize(data)
     var start = data[data.length - 5].time
@@ -88,20 +87,62 @@ async function generateServerCache(server, data) {
     const uptimeInfo = [0, 0]
     const players = []
     const blocks = [0, 0, 0] // [broken, placed, traveled]
+    var itemsCrafted = 0
     const chat = [0, 0, 0, 0] // [messages, characters, whispers, commands]
     var deaths = 0
     var playerPeak = 0
+    var playerpeak = 0
     var totalPlaytime = 0
 
+    const defaultTime = {
+        cpu: 0,
+        ram: 0,
+        storage: 0,
+        players: 0,
+        messages: 0,
+        characters: 0,
+        whispers: 0,
+        commands: 0,
+        count: 0,
+        dataCount: 0,
+        blocksBrokenPerPlayer: 0,
+        blocksPlacedPerPlayer: 0,
+        blocksTraveledPerPlayer: 0,
+        itemsCraftedPerPlayer: 0
+    }
+
     function registerToGraph(packet, graphTime, graphIndex) {
+        var blocksBroken = 0
+        var blocksPlaced = 0
+        var blocksTraveled = 0
+        var itemsCrafted = 0
+        var players = 0
+
+        if (Array.isArray(packet.players))
+            for (var player of packet.players) {
+                blocksBroken += player.blocksBroken ? parseInt(player.blocksBroken) : 0
+                blocksPlaced += player.blocksPlaced ? parseInt(player.blocksPlaced) : 0
+                blocksTraveled += player.blocksTraveled ? parseInt(player.blocksTraveled) : 0
+                itemsCrafted += player.itemsCrafted ? parseInt(player.itemsCrafted) : 0
+                players++
+            }
+
+        players = players == 0 ? 1 : players
+
         graphs[graphTime][graphIndex].cpu += packet.cpuUsage
         graphs[graphTime][graphIndex].ram += packet.ramUsage
         graphs[graphTime][graphIndex].storage += packet.storageUsage
         graphs[graphTime][graphIndex].players += packet.players ? packet.players.length : 0
         graphs[graphTime][graphIndex].messages += packet.messages ? packet.messages : 0
+        graphs[graphTime][graphIndex].characters += packet.characters ? packet.characters : 0
         graphs[graphTime][graphIndex].whispers += packet.whispers ? packet.whispers : 0
+        graphs[graphTime][graphIndex].commands += packet.commands ? packet.commands : 0
         graphs[graphTime][graphIndex].dataCount += 1
 
+        graphs[graphTime][graphIndex].blocksBrokenPerPlayer += blocksBroken / players
+        graphs[graphTime][graphIndex].blocksPlacedPerPlayer += blocksPlaced / players
+        graphs[graphTime][graphIndex].blocksTraveledPerPlayer += blocksTraveled / players
+        graphs[graphTime][graphIndex].itemsCraftedPerPlayer += itemsCrafted / players
 
         // graphs[graphTime][graphIndex].cpu += Math.random() * 100
         // graphs[graphTime][graphIndex].ram += Math.random() * 100
@@ -114,7 +155,46 @@ async function generateServerCache(server, data) {
         // graphs[graphTime][graphIndex].count += 1
     }
 
+    function clearGraph(graphTime) {
+        for (var graphIndex in graphs[graphTime]) {
+            graphs[graphTime][graphIndex].cpu = 0
+            graphs[graphTime][graphIndex].ram = 0
+            graphs[graphTime][graphIndex].storage = 0
+            graphs[graphTime][graphIndex].players = 0
+            graphs[graphTime][graphIndex].messages = 0
+            graphs[graphTime][graphIndex].characters = 0
+            graphs[graphTime][graphIndex].whispers = 0
+            graphs[graphTime][graphIndex].commands = 0
+            graphs[graphTime][graphIndex].dataCount = 0
+
+            graphs[graphTime][graphIndex].blocksBrokenPerPlayer = 0
+            graphs[graphTime][graphIndex].blocksPlacedPerPlayer = 0
+            graphs[graphTime][graphIndex].blocksTraveledPerPlayer = 0
+            graphs[graphTime][graphIndex].itemsCraftedPerPlayer = 0
+        }
+
+    }
+
     const deletePackets = []
+
+    function getDefaultGraphs() {
+        const graphs = { day: [], month: [], year: [], average: [], peak: [] }
+
+        for (var i = 0; i < 24; i++) {
+            graphs.day.push({ ...defaultTime })
+            graphs.average.push({ ...defaultTime })
+            graphs.peak.push({ ...defaultTime })
+        }
+
+        for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++)
+            graphs.month.push({ ...defaultTime })
+
+        for (var i = 0; i < 12; i++)
+            graphs.year.push({ ...defaultTime })
+
+        return graphs
+    }
+    const graphs = getDefaultGraphs()
 
     for (var time = start; time < Date.now(); time += updateInterval * 1000) {
         promises.push(new Promise(async (resolve) => {
@@ -135,6 +215,7 @@ async function generateServerCache(server, data) {
 
                     if (date.getUTCMonth() == now.getUTCMonth()) {
                         registerToGraph(packet, 'month', date.getUTCDate() - 1)
+                        registerToGraph(packet, 'average', date.getUTCHours() - 1)
 
                         if (date.getUTCDate() == now.getUTCDate()) {
                             registerToGraph(packet, 'day', date.getUTCHours() - 1)
@@ -142,12 +223,19 @@ async function generateServerCache(server, data) {
                     }
                 }
 
-
                 blocks[0] += packet.blocksBroken ? packet.blocksBroken : 0
                 blocks[1] += packet.blocksPlaced ? packet.blocksPlaced : 0
                 blocks[2] += packet.blocksTraveled ? packet.blocksTraveled : 0
                 deaths += packet.deaths ? packet.deaths : 0
-                playerPeak = packet.players.length > playerPeak ? packet.players.length : playerPeak
+                itemsCrafted += packet.itemsCrafted ? packet.itemsCrafted : 0
+
+                if (packet.players.length > playerPeak) {
+                    playerpeak = date.getUTCDate()
+                    playerPeak = packet.players.length
+                }
+
+                if (playerpeak == date.getUTCDate())
+                    registerToGraph(packet, 'peak', date.getUTCHours() - 1)
 
                 chat[0] += packet.messages ? packet.messages : 0
                 chat[1] += packet.characters ? packet.characters : 0
@@ -246,6 +334,7 @@ async function generateServerCache(server, data) {
         blocksBroken: blocks[0],
         blocksPlaced: blocks[1],
         blocksTraveled: blocks[2],
+        itemsCrafted: itemsCrafted,
         messages: chat[0],
         characters: chat[1],
         whispers: chat[2],
@@ -265,32 +354,6 @@ async function generateServerCache(server, data) {
     console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets) (searched ${(Math.round((Date.now() - start) / (updateInterval * 1000)))})`)
 
     return cache
-}
-
-function getDefaultGraphs() {
-    const graphs = { day: [], month: [], year: [] }
-
-    const defaultTime = {
-        cpu: 0,
-        ram: 0,
-        storage: 0,
-        players: 0,
-        messages: 0,
-        whispers: 0,
-        count: 0,
-        dataCount: 0
-    }
-
-    for (var i = 0; i < 24; i++)
-        graphs.day.push({ ...defaultTime })
-
-    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++)
-        graphs.month.push({ ...defaultTime })
-
-    for (var i = 0; i < 12; i++)
-        graphs.year.push({ ...defaultTime })
-
-    return graphs
 }
 
 function getAverageDataSize(data) { // KiloBytes

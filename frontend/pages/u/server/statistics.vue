@@ -56,6 +56,58 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="option-column">
+                                <div class="option" @click="toggleYSelected('messages')">
+                                    <div :class="isYSelected('messages') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Messages sent
+                                    </div>
+                                </div>
+                                <div class="option" @click="toggleYSelected('characters')">
+                                    <div :class="isYSelected('characters') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Characters sent
+                                    </div>
+                                </div>
+                                <div class="option" @click="toggleYSelected('whispers')">
+                                    <div :class="isYSelected('whispers') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Whispers sent
+                                    </div>
+                                </div>
+                                <div class="option" @click="toggleYSelected('commands')">
+                                    <div :class="isYSelected('commands') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Commands sent
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="option-column">
+                                <div class="option" @click="toggleYSelected('blocksBrokenPerPlayer')">
+                                    <div :class="isYSelected('blocksBrokenPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Blocks broken/player
+                                    </div>
+                                </div>
+                                <div class="option" @click="toggleYSelected('blocksPlacedPerPlayer')">
+                                    <div :class="isYSelected('blocksPlacedPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Blocks placed/player
+                                    </div>
+                                </div>
+                                <div class="option" @click="toggleYSelected('blocksTraveledPerPlayer')">
+                                    <div :class="isYSelected('blocksTraveledPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Blocks traveled/player
+                                    </div>
+                                </div>
+                                <div class="option" @click="toggleYSelected('itemsCraftedPerPlayer')">
+                                    <div :class="isYSelected('itemsCraftedPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                                    <div class="option-text">
+                                        Items Crafted/player
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -222,7 +274,7 @@
     justify-content: space-between;
     align-items: center;
 
-    width: 100%;
+    width: calc(100% - 3rem);
 
     margin: 0 1.5rem;
 }
@@ -314,6 +366,22 @@ function yIndexToText(index) {
             return 'Storage Usage'
         case 'players':
             return 'Player Count'
+        case 'messages':
+            return 'Messages'
+        case 'characters':
+            return 'Characters'
+        case 'whispers':
+            return 'Whispers'
+        case 'commands':
+            return 'Commands'
+        case 'blocksBrokenPerPlayer':
+            return 'Blocks broken/player'
+        case 'blocksPlacedPerPlayer':
+            return 'Blocks placed/player'
+        case 'blocksTraveledPerPlayer':
+            return 'Blocks Traveled/player'
+        case 'itemsCraftedPerPlayer':
+            return 'Items Crafted/player'
     }
 }
 
@@ -327,6 +395,8 @@ function getColor(index) {
             return '#FF3030'
         case 3:
             return '#FFC700'
+        default:
+            return '#FFFFFF'
     }
 }
 
@@ -372,6 +442,7 @@ let options = {
             }
         },
         y: {
+            min: 0,
             grid: {
                 display: false,
             },
@@ -397,6 +468,16 @@ function getLabels() {
                 values.push(i)
             }
             return values
+        case "peak":
+            for (var i = 0; i < 24; i++) {
+                values.push(i)
+            }
+            return values
+        case "average":
+            for (var i = 0; i < 24; i++) {
+                values.push(i)
+            }
+            return values
         case "month":
             for (var i = 1; i <= new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++) {
                 values.push(i)
@@ -411,7 +492,7 @@ function getLabels() {
 
 function getDataset(index, timeFrame) {
     const values = []
-
+    console.log(activeServer.value.stats.cache.graphs['peak'])
     // Timezone offset
     if (timeFrame == 'day')
         for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {

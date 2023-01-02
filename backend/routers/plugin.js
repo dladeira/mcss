@@ -6,7 +6,7 @@ const socket = require('../socket')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 
-const updateInterval = 2
+const updateInterval = 5
 
 const { generateServerCache } = require('../middleware/serverStats')
 
@@ -46,7 +46,6 @@ router.post('/stats-update', async (req, res) => {
     }
 
     const storageUsage = getAverageDataSize(dataPackets) * dataPackets.length / 1024 / server.storage * 100
-    console.log(storageUsage)
 
 
     const data = new Data({

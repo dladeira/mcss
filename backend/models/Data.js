@@ -21,6 +21,7 @@ const dataSchema = new mongoose.Schema({
     blocksPlaced: Number,
     blocksBroken: Number,
     blocksTraveled: Number,
+    itemsCrafted: Number,
     deaths: Number
 })
 

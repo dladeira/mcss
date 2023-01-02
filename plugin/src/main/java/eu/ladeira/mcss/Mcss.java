@@ -36,6 +36,7 @@ public class Mcss extends JavaPlugin {
 	public static int blocksBroken = 0;
 	public static int blocksPlaced = 0;
 	public static int blocksTraveled = 0;
+	public static int itemsCrafted = 0;
 
 	public static HashSet<StatsPlayer> players = new HashSet<>();
 	
@@ -159,6 +160,7 @@ public class Mcss extends JavaPlugin {
 		form.put("blocksBroken", String.valueOf(blocksBroken));
 		form.put("blocksPlaced", String.valueOf(blocksPlaced));
 		form.put("blocksTraveled", String.valueOf(blocksTraveled));
+		form.put("itemsCrafted", String.valueOf(itemsCrafted));
 
 		form.put("secret", secret);
 

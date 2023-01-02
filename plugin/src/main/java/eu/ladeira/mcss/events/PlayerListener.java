@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -70,5 +71,11 @@ public class PlayerListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent e) {
 		Mcss.getStatsPlayer(e.getPlayer().getUniqueId()).blocksPlaced++;
 		Mcss.blocksPlaced++;
+	}
+	
+	@EventHandler
+	public void onItemCraft(CraftItemEvent e) {
+		Mcss.getStatsPlayer(e.getWhoClicked().getUniqueId()).itemsCrafted++;
+		Mcss.itemsCrafted++;
 	}
 }

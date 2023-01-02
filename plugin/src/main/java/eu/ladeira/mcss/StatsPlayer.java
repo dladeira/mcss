@@ -22,6 +22,7 @@ public class StatsPlayer {
 	public int blocksBroken;
 	public int blocksPlaced;
 	public int blocksTraveled;
+	public int itemsCrafted;
 
 	public StatsPlayer(UUID uuid) {
 		this.uuid = uuid;
@@ -34,6 +35,7 @@ public class StatsPlayer {
 		this.blocksBroken = 0;
 		this.blocksPlaced = 0;
 		this.blocksTraveled = 0;
+		this.itemsCrafted = 0;
 	}
 
 	public static String stringifyPlayers(HashSet<StatsPlayer> players) {
@@ -60,6 +62,7 @@ public class StatsPlayer {
 			data.put("blocksBroken", String.valueOf(stats.blocksBroken));
 			data.put("blocksPlaced", String.valueOf(stats.blocksPlaced));
 			data.put("blocksTraveled", String.valueOf(stats.blocksTraveled));
+			data.put("itemsCrafted", String.valueOf(stats.itemsCrafted));
 			data.put("location", "(" + Math.round(player.getLocation().getX()) + ", " + Math.round(player.getLocation().getY()) + ", " + Math.round(player.getLocation().getZ()) + ")");
 			
 			stats.playtime = 0;
