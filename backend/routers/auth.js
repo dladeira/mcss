@@ -3,7 +3,6 @@ const router = express.Router()
 
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const argv = require('minimist')(process.argv.slice(2))
 const nodemailer = require('nodemailer')
 
 const User = require('../models/User')
@@ -80,7 +79,7 @@ router.post('/register', async (req, res) => {
             from: 'MCSS <mcss@ladeira.eu',
             to: `<${email}>`,
             subject: 'Account Creation - Email Verification',
-            html: `To finish creating your account, verify your email by clicking the link below<br><br><a href="${argv["origin"]}/api/auth/verify-email?code=${code}">Verify Email</a>`
+            html: `To finish creating your account, verify your email by clicking the link below<br><br><a href="${process.env.ORIGIN}/api/auth/verify-email?code=${code}">Verify Email</a>`
         }
 
         await transporter.sendMail(message)
