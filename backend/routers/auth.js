@@ -133,7 +133,7 @@ router.get('/verify-email', async (req, res) => {
         sameSite: 'lax'
     })
 
-    return res.status(200).redirect('/u/account')
+    return res.status(200).redirect('/u/servers')
 })
 
 router.post('/pwd-change', loggedIn, async (req, res) => {
