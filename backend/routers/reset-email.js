@@ -10,7 +10,7 @@ const socket = require('../socket')
 
 var confirmations = []
 
-router.post('/old', loggedIn, async (req, res) => {
+router.post('/old', loggedIn(), async (req, res) => {
     try {
         let transporter = nodemailer.createTransport({
             host: "smtp.ladeira.eu",
@@ -47,7 +47,7 @@ router.post('/old', loggedIn, async (req, res) => {
     }
 })
 
-router.get('/verify', loggedIn, async (req, res) => {
+router.get('/verify', loggedIn(), async (req, res) => {
     const { code } = req.query
 
     var index = confirmations.findIndex(i => i.code == code)
@@ -85,7 +85,7 @@ router.get('/verify', loggedIn, async (req, res) => {
     return res.status(200).send("Email verified. You can close this page now")
 })
 
-router.post('/new', loggedIn, async (req, res) => {
+router.post('/new', loggedIn(), async (req, res) => {
     const { email } = req.body
 
     const user = await User.findOne({ email: email })

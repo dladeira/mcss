@@ -133,7 +133,7 @@ export default {
             this.msgs += `
             <div class="msg">
                 <div class="time">19min</div>
-                <img src="https://cravatar.eu/avatar/DespacitoMaster/16.png" class="image" />
+                <img src="https://cravatar.eu/avatar/${data.sender}/16.png" class="image" />
                 <p class="content">
                     <span class="sender">${data.sender}</span>
                     <span class="text">: ${data.msg}</span>

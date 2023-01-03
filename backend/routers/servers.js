@@ -9,11 +9,11 @@ const loggedIn = require('../middleware/loggedIn')
 const { serverStatsMw } = require('../middleware/serverStats')
 
 
-router.post('/get', loggedIn, serverStatsMw, async (req, res) => {
+router.post('/get', loggedIn(true), serverStatsMw, async (req, res) => {
     res.status(200).json({ servers: req.servers })
 })
 
-router.post('/new', loggedIn, async (req, res) => {
+router.post('/new', loggedIn(), async (req, res) => {
     const { serverName, serverType, bungeeInstance, storageAllocated } = req.body
 
     const userServers = await Server.find({ owner: req.user._id })
@@ -59,7 +59,7 @@ router.post('/new', loggedIn, async (req, res) => {
     return res.status(200).json({ success: "Server created" })
 })
 
-router.post('/delete', loggedIn, async (req, res) => {
+router.post('/delete', loggedIn(), async (req, res) => {
     const { _id } = req.body
 
     await Server.deleteOne({ owner: req.user._id, _id: _id })
@@ -68,7 +68,7 @@ router.post('/delete', loggedIn, async (req, res) => {
     return res.status(200).json({})
 })
 
-router.post('/update', loggedIn, async (req, res) => {
+router.post('/update', loggedIn(), async (req, res) => {
     const { serverName, bungeeInstance, storageAllocated, _id } = req.body
 
     if (!serverName)
@@ -111,7 +111,7 @@ router.post('/update', loggedIn, async (req, res) => {
     return res.status(200).json({ success: "Server saved" })
 })
 
-router.post('/delete', loggedIn, async (req, res) => {
+router.post('/delete', loggedIn(), async (req, res) => {
     const { name } = req.body
 
     await Server.deleteOne({ onwer: req.user._id, name: name })
@@ -119,7 +119,7 @@ router.post('/delete', loggedIn, async (req, res) => {
     return res.status(200).json({})
 })
 
-router.post('/lifetime', loggedIn, async (req, res) => {
+router.post('/lifetime', loggedIn(), async (req, res) => {
     const { _id, lifetime } = req.body
 
     const server = await Server.findOne({ owner: req.user._id, _id: _id })

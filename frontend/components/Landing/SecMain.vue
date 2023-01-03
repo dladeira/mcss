@@ -15,10 +15,14 @@
                     and player behaviors
                 </h2>
 
+                <div class="buttons">
                     <nuxt-link class="cta" to="login">
                         Get Started
                     </nuxt-link>
-
+                    <a class="demo" to="login" @click="setDemo">
+                        Demo
+                    </a>
+                </div>
             </div>
             <div class="image" />
         </div>
@@ -65,6 +69,8 @@
     flex-direction: column;
 
     margin-top: 50px;
+
+    animation: fade-in 2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .title {
@@ -83,7 +89,6 @@
         color: $green;
     }
 
-    animation: fade-in 2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .subtitle {
@@ -93,8 +98,11 @@
     font-size: 2rem;
     font-weight: 400;
     color: $gray1;
+}
 
-    animation: fade-in 2s cubic-bezier(0.22, 0.61, 0.36, 1);
+.buttons {
+    display: flex;
+    flex-direction: row;
 }
 
 .cta {
@@ -103,13 +111,14 @@
     justify-content: center;
     align-items: center;
 
+    height: 4.5rem;
+    width: 18rem;
 
-    height: 5rem;
-    width: 20rem;
+    margin-right: 2rem;
 
     border-radius: 1000px;
 
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 500;
     text-decoration: none;
     background-color: rgba($green, 0.1);
@@ -119,25 +128,41 @@
     overflow: hidden;
     z-index: 0;
 
+    transition: all 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+
     &::after {
+        $borderRadius: 0px;
         content: '';
         position: absolute;
         z-index: -1;
-        left: 6px;
-        top: 6px;
-        width: calc(100% - 12px);
-        height: calc(100% - 12px);
-        background: #113a3d;
+        left: $borderRadius;
+        top: $borderRadius;
+        width: calc(100% - ($borderRadius * 2));
+        height: calc(100% - ($borderRadius * 2));
+        background-color: rgba(0, 0, 0, 0.05);
         border-radius: 1000px;
 
         opacity: 0;
     }
 
     &:hover {
+        cursor: pointer;
+
+        box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.588);
+
         &:after {
             opacity: 1;
         }
     }
+}
+
+.demo {
+    @extend .cta;
+
+    width: 13rem;
+
+    background-color: rgba(white, 0.1);
+    color: white;
 }
 
 @keyframes rotate {
@@ -224,3 +249,14 @@
     }
 }
 </style>
+
+<script setup>
+const demo = useState('demo')
+const user = useState('user')
+
+
+function setDemo() {
+    demo.value = true
+    navigateTo('/u/servers')
+}
+</script>

@@ -35,6 +35,7 @@
 </style>
 
 <script setup>
+const demo = useState("demo")
 const user = useState("user")
 const servers = useState("servers")
 const config = useRuntimeConfig()
@@ -51,7 +52,7 @@ const activeServerCookie = useCookie("activeServer", {
 
 const activeServer = useState("activeServer")
 
-if (!token.value || token.value.length == 0)
+if ((!token.value || token.value.length == 0) && !demo)
     navigateTo("/")
 
 async function getUserData() {
@@ -59,7 +60,8 @@ async function getUserData() {
         method: "POST",
         credentials: "same-origin",
         body: {
-            token: token.value
+            token: token.value,
+            demo: demo.value
         },
     })
 
@@ -67,6 +69,7 @@ async function getUserData() {
         console.log("Forbidden user data")
         return navigateTo("/")
     }
+
     user.value = data.value.user
 }
 
@@ -76,7 +79,8 @@ async function getServerData() {
         method: "POST",
         credentials: "same-origin",
         body: {
-            token: token.value
+            token: token.value,
+            demo: demo.value
         },
     })
 

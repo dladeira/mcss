@@ -29,7 +29,7 @@ function setup(server) {
 
             jwt.verify(token, process.env.JWT_KEY, async (err, id) => {
                 if (err)
-                    return console.log("Error: Failure verifying Socket JWT")
+                    return /*console.log("Error: Failure verifying Socket JWT")*/
 
 
                 const foundUser = await User.findOne({ _id: id })

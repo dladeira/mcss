@@ -15,7 +15,7 @@ const pwdResetCodes = []
 
 router.use('/reset-email', resetEmailRouter)
 
-router.post('/user', loggedIn, (req, res) => {
+router.post('/user', loggedIn(true), (req, res) => {    
     req.user.password = undefined
 
     res.status(200).json({ user: req.user })
@@ -61,8 +61,6 @@ router.post('/register', async (req, res) => {
 
     if (existingSent)
         return res.status(400).json({ error: "Email already sent" })
-
-    console.log("trying")
 
     try {
         let transporter = nodemailer.createTransport({
@@ -136,7 +134,7 @@ router.get('/verify-email', async (req, res) => {
     return res.status(200).redirect('/u/servers')
 })
 
-router.post('/pwd-change', loggedIn, async (req, res) => {
+router.post('/pwd-change', loggedIn(), async (req, res) => {
     const { old, new1, new2 } = req.body
 
     if (new1 != new2) {
