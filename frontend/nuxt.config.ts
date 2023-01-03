@@ -21,6 +21,7 @@ export default defineNuxtConfig({
         'nuxt-socket-io'
     ],
     io: {
+        // server: { teardown: false },
         sockets: [
             {
                 name: 'main',
