@@ -36,7 +36,7 @@
                     Forever
                 </h1>
                 <p class="size">
-                    {{ activeServer.stats.cache.storageUsed }}MB
+                    {{ activeServer.stats.cache.dataAge.forever }}MB
                 </p>
             </div>
         </div>

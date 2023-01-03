@@ -91,7 +91,7 @@ async function generateServerCache(server, data) {
     cachedStats = cachedStats.filter(i => i.server.toString() != server._id.toString())
 
     const graphs = getDefaultGraphs()
-    const dataAge = [0, 0, 0] // [3m, 6m, 1y
+    const dataAge = [0, 0, 0, 0] // [3m, 6m, 1y, forever]
     const averagePacket = getAverageDataSize(data)
     var start = data[data.length - 5].time
     // var start = Date.now() - 55492000
@@ -259,6 +259,8 @@ async function generateServerCache(server, data) {
                     } else {
                         dataAge[0]++
                     }
+                } else {
+                    dataAge[3]++
                 }
 
                 uptimeInfo[0]++
@@ -312,7 +314,8 @@ async function generateServerCache(server, data) {
         dataAge: {
             months3: Math.round((dataAge[0]) * averagePacket / 1024 * 10) / 10,
             months6: Math.round((dataAge[0] + dataAge[1]) * averagePacket / 1024 * 10) / 10,
-            months12: Math.round((dataAge[0] + dataAge[1] + dataAge[2]) * averagePacket / 1024 * 10) / 10
+            months12: Math.round((dataAge[0] + dataAge[1] + dataAge[2]) * averagePacket / 1024 * 10) / 10,
+            forever: Math.round((dataAge[0] + dataAge[1] + dataAge[2] + dataAge[3]) * averagePacket / 1024 * 10) / 10
         },
         players,
         blocksBroken: blocks[0],

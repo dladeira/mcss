@@ -1,6 +1,3 @@
-// Don't touch this while server is running
-// nuxt-socket-io doesn't like that and breaks :(
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     css: [
@@ -21,7 +18,7 @@ export default defineNuxtConfig({
         'nuxt-socket-io'
     ],
     io: {
-        // server: { teardown: false },
+        server: { teardown: false },
         sockets: [
             {
                 name: 'main',
