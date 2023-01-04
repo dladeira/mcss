@@ -117,7 +117,7 @@ router.get('/verify-email', async (req, res) => {
         password: hash,
         plan: {
             storage: 6,
-            serverSlots: 6,
+            serverSlots: 1,
             maxDataLife: 3
         }
     }).save()
