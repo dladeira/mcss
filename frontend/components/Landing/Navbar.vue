@@ -6,9 +6,9 @@
         </nuxt-link>
 
         <div class="links">
-            <a class="link" href="#features">Features</a>
-            <a class="link" href="#pricing">Pricing</a>
-            <a class="link" href="#roadmap">Roadmap</a>
+            <nuxt-link to="/#features" class="link">Features</nuxt-link>
+            <nuxt-link to="/#pricing" class="link">Pricing</nuxt-link>
+            <nuxt-link to="/#roadmap" class="link">Roadmap</nuxt-link>
         </div>
 
         <nuxt-link class="login" to="/login">

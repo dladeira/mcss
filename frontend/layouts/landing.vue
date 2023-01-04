@@ -1,18 +1,15 @@
-<template>    
+<template>
     <div class="wrapper">
-        <div class="inner-wrapper">
-            <div class="page">
-                <LandingNavbar />
-                <slot />
-            </div>
-            <Footer />
+        <div class="page">
+            <LandingNavbar />
+            <slot />
         </div>
+        <Footer />
     </div>
 </template>
 
 <style lang="scss" scoped>
-.wrapper,
-.inner-wrapper {
+.wrapper {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -20,13 +17,8 @@
     min-height: calc(100vh + 140px);
     width: 100%;
 
-    background-color: $dark1;
 
     overflow-x: hidden;
-}
-
-.inner-wrapper {
-    background-image: $gradient-main;
 }
 
 .page {

@@ -1,25 +1,27 @@
 <template>
+    <div>
 
-    <Head>
-        <Title>{{ activeServer.name }} - Players</Title>
-    </Head>
+        <Head>
+            <Title>{{ activeServer.name }} - Players</Title>
+        </Head>
 
-    <NuxtLayout name="server">
-        <div class="page">
-            <div class="top">
-                <PlayersUsage />
+        <NuxtLayout name="server">
+            <div class="page">
+                <div class="top">
+                    <PlayersUsage />
 
-                <PlayersList />
-            </div>
-            <div class="bottom">
-                <PlayersPlayerStats />
-                <PlayersChatStats />
-                <div class="adv panel">
+                    <PlayersList />
+                </div>
+                <div class="bottom">
+                    <PlayersPlayerStats />
+                    <PlayersChatStats />
+                    <div class="adv panel">
 
+                    </div>
                 </div>
             </div>
-        </div>
-    </NuxtLayout>
+        </NuxtLayout>
+    </div>
 </template>
 
 <style lang="scss" scoped>

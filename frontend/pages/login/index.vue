@@ -1,10 +1,9 @@
 <template>
+    <div>
 
-    <Head>
-        <Title>Login</Title>
-    </Head>
-
-    <NuxtLayout name="landing">
+        <Head>
+            <Title>Login</Title>
+        </Head>
         <h1 class="title">Welcome <span class="title-green">back</span></h1>
 
         <div class="panels">
@@ -32,7 +31,7 @@
                 <div v-if="loginError" class="error">{{ loginError }}</div>
             </form>
         </div>
-    </NuxtLayout>
+    </div>
 </template>
 
 <style lang="scss" scoped>
@@ -222,4 +221,11 @@ async function login(e) {
     token.value = data.value.token
     navigateTo("/u")
 }
+
+definePageMeta({
+    pageTransition: {
+        name: 'slide-left'
+    },
+    layout: 'landing'
+})
 </script>

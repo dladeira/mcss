@@ -3,8 +3,6 @@
         <div class="header">
             <h1 class="title">
                 Live Chat
-                <input type="hidden" id="activeServer-id" :value="activeServer._id" />
-                <input type="hidden" id="activeServer-recentMessages" :value="JSON.stringify(activeServer.recentMessages)" />
             </h1>
         </div>
 
@@ -104,10 +102,6 @@
 }
 </style>
 
-<script setup>
-const activeServer = useState('activeServer')
-</script>
-
 <script>
 export default {
     data() {
@@ -116,8 +110,9 @@ export default {
         }
     },
     setup() {
-        const activeServer = useState('')
-        return activeServer
+        return {
+            activeServer: useState('activeServer')
+        }
     },
     mounted() {
         let socket = this.$nuxtSocket({
@@ -129,7 +124,7 @@ export default {
             sameSite: 'lax'
         }).value)
 
-        for (var data of JSON.parse(document.getElementById('activeServer-recentMessages').value)) {
+        for (var data of this.activeServer.recentMessages) {
             this.msgs += `
             <div class="msg">
                 <div class="time">19min</div>
@@ -145,7 +140,7 @@ export default {
         this.scrollToBottom()
 
         socket.on('chatMsg', (data) => {
-            if (document.getElementById('activeServer-id').value == data.server) {
+            if (this.activeServer._id == data.server) {
                 this.msgs += `
             <div class="msg">
                 <div class="time">19min</div>
@@ -158,7 +153,7 @@ export default {
             `
                 this.scrollToBottom()
             } else {
-                console.log(`wanted ${document.getElementById('activeServer-id').value} | received ${data.server}`)
+                console.log(`wanted ${this.activeServer._id} | received ${data.server}`)
             }
         })
     },
@@ -170,7 +165,7 @@ export default {
                     left: 0,
                     behavior: 'smooth'
                 })
-            }, 0)
+            }, 10)
         }
     }
 }

@@ -1,31 +1,33 @@
 <template>
+    <div>
 
-    <Head>
-        <Title>{{ activeServer.name }} - Overview</Title>
-    </Head>
+        <Head>
+            <Title>{{ activeServer.name }} - Overview</Title>
+        </Head>
 
-    <NuxtLayout name="server">
-        <div class="page">
+        <NuxtLayout name="server">
+            <div class="page">
 
-            <div class="dials">
-                <OverviewDial name="CPU" :value="activeServer.stats.live.cpuUsage + '%'" color="#00C2FF" />
-                <OverviewDial name="RAM" :value="activeServer.stats.live.ramUsage + '%'" color="#00FF75" />
-                <OverviewDial name="Storage" :value="activeServer.stats.cache.storageUsage + '%'" color="#FF3030" />
-                <OverviewDial name="Uptime" :value="activeServer.stats.cache.uptime + '%'" color="#FFC700" />
+                <div class="dials">
+                    <OverviewDial name="CPU" :value="activeServer.stats.live.cpuUsage + '%'" color="#00C2FF" />
+                    <OverviewDial name="RAM" :value="activeServer.stats.live.ramUsage + '%'" color="#00FF75" />
+                    <OverviewDial name="Storage" :value="activeServer.stats.cache.storageUsage + '%'" color="#FF3030" />
+                    <OverviewDial name="Uptime" :value="activeServer.stats.cache.uptime + '%'" color="#FFC700" />
+                </div>
+
+                <div class="graphs">
+                    <OverviewUsage />
+                    <OverviewPlayers />
+                </div>
+
+                <div class="misc">
+                    <OverviewChat />
+                    <OverviewStorage />
+                    <OverviewDataLifetime />
+                </div>
             </div>
-
-            <div class="graphs">
-                <OverviewUsage />
-                <OverviewPlayers />
-            </div>
-
-            <div class="misc">
-                <OverviewChat />
-                <OverviewStorage />
-                <OverviewDataLifetime />
-            </div>
-        </div>
-    </NuxtLayout>
+        </NuxtLayout>
+    </div>
 </template>
 
 <style lang="scss" scoped>

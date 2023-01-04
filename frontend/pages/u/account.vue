@@ -1,31 +1,34 @@
 <template>
-    <Head>
-        <Title>Account</Title>
-    </Head>
+    <div>
 
-    <NuxtLayout name="user">
-        <div class="title">Account</div>
+        <Head>
+            <Title>Account</Title>
+        </Head>
 
-        <div class="grid">
-            <div class="column">
-                <!-- <AccountLanguage /> -->
-                <!-- <AccountBugs /> -->
-                <AccountPassword />
-            </div>
-            <div class="column">
-                <AccountEmail />
-                <!-- <AccountPassword /> -->
-            </div>
-            <div class="column">
-                <!-- <div class="plan"></div> -->
-                <!-- <div class="control"></div> -->
-            </div>
-        </div>
+        <NuxtLayout name="user">
+            <div class="title">Account</div>
 
-        <button @click="logout" class="logout">
-            Logout
-        </button>
-    </NuxtLayout>
+            <div class="grid">
+                <div class="column">
+                    <!-- <AccountLanguage /> -->
+                    <!-- <AccountBugs /> -->
+                    <AccountPassword />
+                </div>
+                <div class="column">
+                    <AccountEmail />
+                    <!-- <AccountPassword /> -->
+                </div>
+                <div class="column">
+                    <!-- <div class="plan"></div> -->
+                    <!-- <div class="control"></div> -->
+                </div>
+            </div>
+
+            <button @click="logout" class="logout">
+                Logout
+            </button>
+        </NuxtLayout>
+    </div>
 </template>
 
 <style lang="scss" scoped>

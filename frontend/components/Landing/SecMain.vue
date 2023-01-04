@@ -56,6 +56,7 @@
 }
 
 .jumbotron {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -173,7 +174,7 @@
 
 .image {
     position: absolute;
-    left: 60vw;
+    left: 40vw;
     height: 33rem;
     width: 52.9rem;
 
@@ -222,10 +223,12 @@
 @keyframes slide-from-right {
     0% {
         left: 100vw;
+        opacity: 0;
     }
 
     100% {
-        left: 60vw;
+        left: 40vw;
+        opacity: 1;
     }
 }
 
@@ -238,16 +241,6 @@
         opacity: 1;
     }
 }
-
-@keyframes grow-height {
-    0% {
-        height: 0px;
-    }
-
-    100% {
-        height: 5rem;
-    }
-}
 </style>
 
 <script setup>
@@ -257,6 +250,7 @@ const user = useState('user')
 
 function setDemo() {
     demo.value = true
+    user.value = undefined
     navigateTo('/u/servers')
 }
 </script>

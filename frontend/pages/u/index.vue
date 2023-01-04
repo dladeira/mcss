@@ -1,5 +1,7 @@
 <template>
-    <NuxtLayout name="user"></NuxtLayout>
+    <div>
+        <NuxtLayout name="user"></NuxtLayout>
+    </div>
 </template>
 
 <style lang="scss" scoped>

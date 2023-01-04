@@ -19,9 +19,10 @@ body,
 }
 
 html {
-    background-color: black;
+    background-color: $dark1;
 
     overflow-y: scroll;
+    overflow-x: hidden;
     scroll-behavior:smooth;
 
     // SCROLLBAR
@@ -52,6 +53,10 @@ html {
         border-radius: 100px;
         -webkit-border-radius: 100px;
     }
+}
+
+body {
+    background-image: $gradient-main;
 }
 
 * {

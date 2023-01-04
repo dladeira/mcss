@@ -1,67 +1,69 @@
 <template>
+    <div>
 
-    <Head>
-        <Title>Servers</Title>
-    </Head>
+        <Head>
+            <Title>Servers</Title>
+        </Head>
 
-    <NuxtLayout name="user">
-        <!-- <div class="plan">
+        <NuxtLayout name="user">
+            <!-- <div class="plan">
             <span class="plan-premium">Premium</span> Plan
         </div>
         <nuxt-link class="plan-upgrade" to="/u/plans">Upgrade</nuxt-link> -->
 
-        <div class="stats">
-            <div class="stat">
-                <h1 class="stat-title">
-                    <span class="stat-green">0</span>/{{ 0 }}
-                </h1>
+            <div class="stats">
+                <div class="stat">
+                    <h1 class="stat-title">
+                        <span class="stat-green">0</span>/{{ 0 }}
+                    </h1>
 
-                <h2 class="stat-subtitle">
-                    BungeeCord Slots
-                </h2>
-            </div>
-            <div class="stat">
-                <h1 class="stat-title">
-                    <span class="stat-green">{{ servers.length }}</span>/{{ user.plan.serverSlots }}
-                </h1>
+                    <h2 class="stat-subtitle">
+                        BungeeCord Slots
+                    </h2>
+                </div>
+                <div class="stat">
+                    <h1 class="stat-title">
+                        <span class="stat-green">{{ servers.length }}</span>/{{ user.plan.serverSlots }}
+                    </h1>
 
-                <h2 class="stat-subtitle">
-                    Server Slots
-                </h2>
-            </div>
-            <div class="stat">
-                <h1 class="stat-title">
-                    <span class="stat-blue">{{ servers.reduce((acc, obj) => acc + obj.storage, 0) }}</span>/{{ user.plan.storage }}MB
-                </h1>
+                    <h2 class="stat-subtitle">
+                        Server Slots
+                    </h2>
+                </div>
+                <div class="stat">
+                    <h1 class="stat-title">
+                        <span class="stat-blue">{{ servers.reduce((acc, obj) => acc + obj.storage, 0) }}</span>/{{ user.plan.storage }}MB
+                    </h1>
 
-                <h2 class="stat-subtitle">
-                    Storage Used
-                </h2>
-            </div>
-        </div>
-
-        <div class="servers">
-            <div class="sh">
-                <a class="sh-servers sh-link" :class="currentPanel == 'servers' ? 'sh-active' : ''" @click="setPanel('servers')">
-                    Servers
-                </a>
-
-                <a class="sh-create sh-link" :class="currentPanel == 'create' ? 'sh-active' : ''" @click="setPanel('create')">
-                    Create Server
-                </a>
+                    <h2 class="stat-subtitle">
+                        Storage Used
+                    </h2>
+                </div>
             </div>
 
-            <div v-if="currentPanel == 'servers'" class="panel panel-servers">
-                <ServersServer v-for="server in servers" :name="server.name" :_id="server._id" :stats="server.stats" @settings="openSettings(server._id)" />
+            <div class="servers">
+                <div class="sh">
+                    <a class="sh-servers sh-link" :class="currentPanel == 'servers' ? 'sh-active' : ''" @click="setPanel('servers')">
+                        Servers
+                    </a>
+
+                    <a class="sh-create sh-link" :class="currentPanel == 'create' ? 'sh-active' : ''" @click="setPanel('create')">
+                        Create Server
+                    </a>
+                </div>
+
+                <div v-if="currentPanel == 'servers'" class="panel panel-servers">
+                    <ServersServer v-for="server in servers" :name="server.name" :_id="server._id" :stats="server.stats" @settings="openSettings(server._id)" />
+                </div>
+                <div v-if="currentPanel == 'settings'" class="panel panel-settings">
+                    <ServersSettings :server="serverSettings" />
+                </div>
+                <div v-if="currentPanel == 'create'" class="panel panel-create">
+                    <ServersCreate />
+                </div>
             </div>
-            <div v-if="currentPanel == 'settings'" class="panel panel-settings">
-                <ServersSettings :server="serverSettings" />
-            </div>
-            <div v-if="currentPanel == 'create'" class="panel panel-create">
-                <ServersCreate />
-            </div>
-        </div>
-    </NuxtLayout>
+        </NuxtLayout>
+    </div>
 </template>
 
 <style lang="scss" scoped>

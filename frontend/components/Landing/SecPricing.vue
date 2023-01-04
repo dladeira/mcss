@@ -4,7 +4,7 @@
             <span class="title-green">Pricing</span>
         </h1>
         <div class="plans">
-            <div class="plan plan-free">
+            <div class="plan sec-pricing-plan1 plan-free">
                 <div class="plan-title">
                     Free
                 </div>
@@ -32,7 +32,7 @@
                 </nuxt-link>
             </div>
 
-            <div class="plan plan-premium">
+            <div class="plan sec-pricing-plan1 plan-premium">
                 <div class="plan-title title-blue">
                     Premium
                 </div>
@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            <div class="plan plan-professional">
+            <div class="plan sec-pricing-plan1 plan-professional">
                 <div class="plan-title title-red">
                     Professional
                 </div>
@@ -95,7 +95,7 @@
             </div>
         </div>
 
-        <div class="custom">
+        <div class="custom sec-pricing-plan2">
             <div class="custom-title">Custom</div>
             <div class="custom-price">$X / month</div>
             <div class="custom-description">None of these plans fit you?<br />Contact sales and we're work out a custom
@@ -110,11 +110,12 @@
     height: 110vh;
     min-height: 900px;
 
-    padding-top: 20px;
+    padding-top: 2rem;
 }
 
 .title {
-    margin: 2rem 0 5rem 0;
+    margin: 0;
+    margin-bottom: 5rem;
 
     font-size: 3rem;
     font-weight: 700;
@@ -141,6 +142,8 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    margin-bottom: 3rem;
 }
 
 .plan {
@@ -158,6 +161,12 @@
     background-color: rgba(#1F2940, 0.6);
 
     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transition: opacity 2s cubic-bezier(0.22, 0.61, 0.36, 1);
+
+    &-animated {
+        opacity: 1;
+    }
 
     &-free {
         border-top: 10px rgba(255, 255, 255, 0.5) solid;
@@ -238,7 +247,6 @@
     justify-content: space-between;
     align-items: center;
 
-    margin-top: 3rem;
     padding: 20px 40px;
 
     border-left: 10px solid rgba($green, 0.5);
@@ -247,6 +255,12 @@
     background-color: rgba(#1F2940, 0.6);
 
     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transition: opacity 2s cubic-bezier(0.22, 0.61, 0.36, 1);
+
+    &-animated {
+        opacity: 1;
+    }
 }
 
 .custom-title {
@@ -280,3 +294,35 @@
     }
 }
 </style>
+
+<script setup>
+onMounted(() => {
+    document.addEventListener('scroll', function () {
+        if (isInViewport(document.getElementsByClassName("sec-pricing-plan1")[0])) {
+            for (var panel of document.getElementsByClassName("sec-pricing-plan1"))
+                if (!panel.classList.contains("plan-animated"))
+                    panel.classList.add("plan-animated")
+        }
+
+        if (isInViewport(document.getElementsByClassName("sec-pricing-plan2")[0])) {
+            for (var panel of document.getElementsByClassName("sec-pricing-plan2"))
+                if (!panel.classList.contains("custom-animated"))
+                    panel.classList.add("custom-animated")
+        }
+    }, {
+        passive: true
+    })
+})
+
+/* source: https://www.javascripttutorial.net/dom/css/check-if-an-element-is-visible-in-the-viewport/#:~:text=Use%20the%20getBoundingClientRect()%20method%20to%20get%20the%20size%20of,in%20the%20viewport%20or%20not. */
+function isInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+
+    );
+}
+</script>

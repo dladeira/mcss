@@ -1,15 +1,15 @@
 <template>
+    <div>
 
-    <Head>
-        <Title>All-in-one minecraft server statistics plugin</Title>
-    </Head>
+        <Head>
+            <Title>All-in-one minecraft server statistics plugin</Title>
+        </Head>
 
-    <NuxtLayout name="landing">
-        <LandingSecMain />
-        <LandingSecFeatures />
-        <LandingSecPricing />
-        <LandingSecRoadmap />
-    </NuxtLayout>
+            <LandingSecMain />
+            <LandingSecFeatures />
+            <LandingSecPricing />
+            <LandingSecRoadmap />
+    </div>
 </template>
 
 <style lang="scss" scoped>
@@ -17,3 +17,12 @@
     color: white;
 }
 </style>
+
+<script setup>
+definePageMeta({
+    pageTransition: {
+        name: 'slide-right'
+    },
+    layout: 'landing'
+})
+</script>

@@ -43,5 +43,8 @@ export default defineNuxtConfig({
         public: {
             origin: process.env.ORIGIN
         }
-    }
+    },
+    app: {
+        pageTransition: { name: 'page', mode: 'out-in' }
+    },
 })

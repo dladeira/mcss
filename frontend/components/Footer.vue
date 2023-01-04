@@ -18,21 +18,21 @@
 
                 <div class="links">
                     <div class="link-column">
-                        <p class="link">Home</p>
-                        <p class="link">Login</p>
-                        <p class="link">Sign up</p>
+                        <nuxt-link to="/" class="link">Home</nuxt-link>
+                        <nuxt-link to="/login" class="link">Login</nuxt-link>
+                        <nuxt-link to="/login" class="link">Sign up</nuxt-link>
                     </div>
                     <div class="link-column">
-                        <p class="link">Overview</p>
-                        <p class="link">Account</p>
-                        <p class="link">Plans</p>
+                        <nuxt-link to="/u/servers" class="link">Servers</nuxt-link>
+                        <nuxt-link to="/u/account" class="link">Account</nuxt-link>
+                        <nuxt-link to="/" @click.prevent="logout" class="link">Logout</nuxt-link>
                     </div>
                 </div>
             </div>
 
             <div class="extra">
                 <p class="extra-name">Made by Daniel Ladeira</p>
-                <p class="extra-hire">Available for hire</p>
+                <a href="https://ladeira.eu" class="extra-hire">Available for hire</a>
             </div>
         </footer>
     </div>
@@ -114,6 +114,8 @@
 }
 
 .link {
+    display: block;
+
     margin: 0;
     margin-top: 15px;
 
@@ -137,10 +139,13 @@
 }
 
 .extra-hire {
+    display: block;
+
     margin: 0;
 
     font-size: 0.75rem;
     text-align: right;
+    text-decoration: none;
     color: $blue;
 
     &:hover {
@@ -149,3 +154,26 @@
     }
 }
 </style>
+
+<script setup>
+const demo = useState('demo')
+const servers = useState('servers')
+const user = useState('user')
+const token = useCookie("token", {
+    maxAge: 2592000,
+    sameSite: 'lax'
+})
+const activeServerCookie = useCookie("activeServer", {
+    maxAge: 2592000,
+    sameSite: 'lax'
+})
+
+function logout() {
+    demo.value = false
+    servers.value = undefined
+    user.value = undefined
+    token.value = ""
+    activeServerCookie.value = ""
+    navigateTo("/")
+}
+</script>

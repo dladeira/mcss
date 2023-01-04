@@ -7,7 +7,7 @@
         </h1>
 
         <div class="features">
-            <div class="feature feature-blue">
+            <div class="sec-features-feature feature feature-blue">
                 <h2 class="feature-title">
                     <nuxt-img class="feature-icon" src="/icon-reliable.svg" />
                     Server Usage
@@ -29,7 +29,7 @@
                 </p>
             </div>
 
-            <div class="feature feature-green">
+            <div class="sec-features-feature feature feature-green">
                 <h2 class="feature-title">
                     <nuxt-img class="feature-icon" src="/icon-intelligent.svg" />
                     Chat
@@ -49,7 +49,7 @@
                 </p>
             </div>
 
-            <div class="feature feature-red">
+            <div class="sec-features-feature feature feature-red">
                 <h2 class="feature-title">
                     <nuxt-img class="feature-icon" src="/icon-observant.svg" />
                     Players
@@ -70,8 +70,9 @@
             </div>
         </div>
         <div class="panels">
-            <div class="panel-main"/>
-            <div class="panel-secondary" />
+            <div class="panel sec-features-panel panel-left" />
+            <div class="panel sec-features-panel panel-right" />
+            <div class="panel sec-features-panel panel-center" />
         </div>
     </section>
 </template>
@@ -79,11 +80,14 @@
 <style lang="scss" scoped>
 .main {
     height: 110vh;
-    min-height: 900px;
+
+    margin-top: 3rem;
+    padding-top: 2rem;
 }
 
 .title {
-    margin: 3rem 0 5rem 0;
+    margin: 0;
+    margin-bottom: 5rem;
 
     font-size: 3rem;
     font-weight: 700;
@@ -104,13 +108,20 @@
 
     width: 100%;
 
-    margin-bottom: 4rem;
+    margin-bottom: 6rem;
 }
 
 .feature {
     padding: 0.5rem 4rem 1rem 1.5rem;
 
     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+
+    opacity: 0;
+    transition: opacity 2s cubic-bezier(0.22, 0.61, 0.36, 1);
+
+    &-animated {
+        opacity: 1;
+    }
 
     &-icon {
         height: 30px;
@@ -163,25 +174,102 @@
 }
 
 .panels {
+    position: relative;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
 }
 
-.panel-main {
-    height: 22rem;
-    width: 65%;
+$panelHeight: 62rem;
+$panelWidth: 120rem;
+$panelScale: 0.25;
+$panelCenterScale: 1.2;
+$panelOffset: 4rem;
 
-    // background-color: rgba(white, 0.2);
-    background-image: url("/feature-1.png");
+.panel {
+    height: calc($panelHeight * $panelScale);
+    width: calc($panelWidth * $panelScale);
+
+    border-radius: 10px;
+
+    background-color: rgba(white, 0.2);
+    background-position: center;
     background-size: cover;
+    background-repeat: no-repeat;
+
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.466);
+
+    transition: opacity 2s cubic-bezier(0.22, 0.61, 0.36, 1);
+    opacity: 0;
+
+    &-animated {
+        opacity: 1;
+    }
 }
 
-.panel-secondary {
-    height: 22rem;
-    width: 30%;
+.panel-left {
+    position: absolute;
+    left: -$panelOffset;
 
-    background-image: url("/feature-2.png");
-    background-size: cover;
+    background-image: url("/feature2.png");
+}
+
+.panel-right {
+    position: absolute;
+    right: -$panelOffset;
+
+    background-image: url("/feature3.png");
+}
+
+.panel-center {
+    background-image: url("/feature1.png");
+
+    height: calc($panelHeight * $panelScale * $panelCenterScale);
+    width: calc($panelWidth * $panelScale * $panelCenterScale);
+
+    z-index: 2;
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 </style>
+
+<script setup>
+onMounted(() => {
+    document.addEventListener('scroll', function () {
+        if (isInViewport(document.getElementsByClassName("sec-features-panel")[0])) {
+            for (var panel of document.getElementsByClassName("sec-features-panel"))
+                if (!panel.classList.contains("panel-animated"))
+                    panel.classList.add("panel-animated")
+        }
+
+        if (isInViewport(document.getElementsByClassName("sec-features-feature")[0])) {
+            for (var panel of document.getElementsByClassName("sec-features-feature"))
+                if (!panel.classList.contains("feature-animated"))
+                    panel.classList.add("feature-animated")
+        }
+    }, {
+        passive: true
+    })
+})
+
+/* source: https://www.javascripttutorial.net/dom/css/check-if-an-element-is-visible-in-the-viewport/#:~:text=Use%20the%20getBoundingClientRect()%20method%20to%20get%20the%20size%20of,in%20the%20viewport%20or%20not. */
+function isInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+
+    );
+}
+</script>
