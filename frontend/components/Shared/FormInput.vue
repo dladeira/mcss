@@ -86,7 +86,7 @@ const props = defineProps({
     type: String,
     name: String,
     placeholder: String,
-    disabled: String,
+    disabled: Boolean,
     value: String
 })
 

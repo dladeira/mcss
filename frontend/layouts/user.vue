@@ -38,6 +38,7 @@
 const demo = useState("demo")
 const user = useState("user")
 const servers = useState("servers")
+const activeServer = useState("activeServer")
 const config = useRuntimeConfig()
 
 const token = useCookie("token", {
@@ -50,9 +51,8 @@ const activeServerCookie = useCookie("activeServer", {
     sameSite: 'lax',
 })
 
-const activeServer = useState("activeServer")
 
-if ((!token.value || token.value.length == 0) && !demo)
+if (!getToken() && !demo.value)
     navigateTo("/")
 
 async function getUserData() {
@@ -60,7 +60,7 @@ async function getUserData() {
         method: "POST",
         credentials: "same-origin",
         body: {
-            token: token.value,
+            token: getToken(),
             demo: demo.value
         },
     })
@@ -79,7 +79,7 @@ async function getServerData() {
         method: "POST",
         credentials: "same-origin",
         body: {
-            token: token.value,
+            token: getToken(),
             demo: demo.value
         },
     })
@@ -103,6 +103,10 @@ async function getServerData() {
     } else {
         activeServer.value = foundActiveServer
     }
+}
+
+function getToken() {
+    return token.value && token.value.length > 0 ? token.value : undefined
 }
 
 getUserData()

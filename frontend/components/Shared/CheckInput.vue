@@ -65,7 +65,7 @@
 <script setup>
 const props = defineProps({
     label: String,
-    disabled: String,
+    disabled: Boolean,
     name: String,
     tos: Boolean
 })

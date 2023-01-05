@@ -30,11 +30,16 @@
 </style>
 
 <script setup>
+const demo = useState("demo")
 const token = useCookie("token", {
     maxAge: 2592000,
     sameSite: 'lax'
 })
 
-if (token.value && token.value.length > 0)
+function getToken() {
+    return token.value && token.value.length > 0 ? token.value : undefined
+}
+
+if (getToken() || demo.value)
     navigateTo("/u/servers")
 </script>

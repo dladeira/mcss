@@ -24,7 +24,7 @@ router.post('/user', loggedIn(true), (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body
 
-    const foundAccount = await User.findOne({ email: email })
+    const foundAccount = await User.findOne({ email: email }).lean()
 
     if (!foundAccount) {
         return res.status(400).json({ error: "Invalid username or password" })
