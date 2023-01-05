@@ -88,8 +88,6 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ error: "Invalid email address" })
     }
 
-    console.log("sent")
-
     let emailSent = new EmailSent({
         body: req.body,
         code: code,

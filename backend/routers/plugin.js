@@ -26,7 +26,8 @@ router.post('/server', async (req, res) => {
 var count = 0
 
 router.post('/stats-update', async (req, res) => {
-    const { cpuUsage, ramUsage, players, messages, characters, whispers, commands, blocksBroken, blocksPlaced, blocksTraveled, deaths, secret } = req.body
+    req.body.players = JSON.parse(req.body.players)
+    const { cpu: cpuUsage, ram: ramUsage, players, messages, characters, whispers, commands, blocksBroken, blocksPlaced, blocksTraveled, deaths, secret } = req.body
 
     const server = await Server.findOne({ _id: secret })
 
@@ -47,15 +48,13 @@ router.post('/stats-update', async (req, res) => {
 
     const storageUsage = getAverageDataSize(dataPackets) * dataPackets.length / 1024 / server.storage * 100
 
-
     const data = new Data({
         owner: server.owner,
         server: server._id,
         cpuUsage,
         ramUsage,
         storageUsage,
-        players: JSON.parse(players),
-        time: Date.now() - (Date.now() % (updateInterval * 1000)),
+        players: players,
         messages,
         characters,
         whispers,
@@ -63,7 +62,8 @@ router.post('/stats-update', async (req, res) => {
         blocksBroken,
         blocksPlaced,
         blocksTraveled,
-        deaths
+        deaths,
+        time: Date.now() - (Date.now() % (updateInterval * 1000)),
     })
 
     const sendIn = (updateInterval * 1000) - (Date.now() % (updateInterval * 1000))

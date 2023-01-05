@@ -20,6 +20,12 @@ import net.md_5.bungee.api.ChatColor;
 
 public class RegisterCmd implements CommandExecutor {
 
+	private ApiHandler api;
+	
+	public RegisterCmd(ApiHandler api) {
+		this.api = api;
+	}
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length != 1) {
@@ -36,7 +42,7 @@ public class RegisterCmd implements CommandExecutor {
 			return false;
 		} else {
 			sendMessage(sender, ChatColor.WHITE + "Registered as server " + ChatColor.BOLD + "" + ChatColor.GOLD + serverName);
-			Mcss.setSecret(secret);
+			api.setSecret(secret);
 		}
 
 		return true;
