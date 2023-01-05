@@ -227,7 +227,7 @@ For more information about our privacy practices, if you have questions, or if y
 
 <style lang="scss" scoped>
 .title {
-    margin: 116px auto 60px auto;
+    margin: 116px auto 60px;
 
     width: fit-content;
 

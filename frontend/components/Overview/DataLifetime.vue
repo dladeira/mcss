@@ -137,7 +137,7 @@
 }
 
 .time {
-    margin: 0 0 6px 0;
+    margin: 0 0 6px;
 
     font-size: 0.85rem;
     font-weight: 700;

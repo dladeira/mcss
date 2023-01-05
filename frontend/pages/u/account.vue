@@ -35,7 +35,7 @@
 .title {
     width: fit-content;
 
-    margin: 3rem auto 3rem auto;
+    margin: 3rem auto;
 
     font-size: 3rem;
     font-weight: 700;

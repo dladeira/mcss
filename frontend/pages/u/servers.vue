@@ -70,7 +70,7 @@
 .plan {
     width: fit-content;
 
-    margin: 2rem auto 0.5rem auto;
+    margin: 2rem auto 0.5rem;
     padding: 0.75rem 2rem;
 
     border-radius: 1000px;

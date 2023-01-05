@@ -204,7 +204,7 @@
 .axis-title {
     width: fit-content;
 
-    margin: 1rem auto 1.5rem auto;
+    margin: 1rem auto 1.5rem;
 
     font-size: 1.5rem;
 }
@@ -221,7 +221,7 @@
 
     width: 80%;
 
-    margin: 0 auto 1rem auto;
+    margin: 0 auto 1rem;
 }
 
 .selection {
