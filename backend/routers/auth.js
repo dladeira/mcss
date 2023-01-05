@@ -42,13 +42,16 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/register', async (req, res) => {
-    const { email, password, password2 } = req.body
+    const { email, password, password2, tos } = req.body
 
     if (password != password2)
         return res.status(400).json({ error: "Passwords do not match" })
 
     if (validatePassword(password))
         return res.status(400).send({ error: validatePassword(password) })
+
+    if (!tos)
+        return res.status(400).send({ error: "Please read and agree to the terms of service"})
 
     let code = Math.round(Math.random() * 1000000)
 

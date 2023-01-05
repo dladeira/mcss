@@ -164,6 +164,7 @@
     margin-bottom: 20px;
 
     font-size: 1em;
+    text-align: center;
     color: $red;
 }
 </style>
@@ -186,7 +187,8 @@ async function register(e) {
         body: {
             email: e.target.email.value,
             password: e.target.password.value,
-            password2: e.target.password2.value
+            password2: e.target.password2.value,
+            tos: e.target.tos.checked
         }
     })
 

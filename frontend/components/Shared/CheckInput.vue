@@ -4,7 +4,7 @@
         <label tabindex=0 class="term-box" :for="name" />
         <p v-if="tos" class="term-text">
             I have read and agreed to the
-            <a href="https://example.com/" class="term-text-bold">terms of service</a>
+            <nuxt-link to="/tos" class="term-text-bold">terms of service</nuxt-link>
         </p>
         <p v-else class="term-text">{{ label }}</p>
     </div>
