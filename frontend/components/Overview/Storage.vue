@@ -65,7 +65,7 @@
     height: fit-content;
     width: 100%;
 
-    margin: 1.5rem auto 0 auto;
+    margin: 1.5rem auto 0;
 }
 
 .battery {

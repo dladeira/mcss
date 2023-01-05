@@ -50,7 +50,7 @@
     max-width: 90%;
 
     margin: 0 auto;
-    padding: 20px 0 20px 0;
+    padding: 20px 0;
 }
 
 .brand {
@@ -169,7 +169,7 @@
 .select-option {
     width: 100%;
 
-    padding: 15px 15px;
+    padding: 15px;
 
     border-bottom: 1px solid rgba(white, 0.1);
 

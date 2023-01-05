@@ -29,7 +29,7 @@
 
 <style lang="scss" scoped>
 .title {
-    margin: 116px auto 60px auto;
+    margin: 116px auto 60px;
 
     width: fit-content;
 

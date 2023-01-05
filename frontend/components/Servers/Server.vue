@@ -109,7 +109,7 @@
 }
 
 .time {
-    margin: 0.25rem 0 0 0;
+    margin: 0.25rem 0 0;
 
     font-size: 0.75rem;
     font-style: italic;
@@ -122,7 +122,7 @@
     justify-content: flex-start;
     align-items: center;
 
-    margin: 0.75rem 0 1rem 0;
+    margin: 0.75rem 0 1rem;
 }
 
 .tag {
@@ -159,7 +159,7 @@
 .dial-title {
     width: fit-content;
 
-    margin: 0 auto 0.5rem auto;
+    margin: 0 auto 0.5rem;
 
     font-size: 0.75rem;
     font-weight: 400;
@@ -206,7 +206,7 @@
 
     height: 11rem;
 
-    margin: auto 3rem 0 3rem;
+    margin: auto 3rem 0;
 }
 
 .button {
