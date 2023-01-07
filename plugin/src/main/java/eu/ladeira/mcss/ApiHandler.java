@@ -91,6 +91,58 @@ public class ApiHandler {
 			Bukkit.getLogger().severe("Something is wrong with the plugin, please report the error above to the developers");
 		}
 	}
+	
+	public String validateSecret(String secret) {
+		try {
+			URL obj = new URL(origin + "/servers/plugin-register");
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+			con.setRequestMethod("POST");
+			con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			con.setRequestProperty("Accept", "application/json");
+			con.setDoOutput(true);
+
+			Map<String, String> data = new HashMap<String, String>();
+			data.put("secret", secret);
+
+			byte[] out = toJSON(data).getBytes(StandardCharsets.UTF_8);
+
+			con.setFixedLengthStreamingMode(out.length);
+
+			try {
+				con.connect();
+			} catch (Exception e) {
+				Bukkit.getLogger().severe("Failed connecting to API Server when validating secret!");
+				transportDataDelayed(100000);
+				return null;
+			}
+
+			try (OutputStream os = con.getOutputStream()) {
+				os.write(out);
+
+				int statusCode = con.getResponseCode();
+				
+				@SuppressWarnings("resource") // Eclipse is flagging incorrectly
+				Scanner s = new Scanner(statusCode >= 400 ? con.getErrorStream() : con.getInputStream()).useDelimiter("\\A");
+				String response = s.hasNext() ? s.next() : "";
+				s.close();
+				switch (statusCode) {
+				case 200:
+					return response;
+				default:
+					return null;
+				}
+
+			} catch (Exception e) {
+				Bukkit.getLogger().severe("Secret validate failed! (Invalid server resposne)");
+			}
+		} catch (Exception e) { // Code is wrong (invalid URL, invalid Protocol Type)
+			e.printStackTrace();
+			Bukkit.getLogger().severe("Something is wrong with the plugin, please report the error above to the developers");
+		}
+		
+		return null;
+	}
 
 	// Separate function for readability
 	private void startDataTransportLoop() {

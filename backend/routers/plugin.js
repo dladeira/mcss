@@ -10,19 +10,6 @@ const updateInterval = 5
 
 const { generateServerCache } = require('../middleware/serverStats')
 
-router.post('/server', async (req, res) => {
-    let server
-
-    try {
-        server = await Server.findOne({ _id: req.body.secret })
-    } catch { }
-
-    if (!server)
-        return res.status(400).send("Invalid server")
-
-    res.status(200).send(server.name)
-})
-
 var count = 0
 
 router.post('/stats-update', async (req, res) => {

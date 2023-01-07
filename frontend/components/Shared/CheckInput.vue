@@ -2,11 +2,11 @@
     <div class="term">
         <input :id="name" class="term-input" type="checkbox" :name="name" :disabled="disabled" />
         <label tabindex=0 class="term-box" :for="name" />
-        <p v-if="tos" class="term-text">
+        <label v-if="tos" :for="name" class="term-text">
             I have read and agreed to the
             <nuxt-link to="/tos" class="term-text-bold">terms of service</nuxt-link>
-        </p>
-        <p v-else class="term-text">{{ label }}</p>
+        </label>
+        <label v-else :for="name" class="term-text">{{ label }}</label>
     </div>
 </template>
 

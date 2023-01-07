@@ -47,19 +47,18 @@
                         Servers
                     </a>
 
-                    <a class="sh-create sh-link" :class="currentPanel == 'create' ? 'sh-active' : ''" @click="setPanel('create')">
+                    <a class="sh-create sh-link" :class="currentPanel == 'create' ? 'sh-active' : ''" @click="createServer()">
                         Create Server
                     </a>
                 </div>
 
-                <div v-if="currentPanel == 'servers'" class="panel panel-servers">
+                <ServersCreate />
+
+                <div v-if="currentPanel == 'servers'" class="panel">
                     <ServersServer v-for="server in servers" :name="server.name" :_id="server._id" :stats="server.stats" @settings="openSettings(server._id)" />
                 </div>
-                <div v-if="currentPanel == 'settings'" class="panel panel-settings">
+                <div v-if="currentPanel == 'settings'" class="panel">
                     <ServersSettings :server="serverSettings" />
-                </div>
-                <div v-if="currentPanel == 'create'" class="panel panel-create">
-                    <ServersCreate />
                 </div>
             </div>
         </NuxtLayout>
@@ -198,6 +197,11 @@ const user = useState('user')
 const servers = useState("servers")
 const currentPanel = ref("servers")
 const serverSettings = ref("")
+const popupCreateServer = useState("popupCreateServer", () => false)
+
+function createServer() {
+    popupCreateServer.value = true
+}
 
 function setPanel(panel) {
     currentPanel.value = panel

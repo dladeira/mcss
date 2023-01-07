@@ -56,6 +56,16 @@ function setup(server) {
     })
 }
 
+function verifyServer(userId, serverId) {
+    const socketData = sockets.find(i => String(i.user._id) == String(userId))
+
+    if (!socketData || !io.sockets.sockets.get(socketData.id))
+        return
+
+    const socket = io.sockets.sockets.get(socketData.id)
+    socket.emit("serverVerified", serverId)
+}
+
 function verifyOldEmail(userId) {
     const socketData = sockets.find(i => String(i.user._id) == String(userId))
 
@@ -113,5 +123,6 @@ module.exports = {
     verifyOldEmail,
     verifyNewEmail,
     confirmEmailChange,
-    sendChatMessage
+    sendChatMessage,
+    verifyServer
 }

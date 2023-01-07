@@ -2,15 +2,41 @@ const express = require('express')
 const router = express.Router()
 const bson = require('bson')
 
+const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 
 const loggedIn = require('../middleware/loggedIn')
 const { serverStatsMw } = require('../middleware/serverStats')
+const { verifyServer } = require('../socket')
 
+var serversWaiting = []
 
 router.post('/get', loggedIn(true), serverStatsMw, async (req, res) => {
     res.status(200).json({ servers: req.servers })
+})
+
+router.post('/plugin-register', async (req, res) => {
+    var existingServer = await Server.findOne({ _id: req.body.secret })
+    var waitingServer = serversWaiting.find(i => String(i._id) == req.body.secret)
+    var server = existingServer ? existingServer : waitingServer
+
+    if (!server)
+        return res.status(400).send("Invalid server")
+
+    if (waitingServer) {
+        const userServers = await Server.find({ owner: waitingServer.owner })
+        const user = await User.findOne({ _id: waitingServer.owner })
+
+        if (userServers.length + 1 > user.plan.serverSlots)
+            return res.status(400).json({ error: 'No more server slots' })
+
+        await waitingServer.save()
+    }
+
+    verifyServer(waitingServer.owner, server._id)
+
+    res.status(200).send(server.name)
 })
 
 router.post('/new', loggedIn(), async (req, res) => {
@@ -54,9 +80,9 @@ router.post('/new', loggedIn(), async (req, res) => {
         dataLifetime: 3,
         recentMessages: []
     })
-    await newServer.save()
+    serversWaiting.push(newServer)
 
-    return res.status(200).json({ success: "Server created" })
+    return res.status(200).json({ success: "Server created", secret: newServer._id })
 })
 
 router.post('/delete', loggedIn(), async (req, res) => {

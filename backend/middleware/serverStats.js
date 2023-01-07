@@ -6,7 +6,7 @@ const Data = require('../models/Data')
 const updateInterval = 5
 
 const cacheEnabled = true
-const cacheLife = 60 * 1000
+const cacheLife = 6000 * 1000
 
 var cachedStats = []
 
@@ -104,7 +104,11 @@ async function generateServerCache(server, data) {
     const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0, 0] // [3m, 6m, 1y, forever]
     const averagePacket = getAverageDataSize(data)
-    var start = data[data.length - 5].time
+    if (data.length > 5) {
+        var start = data[data.length - 5].time
+    } else {
+        var start = data[0].time
+    }
     // var start = Date.now() - 55492000
     // var startDelay = start % (updateInterval * 1000)
     // console.log(startDelay)
