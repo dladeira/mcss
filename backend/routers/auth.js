@@ -4,6 +4,7 @@ const router = express.Router()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
+const config = require('config')
 
 const User = require('../models/User')
 const EmailSent = require('../models/EmailSent')
@@ -116,11 +117,7 @@ router.get('/verify-email', async (req, res) => {
     let user = await new User({
         email: email,
         password: hash,
-        plan: {
-            storage: 6,
-            serverSlots: 1,
-            maxDataLife: 3
-        }
+        plan: config.get('plans.free')
     }).save()
 
     const token = jwt.sign(user._id.toString(), process.env.JWT_KEY)

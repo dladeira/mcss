@@ -3,14 +3,11 @@ const router = express.Router()
 const bson = require('bson')
 const socket = require('../socket')
 
+const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 
-const updateInterval = 5
-
 const { generateServerCache } = require('../middleware/serverStats')
-
-var count = 0
 
 router.post('/stats-update', async (req, res) => {
     req.body.players = JSON.parse(req.body.players)
@@ -21,19 +18,25 @@ router.post('/stats-update', async (req, res) => {
     if (!server)
         return res.status(404).send("Server not found")
 
+    const user = await User.findOne({ _id: server.owner })
+    const updateInterval = user.plan.updateFrequency * 60 * 1000
+
     const dataPackets = await Data.find({ server: secret })
 
     if (!server.firstUpdate) {
         server.firstUpdate = Date.now()
     }
 
-    if (server.lastUpdate && Date.now() - (server.lastUpdate - (server.lastUpdate % (updateInterval * 1000))) < updateInterval * 1000) {
-        const throttle = (updateInterval * 1000) - (Date.now() - (server.lastUpdate - (server.lastUpdate % (updateInterval * 1000))))
-        // console.log("Throttle: " + throttle)
+    if (server.lastUpdate && Date.now() - (server.lastUpdate - (server.lastUpdate % (updateInterval))) < updateInterval) {
+        const throttle = (updateInterval) - (Date.now() - (server.lastUpdate - (server.lastUpdate % (updateInterval))))
+        // console.log("Throttle: " + throttle / 1000)
         return res.status(425).send("Throttle:" + throttle)
     }
 
     const storageUsage = getAverageDataSize(dataPackets) * dataPackets.length / 1024 / server.storage * 100
+
+    if (storageUsage / 1024 > server.storage)
+        return res.status(429).send("No storage left")
 
     const data = new Data({
         owner: server.owner,
@@ -50,10 +53,12 @@ router.post('/stats-update', async (req, res) => {
         blocksPlaced,
         blocksTraveled,
         deaths,
-        time: Date.now() - (Date.now() % (updateInterval * 1000)),
+        time: Date.now() - (Date.now() % (updateInterval)),
     })
 
-    const sendIn = (updateInterval * 1000) - (Date.now() % (updateInterval * 1000))
+    const sendIn = (updateInterval) - (Date.now() % (updateInterval))
+    console.log(sendIn)
+    console.log(updateInterval)
     server.lastUpdate = Date.now()
 
     await server.save()
@@ -61,10 +66,7 @@ router.post('/stats-update', async (req, res) => {
 
     res.status(200).send("SendIn:" + sendIn)
 
-    // if (++count >= 100) {
-        // new Promise((resolve) => { generateServerCache(server); resolve() })
-        // count = 0
-    // }
+    new Promise((resolve) => { generateServerCache(server); resolve() })
 })
 
 router.post('/chat-msg', async (req, res) => {

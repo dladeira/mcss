@@ -176,8 +176,6 @@ public class ApiHandler {
 			data.put("secret", this.secret);
 
 			byte[] out = toJSON(data).getBytes(StandardCharsets.UTF_8);
-			
-			System.out.println(toJSON(data));
 
 			con.setFixedLengthStreamingMode(out.length);
 
@@ -214,6 +212,9 @@ public class ApiHandler {
 					int throttle = Integer.parseInt(response.split(":")[1]);
 					dataDelay = throttle;
 					break;
+				case 429:
+					Bukkit.getLogger().warning("[IMPORTANT] No storage left on MCSS server! Please allocate or buy more. Canceling future requests");
+					return;
 				default:
 					Bukkit.getLogger().severe("Request failed for unexpected reason! Canceling future requests (Response Code: " + statusCode + ")");
 					return;

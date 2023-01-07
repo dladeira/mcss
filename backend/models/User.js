@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema({
     plan: {
         storage: Number,
         serverSlots: Number,
-        maxDataLife: Number
+        maxDataLife: Number,
+        updateFrequency: Number
     }
 })
 

@@ -1,12 +1,12 @@
 const bson = require('bson')
 
-const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 const updateInterval = 5
+const config = require('config');
 
 const cacheEnabled = true
-const cacheLife = 6000 * 1000
+const cacheLife = config.get('serverStats.cacheLife') * 1000
 
 var cachedStats = []
 

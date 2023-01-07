@@ -31,10 +31,11 @@ router.post('/plugin-register', async (req, res) => {
         if (userServers.length + 1 > user.plan.serverSlots)
             return res.status(400).json({ error: 'No more server slots' })
 
+        verifyServer(waitingServer.owner, server._id)
+
         await waitingServer.save()
     }
 
-    verifyServer(waitingServer.owner, server._id)
 
     res.status(200).send(server.name)
 })

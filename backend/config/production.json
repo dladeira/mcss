@@ -1,0 +1,13 @@
+{
+    "serverStats": {
+        "cacheLife": 1000000
+    },
+    "plans": {
+        "free": {
+            "storage": 10,
+            "serverSlots": 1,
+            "maxDataLife": 3,
+            "updateFrequency": 60
+        }
+    }
+}
