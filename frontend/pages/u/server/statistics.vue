@@ -1,11 +1,11 @@
 <template>
     <div>
-
-        <Head>
-            <Title>{{ activeServer.name }} - Statistics</Title>
-        </Head>
-
         <NuxtLayout name="server">
+
+            <Head>
+                <Title>{{ activeServer.name }} - Statistics</Title>
+            </Head>
+
             <div class="page">
                 <div class="container">
                     <div class="header">

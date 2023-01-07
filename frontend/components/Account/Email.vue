@@ -110,6 +110,7 @@
 const oldStatus = ref('Send verification')
 const newStatus = ref('Send verification')
 const user = useState("user")
+const notifications = useState('notifications')
 const config = useRuntimeConfig()
 
 async function sendOldEmail(e) {
@@ -119,7 +120,7 @@ async function sendOldEmail(e) {
     })
 
     if (error.value)
-        return oldStatus.value = null
+        return oldStatus.value = 'Send verification'
 }
 
 async function sendNewEmail(e) {
@@ -131,8 +132,15 @@ async function sendNewEmail(e) {
         }
     })
 
-    if (error.value)
-        return newStatus.value = 'Enter valid email'
+    if (error.value) {
+        notifications.value.push({
+            html: "Please enter a valid email address",
+            type: 'red',
+            id: Math.random(),
+            time: Date.now()
+        })
+        return newStatus.value = 'Send verification'
+    }
 }
 </script>
 

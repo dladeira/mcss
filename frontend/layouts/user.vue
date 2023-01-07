@@ -1,5 +1,6 @@
 <template>
     <div class="wrapper">
+        <NotificationSystem />
         <UserNavbar />
         <div class="page" v-if="user && servers">
             <slot />

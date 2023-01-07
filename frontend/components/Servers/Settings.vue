@@ -7,11 +7,11 @@
         </div>
 
         <div class="bottom-row">
-            <SharedFormSlider class="storage" label="Storage Allocated" name="storage" :value="server.stats.cache.storageUsed" :min="server.stats.cache.storageUsed" :max="user.plan.storage" :disabled="connecting" :step="0.1" />
+            <SharedFormSlider class="storage" label="Storage Allocated" name="storage" :value="server.storage" :min="server.stats.cache.storageUsed" :max="user.plan.storage" :disabled="connecting" :step="0.1" />
             <SharedFormInput class="secret" type="text" label="Server Secret" :disabled="true" name="_id" :value="server._id" />
             <div class="submit-wrapper">
                 <div class="error">{{ error }}</div>
-                <button class="submit" type="submit">Save Server</button>
+                <button class="submit" type="submit" :disabled="connecting">Save Server</button>
             </div>
         </div>
     </form>
@@ -82,6 +82,15 @@
     background-color: rgba($green, 0.2);
     color: $green;
 
+    &:disabled {
+        opacity: 0.5;
+
+        &:hover {
+            background-color: rgba($green, 0.2);
+            cursor: default;
+        }
+    }
+
     &:hover {
         background-color: darken(rgba($green, 0.2), 5);
         cursor: pointer;
@@ -91,6 +100,7 @@
 
 <script setup>
 const user = useState('user')
+const notifications = useState('notifications')
 const config = useRuntimeConfig()
 
 const props = defineProps({
@@ -120,6 +130,11 @@ async function modifyServer(e) {
     }
 
     error.value = null
-    window.location.reload(true)
+    notifications.value.push({
+        type: 'blue',
+        time: Date.now(),
+        id: Math.random(),
+        html: `Saved settings for <span class='notif-bold'>${props.server.name}</span>`
+    })
 }
 </script>

@@ -1,11 +1,11 @@
 <template>
     <div>
-
-        <Head>
-            <Title>{{ activeServer.name }} - Players</Title>
-        </Head>
-
         <NuxtLayout name="server">
+
+            <Head>
+                <Title>{{ activeServer.name }} - Players</Title>
+            </Head>
+            
             <div class="page">
                 <div class="top">
                     <PlayersUsage />

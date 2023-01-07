@@ -31,7 +31,7 @@
                     {{ activeServer.stats.cache.dataAge.months12 }}MB
                 </p>
             </div>
-            <div @click="setLifetime(0)" :class="activeServer.dataLifetime == 0 ? 'option-selected' : user.plan.maxDataLife > 12 ? 'option' : 'option-blocked'">
+            <div @click="setLifetime(0)" :class="activeServer.dataLifetime == 0 ? 'option-selected' : user.plan.maxDataLife >= 24 ? 'option' : 'option-blocked'">
                 <h1 class="time">
                     Forever
                 </h1>
@@ -156,6 +156,7 @@
 <script setup>
 const user = useState('user')
 const activeServer = useState('activeServer')
+const notifications = useState('notifications')
 const config = useRuntimeConfig()
 
 async function setLifetime(time) {
@@ -172,6 +173,12 @@ async function setLifetime(time) {
             if (error.value)
                 return console.log(error.value)
 
+            notifications.value.push({
+                time: Date.now(),
+                html: `Data lifetime set to <span class='notif-bold'>${time == 0 ? 'forever' : time + ' months'}</span>`,
+                type: 'green',
+                id: Math.random()
+            })
             activeServer.value.dataLifetime = time
         }
     }

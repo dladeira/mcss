@@ -296,8 +296,6 @@ export default {
         }
     },
     mounted() {
-        console.log("CITY OF DREAMS CITY OF GANG")
-        this.clickInner()
         let socket = this.$nuxtSocket({
             name: 'main'
         })
