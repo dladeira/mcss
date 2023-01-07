@@ -16,7 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ApiHandler {
 
-	private String origin = "http://192.168.100.100:3001";
+	private String origin = "https://mcss.api.ladeira.eu";
 	private String secret;
 
 	private DataHandler dataHandler;
