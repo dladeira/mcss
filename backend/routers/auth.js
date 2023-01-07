@@ -54,7 +54,7 @@ router.post('/register', async (req, res) => {
     if (!tos)
         return res.status(400).send({ error: "Please read and agree to the terms of service"})
 
-    let code = Math.round(Math.random() * 1000000)
+    let code = Math.round(Math.random() * 1000000000)
 
     let existingEmail = await User.findOne({ email: email })
 
