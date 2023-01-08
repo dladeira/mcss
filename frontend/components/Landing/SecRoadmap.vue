@@ -99,7 +99,7 @@
     justify-content: space-between;
     align-items: center;
 
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
 }
 
 .plan {

@@ -76,10 +76,8 @@
 
 .title {
     margin: 0;
-    margin-bottom: 2rem;
 
-    font-size: 4rem;
-    ;
+    font-size: 3.5rem;;
     font-weight: 700;
 
     &-blue {
@@ -94,9 +92,10 @@
 
 .subtitle {
     margin: 0;
+    margin-top: 1rem;
     margin-bottom: 3rem;
 
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 400;
     color: $gray1;
 }
@@ -112,14 +111,14 @@
     justify-content: center;
     align-items: center;
 
-    height: 4.5rem;
-    width: 18rem;
+    height: 3.25rem;
+    width: 14rem;
 
     margin-right: 2rem;
 
     border-radius: 1000px;
 
-    font-size: 1.75rem;
+    font-size: 1.25rem;
     font-weight: 500;
     text-decoration: none;
     background-color: rgba($green, 0.1);
@@ -160,7 +159,7 @@
 .demo {
     @extend .cta;
 
-    width: 13rem;
+    width: 9rem;
 
     background-color: rgba(white, 0.1);
     color: white;
@@ -180,7 +179,7 @@
 
     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
 
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 60%, rgb(11, 4, 4)), url("/product-preview.png");
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 70%, rgb(11, 4, 4)), url("/product-preview.png");
     background-size: contain;
 
     animation: slide-from-right 1s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -195,7 +194,7 @@
     width: fit-content;
 
     margin: 0 auto;
-    margin-top: 10vh;
+    margin-top: 23vh;
 }
 
 .icon {

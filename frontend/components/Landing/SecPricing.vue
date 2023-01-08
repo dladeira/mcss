@@ -153,6 +153,7 @@
     align-items: center;
 
     width: 30%;
+    max-width: 350px;
 
     padding: 30px 0;
 
