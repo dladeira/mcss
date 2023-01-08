@@ -4,6 +4,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import eu.ladeira.mcss.commands.EnvCmd;
+import eu.ladeira.mcss.commands.RegisterCmd;
 import eu.ladeira.mcss.events.MessagesListener;
 import eu.ladeira.mcss.events.PlayerListener;
 
@@ -22,6 +24,7 @@ public class Mcss extends JavaPlugin {
 		this.apiHandler = new ApiHandler(dataHandler);
 
 		getCommand("register").setExecutor(new RegisterCmd(apiHandler));
+		getCommand("setenvmcss").setExecutor(new EnvCmd(apiHandler));
 
 		registerEvents(new MessagesListener(dataHandler, apiHandler), new PlayerListener(dataHandler));
 	}

@@ -1,4 +1,4 @@
-package eu.ladeira.mcss;
+package eu.ladeira.mcss.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import eu.ladeira.mcss.ApiHandler;
 import net.md_5.bungee.api.ChatColor;
 
 public class RegisterCmd implements CommandExecutor {
@@ -18,6 +19,13 @@ public class RegisterCmd implements CommandExecutor {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (sender instanceof Player) {
+			if (!((Player) sender).isOp()) {
+				sendMessage(sender, ChatColor.RED + "ERROR: Only administrators can use this command");
+				return false;
+			}
+		}
+		
 		if (args.length != 1) {
 			sendMessage(sender, ChatColor.RED + "ERROR: Incorrect argument count");
 			return false;

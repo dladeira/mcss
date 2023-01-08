@@ -57,8 +57,6 @@ router.post('/stats-update', async (req, res) => {
     })
 
     const sendIn = (updateInterval) - (Date.now() % (updateInterval))
-    console.log(sendIn)
-    console.log(updateInterval)
     server.lastUpdate = Date.now()
 
     await server.save()

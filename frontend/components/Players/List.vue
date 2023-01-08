@@ -30,10 +30,11 @@
                     <div class="location">{{ player.location }}</div>
                     <div class="messages">{{ player.messages }}</div>
                     <div class="time">{{ Math.round(player.playtime / 3600) }}h</div>
-                    <div class="view">View</div>
+                    <div class="view" @click="openPlayerCard(player)">View</div>
                 </div>
             </div>
         </div>
+        <PlayersPlayerCard />
     </div>
 </template>
 
@@ -197,6 +198,11 @@
 
 <script setup>
 const activeServer = useState('activeServer')
+const popupPlayerCard = useState('popupPlayerCard')
 
 const search = useState('player-search', () => "")
+
+function openPlayerCard(player) {
+    popupPlayerCard.value = player
+}
 </script>

@@ -171,7 +171,6 @@ export default {
         })
 
         socket.on("confirmEmailChange", () => {
-            console.log("supposed to refresh")
             window.location.reload(true)
         })
     }

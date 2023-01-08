@@ -67,7 +67,8 @@ async function getUserData() {
     })
 
     if (error.value) {
-        console.log("Forbidden user data")
+        // console.log("Forbidden user data")
+        token.value = ""
         return navigateTo("/")
     }
 
@@ -86,7 +87,8 @@ async function getServerData() {
     })
 
     if (error.value) {
-        console.log("Forbidden server data")
+        // console.log("Forbidden server data")
+        token.value = ""
         return navigateTo("/")
     }
 

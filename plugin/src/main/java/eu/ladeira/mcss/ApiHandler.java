@@ -16,7 +16,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ApiHandler {
 
-	private String origin = "https://mcss.api.ladeira.eu";
+	private String devOrigin = "http://192.168.100.100:3001";
+	private String prodOrigin = "https://mcss.api.ladeira.eu";
+	private int env = 1; // 0 = dev | 1 = prod
 	private String secret;
 
 	private DataHandler dataHandler;
@@ -24,14 +26,21 @@ public class ApiHandler {
 	public ApiHandler(DataHandler dataHandler) {
 		this.dataHandler = dataHandler;
 
-		loadSecret(); // Starts data transport loop if secret is found
+		loadConfig(); // Starts data transport loop if secret is found
 	}
 
 	public void onDisable() {
-		if (secret != null) {
+		if (secret != null)
 			Mcss.plugin.getConfig().set("secret", secret);
-			Mcss.plugin.saveConfig();
-		}
+		
+		if (env != 1)
+			Mcss.plugin.getConfig().set("env", env);
+		
+		Mcss.plugin.saveConfig();
+	}
+	
+	public void setEnv(int env) {
+		this.env = env;
 	}
 
 	public void onChatMessage(Player sender, String content) {
@@ -41,7 +50,7 @@ public class ApiHandler {
 		}
 
 		try {
-			URL obj = new URL(origin + "/plugin/chat-msg");
+			URL obj = new URL(getOrigin() + "/plugin/chat-msg");
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
 			con.setRequestMethod("POST");
@@ -91,10 +100,10 @@ public class ApiHandler {
 			Bukkit.getLogger().severe("Something is wrong with the plugin, please report the error above to the developers");
 		}
 	}
-	
+
 	public String validateSecret(String secret) {
 		try {
-			URL obj = new URL(origin + "/servers/plugin-register");
+			URL obj = new URL(getOrigin() + "/servers/plugin-register");
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
 			con.setRequestMethod("POST");
@@ -121,7 +130,7 @@ public class ApiHandler {
 				os.write(out);
 
 				int statusCode = con.getResponseCode();
-				
+
 				@SuppressWarnings("resource") // Eclipse is flagging incorrectly
 				Scanner s = new Scanner(statusCode >= 400 ? con.getErrorStream() : con.getInputStream()).useDelimiter("\\A");
 				String response = s.hasNext() ? s.next() : "";
@@ -140,7 +149,7 @@ public class ApiHandler {
 			e.printStackTrace();
 			Bukkit.getLogger().severe("Something is wrong with the plugin, please report the error above to the developers");
 		}
-		
+
 		return null;
 	}
 
@@ -164,7 +173,7 @@ public class ApiHandler {
 		}
 
 		try {
-			URL obj = new URL(origin + "/plugin/stats-update");
+			URL obj = new URL(getOrigin() + "/plugin/stats-update");
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
 			con.setRequestMethod("POST");
@@ -239,9 +248,13 @@ public class ApiHandler {
 			startDataTransportLoop();
 	}
 
-	private void loadSecret() {
+	private void loadConfig() {
 		FileConfiguration config = Mcss.plugin.getConfig();
 
+		if (config.isSet("env")) {
+			this.env = config.getInt("env");
+		}
+		
 		if (config.isSet("secret")) {
 			secret = config.getString("secret");
 			Bukkit.getLogger().info("Loaded secret from config");
@@ -249,6 +262,17 @@ public class ApiHandler {
 		} else {
 			warnSecret();
 		}
+	}
+
+	private String getOrigin() {
+		switch (env) {
+		case 0:
+			return devOrigin;
+		case 1:
+			return prodOrigin;
+		}
+
+		return devOrigin;
 	}
 
 	private void warnSecret() {

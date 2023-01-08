@@ -1,8 +1,8 @@
 const bson = require('bson')
 
+const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
-const updateInterval = 5
 const config = require('config');
 
 const cacheEnabled = true
@@ -88,12 +88,15 @@ async function loadCache(server, data) {
         }
     } else if (cacheEnabled) {
         return await generateServerCache(server, data)
-    }
+    } start
 }
 
 async function generateServerCache(server, data) {
     if (!data)
         data = await Data.find({ server: server._id })
+
+    const user = await User.findOne({ _id: server.owner })
+    const updateInterval = user.plan.updateFrequency * 60
 
     var latestData = data.reduce((prev, current) => prev.time > current.time ? prev : current)
 
@@ -109,9 +112,6 @@ async function generateServerCache(server, data) {
     } else {
         var start = data[0].time
     }
-    // var start = Date.now() - 55492000
-    // var startDelay = start % (updateInterval * 1000)
-    // console.log(startDelay)
 
     var now = new Date()
     const month = 30 * 24 * 60 * 60 * 1000
@@ -258,7 +258,7 @@ async function generateServerCache(server, data) {
                         username: stats.username,
                         playtime: parseInt(stats.playtime) / 20,
                         messages: parseInt(stats.messages),
-                        location: latestPlayer ? latestPlayer.location : "---",
+                        location: latestPlayer ? `(${latestPlayer['location.x']}, ${latestPlayer['location.y']}, ${latestPlayer['location.z']})` : "---",
                         online: latestPlayer ? true : false
                     })
                 }
@@ -483,13 +483,6 @@ function generateFakeServer(name, id) {
             }
         }
     }
-}
-
-function randomString(length) {
-    var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    var result = '';
-    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-    return result;
 }
 
 function generateFakeGraphs() {

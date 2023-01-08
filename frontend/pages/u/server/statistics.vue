@@ -523,7 +523,6 @@ function getLabels() {
 
 function getDataset(index, timeFrame) {
     const values = []
-    console.log(activeServer.value.stats.cache.graphs['peak'])
     // Timezone offset
     if (timeFrame == 'day' || timeFrame == 'average' || timeFrame == 'peak')
         for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {

@@ -40,10 +40,10 @@ public class DataHandler {
 	public Map<String, String> getData() {
 		Map<String, String> map = new HashMap<String, String>();
 
-		map.put("players", stringifyPlayers());
+		map.put("players", finalizePlayerStats());
 		map.put("cpu", getCpuUsage());
 		map.put("ram", getRamUsage());
-		map.putAll(stringifyStats());
+		map.putAll(finalizeServerStats());
 		
 		resetStats();
 		return map;
@@ -125,16 +125,18 @@ public class DataHandler {
 		return String.valueOf(memPercent);
 	}
 	
-	private Map<String, String> stringifyStats() {
+	private Map<String, String> finalizeServerStats() {
 		Map<String, String> data = new HashMap<String, String>();
 		for (String index : this.stats.keySet()) {
 			data.put(index, String.valueOf(stats.get(index)));
 		}
 		
+		
+		
 		return data;
 	}
 	
-	private String stringifyPlayers() {
+	private String finalizePlayerStats() {
 		String string = "";
 
 		StringJoiner array = new StringJoiner(",", "[", "]");
@@ -157,7 +159,11 @@ public class DataHandler {
 			data.put(index, String.valueOf(player.getStat(index)));
 		}
 		
-		data.put("location", "(" + Math.round(bukkitPlayer.getLocation().getX()) + ", " + Math.round(bukkitPlayer.getLocation().getY()) + ", " + Math.round(bukkitPlayer.getLocation().getZ()) + ")");
+		data.put("username", player.username);
+		
+		data.put("location.x", String.valueOf(Math.round(bukkitPlayer.getLocation().getX())));
+		data.put("location.y", String.valueOf(Math.round(bukkitPlayer.getLocation().getY())));
+		data.put("location.z", String.valueOf(Math.round(bukkitPlayer.getLocation().getZ())));
 		
 		for (Entry<String, String> entry : data.entrySet()) {
 			objectData.add("\\\"" + entry.getKey() + "\\\": \\\"" + entry.getValue() + "\\\"");
