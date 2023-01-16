@@ -6,9 +6,9 @@
         </nuxt-link>
 
         <div class="links">
-            <nuxt-link to="/#features" class="link">Features</nuxt-link>
-            <nuxt-link to="/#pricing" class="link">Pricing</nuxt-link>
-            <nuxt-link to="/#roadmap" class="link">Roadmap</nuxt-link>
+            <nuxt-link to="/pricing" :class="route.path == '/pricing' ? 'link-active' : 'link'">Pricing</nuxt-link>
+            <nuxt-link to="/roadmap" :class="route.path == '/roadmap' ? 'link-active' : 'link'">Roadmap</nuxt-link>
+            <nuxt-link to="/developers" :class="route.path == '/developers' ? 'link-active' : 'link'">Developers</nuxt-link>
         </div>
 
         <nuxt-link class="login" to="/login">
@@ -56,6 +56,12 @@
     &:hover {
         cursor: pointer;
     }
+
+    &-active {
+        @extend .link;
+
+        color: $blue;
+    }
 }
 
 .login {
@@ -63,3 +69,7 @@
     color: $dark-blue;
 }
 </style>
+
+<script setup>
+const route = useRoute()
+</script>

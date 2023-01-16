@@ -1,50 +1,30 @@
 <template>
     <section class="main">
-        <div class="jumbotron">
-            <div class="text">
+        <div class="text">
 
-                <h1 class="title">
-                    <span class="title-blue">All-in-one </span><br />
-                    <span class="title-green">minecraft </span>
-                    server<br />
-                    statistics <span class="title-blue">plugin </span><br />
-                </h1>
+            <h1 class="title">
+                The <span class="title-blue">all-in-one</span> <span class="title-green">Minecraft</span> server<br />
+                statistics <span class="title-blue">plugin</span> for <span class="title-red">admins</span>
+            </h1>
 
-                <h2 class="subtitle">
-                    Keep track of your server usage<br />
-                    and player behaviors
-                </h2>
+            <h2 class="subtitle">
+                Never worry again about installing all the different plugins to track server statistics.<br />
+                From CPU & RAM usage, to player chatting patterns, we've got it all.
+            </h2>
 
-                <div class="buttons">
-                    <nuxt-link class="cta" to="login">
-                        Get Started
-                    </nuxt-link>
-                    <a class="demo" to="login" @click="setDemo">
-                        Demo
-                    </a>
+            <div class="buttons">
+                <nuxt-link class="cta" to="login">
+                    Get Started
+                </nuxt-link>
+                <div class="demo" @click="setDemo">
+                    See demo
                 </div>
             </div>
-            <div class="image" />
         </div>
-        <div class="icons">
-            <div class="icon">
-                <nuxt-img class="icon-image" src="/icon-intelligent.svg" />
-                <div class="icon-text">
-                    Intelligent
-                </div>
-            </div>
-            <div class="icon">
-                <nuxt-img class="icon-image" src="/icon-reliable.svg" />
-                <div class="icon-text">
-                    Reliable
-                </div>
-            </div>
-            <div class="icon">
-                <nuxt-img class="icon-image" src="/icon-observant.svg" />
-                <div class="icon-text">
-                    Observant
-                </div>
-            </div>
+        <div class="images">
+            <div class="image sec-main-panel image-left" />
+            <div class="image sec-main-panel image-right" />
+            <div class="image sec-main-panel image-center" />
         </div>
     </section>
 </template>
@@ -55,21 +35,12 @@
     min-height: 900px;
 }
 
-.jumbotron {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-
-    margin-top: 75px;
-}
-
 .text {
     display: flex;
     flex-direction: column;
+    align-items: center;
 
-    margin-top: 50px;
+    margin-top: 6rem;
 
     animation: fade-in 2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -77,8 +48,9 @@
 .title {
     margin: 0;
 
-    font-size: 3.5rem;;
+    font-size: 3.5rem;
     font-weight: 700;
+    text-align: center;
 
     &-blue {
         color: $blue;
@@ -88,15 +60,18 @@
         color: $green;
     }
 
+    &-red {
+        color: $red;
+    }
 }
 
 .subtitle {
-    margin: 0;
-    margin-top: 1rem;
-    margin-bottom: 3rem;
+    margin: 1rem 0 2rem;
 
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 400;
+    line-height: 2rem;
+    text-align: center;
     color: $gray1;
 }
 
@@ -111,8 +86,8 @@
     justify-content: center;
     align-items: center;
 
-    height: 3.25rem;
-    width: 14rem;
+    height: 3.5rem;
+    width: 16rem;
 
     margin-right: 2rem;
 
@@ -121,10 +96,10 @@
     font-size: 1.25rem;
     font-weight: 500;
     text-decoration: none;
-    background-color: rgba($green, 0.1);
-    color: $green;
-    
-    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+    background-color: rgba($green, 0.5);
+    color: white;
+
+    box-shadow: 0 0 10px 0 rgba($green, 0.5);
     overflow: hidden;
     z-index: 0;
 
@@ -148,7 +123,7 @@
     &:hover {
         cursor: pointer;
 
-        box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.588);
+        box-shadow: 0 0 20px 0 rgba($green, 0.588);
 
         &:after {
             opacity: 1;
@@ -159,10 +134,15 @@
 .demo {
     @extend .cta;
 
-    width: 9rem;
+    width: 12rem;
 
     background-color: rgba(white, 0.1);
     color: white;
+    box-shadow: none;
+
+    &:hover {
+        box-shadow: none;
+    }
 }
 
 @keyframes rotate {
@@ -171,64 +151,59 @@
     }
 }
 
-.image {
-    position: absolute;
-    left: 40vw;
-    height: 33rem;
-    width: 52.9rem;
-
-    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
-
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 70%, rgb(11, 4, 4)), url("/product-preview.png");
-    background-size: contain;
-
-    animation: slide-from-right 1s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.icons {
+.images {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 
-    width: fit-content;
-
-    margin: 0 auto;
-    margin-top: 23vh;
+    margin-top: 5rem;
 }
 
-.icon {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+$panelHeight: 62rem;
+$panelWidth: 120rem;
+$panelScale: 0.24;
+$panelCenterScale: 1.2;
+$panelOffset: 4rem;
 
-    margin: 0 3rem;
+.image {
+    height: calc($panelHeight * $panelScale);
+    width: calc($panelWidth * $panelScale);
 
-    &-image {
-        height: 50px;
-        width: 50px;
-    }
+    border-radius: 10px;
 
-    &-text {
-        margin-top: 28px;
+    background-color: rgba(white, 0.2);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 
-        font-size: 1rem;
-        font-weight: 500;
-        color: $gray2;
-    }
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.466);
+
+    transition: opacity 2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-@keyframes slide-from-right {
-    0% {
-        left: 100vw;
-        opacity: 0;
-    }
+.image-left {
+    position: absolute;
+    left: -$panelOffset;
 
-    100% {
-        left: 40vw;
-        opacity: 1;
-    }
+    background-image: url("/feature2.png");
+}
+
+.image-right {
+    position: absolute;
+    right: -$panelOffset;
+
+    background-image: url("/feature3.png");
+}
+
+.image-center {
+    background-image: url("/feature1.png");
+
+    height: calc($panelHeight * $panelScale * $panelCenterScale);
+    width: calc($panelWidth * $panelScale * $panelCenterScale);
+
+    z-index: 2;
 }
 
 @keyframes fade-in {
