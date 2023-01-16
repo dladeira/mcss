@@ -8,12 +8,6 @@
 
             <div class="page">
                 <div class="container">
-                    <div class="header">
-                        <h2 class="title">
-                            Player List
-                        </h2>
-                    </div>
-
                     <div class="chart">
                         <Line :data="getData()" :options="options" />
                     </div>
@@ -144,26 +138,9 @@
     height: 100%;
     width: 100%;
 
+    padding-top: 1rem;
+
     background-color: $gray6;
-}
-
-.header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    width: 100%;
-}
-
-.title {
-    width: fit-content;
-
-    font-size: 1.25rem;
-    font-weight: 700;
-
-
-    margin: 10px 0 1rem 18px;
 }
 
 .chart {
