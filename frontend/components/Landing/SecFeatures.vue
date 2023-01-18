@@ -1,234 +1,152 @@
 <template>
     <section class="main" id="features">
-        <h1 class="title">
-            <span class="title-blue">Bundled </span>
-            with the most popular
-            <span class="title-green">features</span>
-        </h1>
+        <h1 class="title">Features</h1>
+        <h2 class="subtitle">Everything you need in one place</h2>
 
-        <div class="features">
-            <div class="sec-features-feature feature feature-blue">
-                <h2 class="feature-title">
-                    <nuxt-img class="feature-icon" src="/icon-reliable.svg" />
-                    Server Usage
-                </h2>
+        <div class="feature">
+            <div class="image">
 
-                <p class="desc">
-                    <span class="desc-blue">CPU </span>
-                    and
-                    <span class="desc-green">RAM </span>
-                    usage
-                </p>
-                <p class="desc">
-                    Server
-                    <span class="desc-red">health </span>
-                    report
-                </p>
-                <p class="desc">
-                    Chunks and worlds loaded
-                </p>
             </div>
-
-            <div class="sec-features-feature feature feature-green">
-                <h2 class="feature-title">
-                    <nuxt-img class="feature-icon" src="/icon-intelligent.svg" />
-                    Chat
-                </h2>
-
-                <p class="desc">
-                    <span class="desc-blue">Player </span>
-                    Chatting Patterns
+            <div class="text-right">
+                <h1 class="text-title">Analyze <span class="tt-green">player behaviour</span> and <span class="tt-blue">activity</span></h1>
+                <p class="text-desc">
+                    Know when your server has the most players and when to have your staff online
                 </p>
-                <p class="desc">
-                    Command frequency
-                </p>
-                <p class="desc">
-                    Realtime
-                    <span class="desc-green">chat </span>
-                    access
-                </p>
-            </div>
-
-            <div class="sec-features-feature feature feature-red">
-                <h2 class="feature-title">
-                    <nuxt-img class="feature-icon" src="/icon-observant.svg" />
-                    Players
-                </h2>
-
-                <p class="desc">
-                    <span class="desc-blue">Player </span>
-                    session information
-                </p>
-                <p class="desc">
-                    Individual statistics
-                </p>
-                <p class="desc">
-                    Peak
-                    <span class="desc-blue">player </span>
-                    count
-                </p>
+                <ul dir="rtl" class="text-list">
+                    <li>View message and command frequency</li>
+                    <li>Player message content</li>
+                    <li>Most and least used commands</li>
+                </ul>
             </div>
         </div>
-        <div class="panels">
-            <div class="panel sec-features-panel panel-left" />
-            <div class="panel sec-features-panel panel-right" />
-            <div class="panel sec-features-panel panel-center" />
+
+        <div class="feature">
+            <div class="text-left">
+                <h1 class="text-title">Visualize <span class="tt-green">data</span> the way <span class="tt-blue">you</span> want to see it</h1>
+                <p class="text-desc">
+                    Select the statistics that are most important to you and view them on a variety of time periods
+                </p>
+                <ul class="text-list">
+                    <li>4 default graphs</li>
+                    <li>5 time periods</li>
+                    <li>12+ statistics</li>
+                    <li>Custom data viewer</li>
+                </ul>
+            </div>
+            <div class="image">
+
+            </div>
+        </div>
+
+        <div class="feature">
+            <div class="image">
+
+            </div>
+            <div class="text-right">
+                <h1 class="text-title">Measure server <span class="tt-green">performance</span> in <span class="tt-blue">realtime</span></h1>
+                <p class="text-desc">
+                    Do you need a better CPU? Not enoguh RAM? Are you getting DDoS'ed?
+                </p>
+                <ul dir="rtl" class="text-list">
+                    <li>Realtime CPU and RAM load</li>
+                    <li>Past server performance</li>
+                    <li>Daily TPS average graph</li>
+                </ul>
+            </div>
         </div>
     </section>
 </template>
 
 <style lang="scss" scoped>
 .main {
-    height: 110vh;
+    height: 210vh;
 
     margin-top: 3rem;
     padding-top: 2rem;
 }
 
 .title {
-    margin: 0;
-    margin-bottom: 5rem;
+    width: fit-content;
+
+
+    margin: 0 auto;
 
     font-size: 3rem;
     font-weight: 700;
-
-    &-blue {
-        color: $blue;
-    }
-
-    &-green {
-        color: $green;
-    }
 }
 
-.features {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.subtitle {
+    width: fit-content;
 
-    width: 100%;
+    margin: 1rem auto 5rem;
 
-    margin-bottom: 6rem;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: $gray1;
 }
 
 .feature {
-    padding: 0.5rem 4rem 1rem 1.5rem;
-
-    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
-
-    opacity: 0;
-    transition: opacity 2s cubic-bezier(0.22, 0.61, 0.36, 1);
-
-    &-animated {
-        opacity: 1;
-    }
-
-    &-icon {
-        height: 30px;
-        width: 30px;
-
-        margin-right: 1rem;
-
-        filter: brightness(0%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(142deg) brightness(104%) contrast(104%);
-    }
-
-    &-title {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-
-        margin-bottom: 30px;
-
-        font-size: 1.5rem;
-        font-weight: 700;
-    }
-
-    &-blue {
-        background-color: rgba($blue, 0.15);
-    }
-
-    &-red {
-        background-color: rgba($red, 0.15);
-    }
-
-    &-green {
-        background-color: rgba($green, 0.15);
-    }
-}
-
-.desc {
-    &-blue {
-        font-weight: bold;
-        color: $blue;
-    }
-
-    &-green {
-        font-weight: bold;
-        color: $green;
-    }
-
-    &-red {
-        font-weight: bold;
-        color: $red;
-    }
-}
-
-.panels {
-    position: relative;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+
+    margin-bottom: 10rem;
 }
 
-$panelHeight: 62rem;
-$panelWidth: 120rem;
-$panelScale: 0.25;
-$panelCenterScale: 1.2;
-$panelOffset: 4rem;
+.image {
+    height: 23vw;
+    width: 23vw;
 
-.panel {
-    height: calc($panelHeight * $panelScale);
-    width: calc($panelWidth * $panelScale);
+    border-radius: 1000px;
 
-    border-radius: 10px;
+    background-color: white;
+}
 
-    background-color: rgba(white, 0.2);
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+.text {
+    width: 55%;
 
-    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.466);
+    &-left {
+        @extend .text;
 
-    transition: opacity 2s cubic-bezier(0.22, 0.61, 0.36, 1);
-    opacity: 0;
+        text-align: left;
+    }
 
-    &-animated {
-        opacity: 1;
+    &-right {
+        @extend .text;
+
+        text-align: right;
     }
 }
 
-.panel-left {
-    position: absolute;
-    left: -$panelOffset;
+.text-title {
+    margin: 0;
 
-    background-image: url("/feature2.png");
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
 }
 
-.panel-right {
-    position: absolute;
-    right: -$panelOffset;
-
-    background-image: url("/feature3.png");
+.tt-green {
+    color: $green;
 }
 
-.panel-center {
-    background-image: url("/feature1.png");
+.tt-blue {
+    color: $blue;
+}
 
-    height: calc($panelHeight * $panelScale * $panelCenterScale);
-    width: calc($panelWidth * $panelScale * $panelCenterScale);
+.text-desc {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: $gray1;
+}
 
-    z-index: 2;
+.text-list {
+    @extend .text-desc;
+
+    padding-right: 1rem;
+
+    line-height: 2.5rem;
 }
 
 @keyframes fade-in {
