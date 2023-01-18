@@ -4,9 +4,7 @@
         <h2 class="subtitle">Everything you need in one place</h2>
 
         <div class="feature">
-            <div class="image">
-
-            </div>
+            <div class="image-1" />
             <div class="text-right">
                 <h1 class="text-title">Analyze <span class="tt-green">player behaviour</span> and <span class="tt-blue">activity</span></h1>
                 <p class="text-desc">
@@ -33,15 +31,11 @@
                     <li>Custom data viewer</li>
                 </ul>
             </div>
-            <div class="image">
-
-            </div>
+            <div class="image-2" />
         </div>
 
         <div class="feature">
-            <div class="image">
-
-            </div>
+            <div class="image-3" />
             <div class="text-right">
                 <h1 class="text-title">Measure server <span class="tt-green">performance</span> in <span class="tt-blue">realtime</span></h1>
                 <p class="text-desc">
@@ -101,6 +95,28 @@
     border-radius: 1000px;
 
     background-color: white;
+    background-position: center center;
+    background-size: cover;
+
+    box-shadow: 0 0 20px 0 rgba(black, 0.6);
+
+    &-1 {
+        @extend .image;
+
+        background-image: url('/feature1.png');
+    }
+    &-2 {
+        @extend .image;
+
+        background-image: url('/feature2.png');
+        background-size: 20rem;
+    }
+    &-3 {
+        @extend .image;
+
+        background-image: url('/feature3.png');
+        background-size: 20rem;
+    }
 }
 
 .text {

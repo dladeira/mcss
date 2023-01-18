@@ -187,18 +187,18 @@ $panelOffset: 4rem;
     position: absolute;
     left: -$panelOffset;
 
-    background-image: url("/feature2.png");
+    background-image: url("/preview2.png");
 }
 
 .image-right {
     position: absolute;
     right: -$panelOffset;
 
-    background-image: url("/feature3.png");
+    background-image: url("/preview3.png");
 }
 
 .image-center {
-    background-image: url("/feature1.png");
+    background-image: url("/preview1.png");
 
     height: calc($panelHeight * $panelScale * $panelCenterScale);
     width: calc($panelWidth * $panelScale * $panelCenterScale);
