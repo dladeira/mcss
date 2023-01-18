@@ -5,10 +5,12 @@
             <Title>All-in-one minecraft server statistics plugin</Title>
         </Head>
 
-            <LandingSecMain />
-            <LandingSecFeatures />
-            <LandingSecPricing />
-            <LandingSecRoadmap />
+        <LandingSecMain />
+        <LandingSecFeatures />
+        <LandingSecMoreFeatures />
+        <LandingSecFAQ />
+        <LandingSecPricing />
+        <LandingSecRoadmap />
     </div>
 </template>
 

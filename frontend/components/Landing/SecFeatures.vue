@@ -175,35 +175,3 @@
     }
 }
 </style>
-
-<script setup>
-onMounted(() => {
-    document.addEventListener('scroll', function () {
-        if (isInViewport(document.getElementsByClassName("sec-features-panel")[0])) {
-            for (var panel of document.getElementsByClassName("sec-features-panel"))
-                if (!panel.classList.contains("panel-animated"))
-                    panel.classList.add("panel-animated")
-        }
-
-        if (isInViewport(document.getElementsByClassName("sec-features-feature")[0])) {
-            for (var panel of document.getElementsByClassName("sec-features-feature"))
-                if (!panel.classList.contains("feature-animated"))
-                    panel.classList.add("feature-animated")
-        }
-    }, {
-        passive: true
-    })
-})
-
-/* source: https://www.javascripttutorial.net/dom/css/check-if-an-element-is-visible-in-the-viewport/#:~:text=Use%20the%20getBoundingClientRect()%20method%20to%20get%20the%20size%20of,in%20the%20viewport%20or%20not. */
-function isInViewport(el) {
-    const rect = el.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-
-    );
-}
-</script>
