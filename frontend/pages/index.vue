@@ -7,10 +7,8 @@
 
         <LandingSecMain />
         <LandingSecFeatures />
-        <LandingSecMoreFeatures />
         <LandingSecFAQ />
-        <LandingSecPricing />
-        <LandingSecRoadmap />
+        <LandingSecCTA />
     </div>
 </template>
 

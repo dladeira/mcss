@@ -1,59 +1,20 @@
 <template>
-    <section class="main" id="features">
+    <section class="main">
         <h1 class="title">Features</h1>
         <h2 class="subtitle">Everything you need in one place</h2>
 
-        <div class="feature">
-            <div class="image-1" />
-            <div class="text-right">
-                <h1 class="text-title">Analyze <span class="tt-green">player behaviour</span> and <span class="tt-blue">activity</span></h1>
-                <p class="text-desc">
-                    Know when your server has the most players and when to have your staff online
-                </p>
-                <ul dir="rtl" class="text-list">
-                    <li>View message and command frequency</li>
-                    <li>Player message content</li>
-                    <li>Most and least used commands</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="feature">
-            <div class="text-left">
-                <h1 class="text-title">Visualize <span class="tt-green">data</span> the way <span class="tt-blue">you</span> want to see it</h1>
-                <p class="text-desc">
-                    Select the statistics that are most important to you and view them on a variety of time periods
-                </p>
-                <ul class="text-list">
-                    <li>4 default graphs</li>
-                    <li>5 time periods</li>
-                    <li>12+ statistics</li>
-                    <li>Custom data viewer</li>
-                </ul>
-            </div>
-            <div class="image-2" />
-        </div>
-
-        <div class="feature">
-            <div class="image-3" />
-            <div class="text-right">
-                <h1 class="text-title">Measure server <span class="tt-green">performance</span> in <span class="tt-blue">realtime</span></h1>
-                <p class="text-desc">
-                    Do you need a better CPU? Not enoguh RAM? Are you getting DDoS'ed?
-                </p>
-                <ul dir="rtl" class="text-list">
-                    <li>Realtime CPU and RAM load</li>
-                    <li>Past server performance</li>
-                    <li>Daily TPS average graph</li>
-                </ul>
-            </div>
-        </div>
+        <LandingFeature image="features/feature-1.svg" align="left"  title="Individual Player Stats" subtitle="Get to know each player individually and how they're doing on your server" />
+        <LandingFeature image="features/feature-2.svg" align="right" title="Custom Data Viewer" subtitle="Select the statistics that are most important to you and view them on a variety of time periods" />
+        <LandingFeature image="features/feature-3.svg" align="left"  title="Realtime Server Status" subtitle="Players complaining about lag? Do you need a better CPU? Not enough RAM?" />
+        <LandingFeature image="features/feature-4.svg" align="right" title="Player Engagement Score" subtitle="Know how engaged your players are with your server, how long, and how often they play" />
+        <LandingFeature image="features/feature-5.svg" align="left"  title="New & Returning Player" subtitle="Find out how many players joined your server today and how many new players you got" />
+        <LandingFeature image="features/feature-6.svg" align="right" title="Full Player List" subtitle="Know your most active players, when they are online, where they are, and what they do" />
     </section>
 </template>
 
 <style lang="scss" scoped>
 .main {
-    height: 210vh;
+    height: 360vh;
 
     margin-top: 3rem;
     padding-top: 2rem;
@@ -72,7 +33,7 @@
 .subtitle {
     width: fit-content;
 
-    margin: 1rem auto 5rem;
+    margin: 1rem auto 10rem;
 
     font-size: 1.25rem;
     font-weight: 400;

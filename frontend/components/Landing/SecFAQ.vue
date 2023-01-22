@@ -1,5 +1,5 @@
 <template>
-    <section class="main" id="features">
+    <section class="main">
         <h1 class="title">FAQ</h1>
         <h2 class="subtitle">Everything you need to know</h2>
 
@@ -51,7 +51,7 @@
 
 <style lang="scss" scoped>
 .main {
-    height: 80vh;
+    height: 90vh;
 
     margin-top: 3rem;
     padding-top: 2rem;
