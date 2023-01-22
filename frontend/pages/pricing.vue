@@ -7,8 +7,8 @@
 
         <h1 class="page-title">Choose your <span class="title-green">plan</span></h1>
 
-            <h1 class="title">For <span class="title-green">free</span>, for <span class="title-blue">now</span>...</h1>
-            <h2 class="subtitle">For more information check out our <nuxt-link class="link" to="/roadmap">roadmap</nuxt-link></h2>
+        <h1 class="title">For <span class="title-green">free</span>, for <span class="title-blue">now</span>...</h1>
+        <h2 class="subtitle">For more information check out our <nuxt-link class="link" to="/roadmap">roadmap</nuxt-link></h2>
     </div>
 </template>
 

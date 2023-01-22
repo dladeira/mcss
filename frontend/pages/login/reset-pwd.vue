@@ -1,10 +1,11 @@
 <template>
-    <Head>
-        <Title>Reset Password</Title>
-    </Head>
+    <div>
 
-    <NuxtLayout name="landing">
-        <h1 class="title">Welcome <span class="title-green">back</span></h1>
+        <Head>
+            <Title>Reset Password</Title>
+        </Head>
+
+        <h1 class="title">Forgot <span class="title-green">pwd?</span></h1>
 
         <form @submit.prevent="resetPassword" class="panel">
             <h2 class="panel-title">Reset Password</h2>
@@ -12,19 +13,16 @@
                 <label for="email" class="field-title">
                     Email
                 </label>
-                <input class="field-input" type="email" name="email" placeholder="user@email.com"
-                    :disabled="connecting" />
+                <input class="field-input" type="email" name="email" placeholder="user@email.com" :disabled="connecting" />
             </div>
-            <div v-if="!success" class="submit-wrapper"><button class="submit login" type="submit"
-                    :disabled="connecting" :class="connecting ? 'login-connecting' : ''">Send Email</button></div>
-            <div v-if="success" class="submit-wrapper"><button class="submit login" :disabled="connecting"
-                    :class="connecting ? 'login-connecting' : ''">Send Email</button></div>
+            <div v-if="!success" class="submit-wrapper"><button class="submit login" type="submit" :disabled="connecting" :class="connecting ? 'login-connecting' : ''">Send Email</button></div>
+            <div v-if="success" class="submit-wrapper"><button class="submit login" :disabled="connecting" :class="connecting ? 'login-connecting' : ''">Send Email</button></div>
 
 
             <div v-if="success" class="success">{{ success }}</div>
             <div v-else-if="error" class="error">{{ error }}</div>
         </form>
-    </NuxtLayout>
+    </div>
 </template>
 
 <style lang="scss" scoped>
@@ -175,4 +173,11 @@ async function resetPassword(e) {
     success.value = data.value.success
     error.value = null
 }
+
+definePageMeta({
+    pageTransition: {
+        name: 'slide-left'
+    },
+    layout: 'landing'
+})
 </script>

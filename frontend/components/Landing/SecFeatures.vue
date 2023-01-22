@@ -7,7 +7,7 @@
         <LandingFeature image="features/feature-2.svg" align="right" title="Custom Data Viewer" subtitle="Select the statistics that are most important to you and view them on a variety of time periods" />
         <LandingFeature image="features/feature-3.svg" align="left"  title="Realtime Server Status" subtitle="Players complaining about lag? Do you need a better CPU? Not enough RAM?" />
         <LandingFeature image="features/feature-4.svg" align="right" title="Player Engagement Score" subtitle="Know how engaged your players are with your server, how long, and how often they play" />
-        <LandingFeature image="features/feature-5.svg" align="left"  title="New & Returning Player" subtitle="Find out how many players joined your server today and how many new players you got" />
+        <LandingFeature image="features/feature-5.svg" align="left"  title="New & Returning Players" subtitle="Find out how many players joined your server today and how many new players you got" />
         <LandingFeature image="features/feature-6.svg" align="right" title="Full Player List" subtitle="Know your most active players, when they are online, where they are, and what they do" />
     </section>
 </template>
