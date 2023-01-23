@@ -56,7 +56,7 @@
 
     width: 90%;
 
-    margin: 1rem auto 1.5rem 1rem;
+    margin: 0.75rem auto 0 1rem;
 }
 
 .dials {

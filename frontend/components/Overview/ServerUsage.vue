@@ -1,97 +1,99 @@
 <template>
-    <div class="container">
-        <div class="header">
-            <h2 class="title">
-                Server Usage
-            </h2>
+    <div class="panel">
+        <h1 class="panel-title">
+            Server Usage (past 24h)
+        </h1>
 
-            <div class="selector">
-                <div :class="selected == 'day' ? 'option-active' : 'option'" @click="selected = 'day'">
-                    Day
-                </div>
-                <div :class="selected == 'month' ? 'option-active' : 'option'" @click="selected = 'month'">
-                    Month
-                </div>
-                <div :class="selected == 'year' ? 'option-active' : 'option'" @click="selected = 'year'">
-                    Year
-                </div>
-            </div>
-        </div>
         <div class="chart">
             <Line :data="getData()" :options="options" />
+        </div>
+
+        <div class="labels">
+            <div class="label">
+                <div class="label-box" />
+                <div class="label-text">CPU Usage</div>
+            </div>
+            <div class="label">
+                <div class="label-box box-green" />
+                <div class="label-text">RAM Usage</div>
+            </div>
+            <div class="label">
+                <div class="label-box box-red" />
+                <div class="label-text">Storage</div>
+            </div>
         </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-items: flex-start;
-    align-items: center;
+.panel {
+    position: relative;
 
-    height: 50%;
-    width: 100%;
+    grid-column: 3 / 4;
+    grid-row: 1 / 3;
 
-    margin-bottom: 1rem;
+    border-radius: 5px;
 
-    background-color: $gray6;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
 }
 
-.header {
+.panel-title {
+    margin: 1rem 0 0 1rem;
+
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.chart {
+    height: 85%;
+    width: 96%;
+
+    margin: 1.5rem 0 0 1rem;
+}
+
+.labels {
+    position: absolute;
+    top: 15px;
+    right: 0;
+
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-
-    width: 100%;
 }
 
-.title {
-    width: fit-content;
-
-    font-size: 1.25rem;
-    font-weight: 700;
-
-
-    margin: 10px 0 0 18px;
-}
-
-.selector {
+.label {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
 
-    margin-top: 0.5rem;
+    margin-right: 1rem;
 }
 
-.option {
-    margin-right: 1.25rem;
-    padding: 0.25rem;
+.label-box {
+    height: 0.75rem;
+    width: 0.75rem;
 
-    border-bottom: 1px solid $gray2;
+    border-radius: 5px;
 
+    background-color: $blue;
+}
+
+.box-green {
+    background-color: $green;
+}
+
+.box-red {
+    background-color: $red;
+}
+
+.label-text {
+    margin-left: 0.25rem;
+    
     font-size: 0.75rem;
-    color: $gray2;
-
-    &:hover {
-        cursor: pointer;
-    }
-
-    &-active {
-        @extend .option;
-        color: white;
-        border-color: white;
-    }
-}
-
-.chart {
-    position: relative;
-    height: 100%;
-    width: 100%;
-
-    padding: 1rem;
+    font-weight: 400;
+    color: rgba(white, 0.75);
 }
 </style>
 
@@ -126,42 +128,22 @@ ChartJS.register(
 let options = {
     responsive: true,
     maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            display: false
+        }
+    },
     scales: {
         x: {
             grid: {
                 display: false,
-            },
-            border: {
-                color: 'rgba(255, 255, 255, 0.2)',
-                width: 1
-            },
-            ticks: {
-                font: {
-                    size: 12
-                },
-                color: '#A3A3A3'
             }
         },
         y: {
-            max: 100,
-            min: 0,
             grid: {
                 display: false,
             },
-            border: {
-                color: 'rgba(255, 255, 255, 0.2)',
-                width: 1
-            },
-            ticks: {
-                stepSize: 20,
-                callback: function (value) {
-                    return value + '%'
-                },
-                font: {
-                    size: 12
-                },
-                color: '#A3A3A3'
-            }
+            min: 0
         }
     }
 }
@@ -190,10 +172,10 @@ function getDataset(index, timeFrame) {
     const values = []
 
     // Timezone offset
-    if (timeFrame == 'day')
-        for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
-            values.push(undefined)
-        }
+    // if (timeFrame == 'day')
+    //     for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
+    //         values.push(undefined)
+    //     }
 
     for (var timeFrame of activeServer.value.stats.cache.graphs[timeFrame]) {
         var value = timeFrame[index] / timeFrame.dataCount

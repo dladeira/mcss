@@ -1,93 +1,82 @@
 <template>
-    <div class="container">
-        <div class="header">
-            <h2 class="title">
-                Players
-            </h2>
+    <div class="panel">
+        <h1 class="panel-title">
+            Players (past week)
+        </h1>
 
-            <div class="selector">
-                <div :class="selected == 'day' ? 'option-active' : 'option'" @click="selected = 'day'">
-                    Day
-                </div>
-                <div :class="selected == 'month' ? 'option-active' : 'option'" @click="selected = 'month'">
-                    Month
-                </div>
-                <div :class="selected == 'year' ? 'option-active' : 'option'" @click="selected = 'year'">
-                    Year
-                </div>
-            </div>
-        </div>
         <div class="chart">
             <Line :data="getData()" :options="options" />
+        </div>
+
+        <div class="labels">
+            <div class="label">
+                <div class="label-box" />
+                <div class="label-text">Players</div>
+            </div>
         </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-items: flex-start;
-    align-items: center;
+.panel {
+    position: relative;
 
-    height: 50%;
-    width: 100%;
+    grid-column: 1 / 4;
+    grid-row: 3 / 4;
 
-    background-color: $gray6;
+    border-radius: 5px;
+
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
 }
 
-.header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+.panel-title {
+    margin: 1rem 0 0 1rem;
 
-    width: 100%;
+    font-size: 1rem;
+    font-weight: 400;
 }
 
-.title {
-    width: fit-content;
+.chart {
+    height: 77%;
+    width: 98%;
 
-    font-size: 1.25rem;
-    font-weight: 700;
-
-
-    margin: 10px 0 0 18px;
+    margin: 1.5rem 0 0 1rem;
 }
 
-.selector {
+.labels {
+    position: absolute;
+    top: 15px;
+    right: 0;
+
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
 }
 
-.option {
-    margin-right: 1.25rem;
-    padding: 0.25rem;
+.label {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 
-    border-bottom: 1px solid $gray2;
-
-    font-size: 0.75rem;
-    color: $gray2;
-
-    &:hover {
-        cursor: pointer;
-    }
-
-    &-active {
-        @extend .option;
-        color: white;
-        border-color: white;
-    }
+    margin-right: 1rem;
 }
 
-.chart {
-    position: relative;
-    height: 100%;
-    width: 100%;
+.label-box {
+    height: 0.75rem;
+    width: 0.75rem;
 
-    padding: 1rem;
+    border-radius: 5px;
+
+    background-color: $gold;
+}
+.label-text {
+    margin-left: 0.25rem;
+    
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: rgba(white, 0.75);
 }
 </style>
 
@@ -108,7 +97,6 @@ import { Line } from 'vue-chartjs'
 const activeServer = useState('activeServer')
 const selected = useState('selectedTime', () => "day")
 
-
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -123,37 +111,22 @@ ChartJS.register(
 let options = {
     responsive: true,
     maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            display: false
+        }
+    },
     scales: {
         x: {
             grid: {
                 display: false,
-            },
-            border: {
-                color: 'rgba(255, 255, 255, 0.2)',
-                width: 1
-            },
-            ticks: {
-                font: {
-                    size: 12
-                },
-                color: '#A3A3A3'
             }
         },
         y: {
-            min: 0,
             grid: {
                 display: false,
             },
-            border: {
-                color: 'rgba(255, 255, 255, 0.2)',
-                width: 1
-            },
-            ticks: {
-                font: {
-                    size: 12
-                },
-                color: '#A3A3A3'
-            }
+            min: 0
         }
     }
 }
@@ -178,18 +151,18 @@ function getLabels() {
     return values
 }
 
-function getDataset(timeFrame) {
+function getDataset(index, timeFrame) {
     const values = []
 
-// Timezone offset
-if (timeFrame == 'day')
-        for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
-            values.push(undefined)
-        }
+    // Timezone offset
+    // if (timeFrame == 'day')
+    //     for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
+    //         values.push(undefined)
+    //     }
 
-    for (var timeData of activeServer.value.stats.cache.graphs[timeFrame]) {
-        var value = timeData['players'] / timeData.count
-        values.push(isNaN(value) || value == Infinity ? 0 : value)
+    for (var timeFrame of activeServer.value.stats.cache.graphs[timeFrame]) {
+        var value = timeFrame[index] / timeFrame.dataCount
+        values.push(isNaN(value) && index != 'storage' || value == Infinity ? 0 : value)
     }
 
     return values
@@ -200,16 +173,16 @@ function getData() {
         labels: getLabels(),
         datasets: [
             {
-                label: 'Average Players',
-                backgroundColor: '#FFC700',
-                borderColor: "#FFC700",
-                data: getDataset(selected.value),
+                label: 'Players',
+                backgroundColor: '#FFD600',
+                borderColor: "#FFD600",
+                data: getDataset('players', selected.value),
                 fill: {
                     target: 'origin',
-                    above: '#FFC70044',   // Area will be red above the origin
+                    above: '#FFD6003F',
                 },
                 lineTension: 0.1
-            }
+            },
         ]
     }
 }
