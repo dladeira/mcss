@@ -1,43 +1,37 @@
 <template>
-    <div class="nav-wrapper">
-        <nav class="nav">
-            <nuxt-link to="/u/servers" class="brand">
-                MCSS
-            </nuxt-link>
+    <nav class="nav">
+        <nuxt-link to="/u/servers" class="brand">
+            MCSS
+        </nuxt-link>
 
-            <div class="links-main">
-                <nuxt-link to="/u/servers" :class="route == '/u/servers' ? 'link-selected' : 'link'">Servers</nuxt-link>
-                <nuxt-link to="/u/account" :class="route == '/u/account' ? 'link-selected' : 'link'">Account</nuxt-link>
-                <!-- <nuxt-link to="/u/plans" :class="route == '/u/plans' ? 'link-selected' : 'link'">Plans</nuxt-link> -->
+        <div class="links-main">
+            <nuxt-link to="/u/servers" :class="route == '/u/servers' ? 'link-selected' : 'link'">Servers</nuxt-link>
+            <nuxt-link to="/u/account" :class="route == '/u/account' ? 'link-selected' : 'link'">Account</nuxt-link>
+            <!-- <nuxt-link to="/u/plans" :class="route == '/u/plans' ? 'link-selected' : 'link'">Plans</nuxt-link> -->
+        </div>
+
+        <div class="server">
+            <div class="links-server">
+                <nuxt-link to="/u/server/overview" :class="route == '/u/server/overview' ? 'link-selected' : 'link'">Overview</nuxt-link>
+                <nuxt-link to="/u/server/players" :class="route == '/u/server/players' ? 'link-selected' : 'link'">Players</nuxt-link>
+                <nuxt-link to="/u/server/statistics" :class="route == '/u/server/statistics' ? 'link-selected' : 'link'">Statistics</nuxt-link>
+                <!-- <div class="link">Surveys</div> -->
             </div>
-
-            <div class="server">
-                <div class="links-server">
-                    <nuxt-link to="/u/server/overview" :class="route == '/u/server/overview' ? 'link-selected' : 'link'">Overview</nuxt-link>
-                    <nuxt-link to="/u/server/players" :class="route == '/u/server/players' ? 'link-selected' : 'link'">Players</nuxt-link>
-                    <nuxt-link to="/u/server/statistics" :class="route == '/u/server/statistics' ? 'link-selected' : 'link'">Statistics</nuxt-link>
-                    <!-- <div class="link">Surveys</div> -->
+            <div class="divider" />
+            <div class="select-wrapper">
+                <div class="select" :class="optionsOpen ? 'select-open' : 'select-closed'" @click="optionsOpen = !optionsOpen">
+                    {{ activeServer? activeServer.name : "None" }}
                 </div>
-                <div class="divider" />
-                <div class="select-wrapper">
-                    <div class="select" :class="optionsOpen ? 'select-open' : 'select-closed'" @click="optionsOpen = !optionsOpen">
-                        {{ activeServer ? activeServer.name : "None" }}
-                    </div>
 
-                    <div class="select-options" v-if="optionsOpen">
-                        <div v-for="server in servers" class="select-option" @click="changeServer(server._id)">{{ server.name }}</div>
-                    </div>
+                <div class="select-options" v-if="optionsOpen">
+                    <div v-for="server in servers" class="select-option" @click="changeServer(server._id)">{{ server.name }}</div>
                 </div>
             </div>
-        </nav>
-    </div>
+        </div>
+    </nav>
 </template>
 
 <style lang="scss" scoped>
-.nav-wrapper {
-    border-bottom: 1px solid rgba(white, 0.15);
-}
-
 .nav {
     position: static;
     display: flex;
@@ -82,6 +76,7 @@
 
     margin: 0 1rem;
 
+    font-weight: 300;
     text-decoration: none;
     color: $gray1;
 

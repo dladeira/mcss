@@ -6,10 +6,6 @@
         </Head>
 
         <NuxtLayout name="user">
-            <!-- <div class="plan">
-            <span class="plan-premium">Premium</span> Plan
-        </div>
-        <nuxt-link class="plan-upgrade" to="/u/plans">Upgrade</nuxt-link> -->
 
             <div class="stats">
                 <div class="stat">
@@ -66,42 +62,15 @@
 </template>
 
 <style lang="scss" scoped>
-.plan {
-    width: fit-content;
-
-    margin: 2rem auto 0.5rem;
-    padding: 0.75rem 2rem;
-
-    border-radius: 1000px;
-
-    font-size: 2rem;
-    font-weight: 600;
-    background-color: rgba($blue, 0.1);
-    color: white;
-
-    &-premium {
-        color: $blue;
-    }
-
-    &-upgrade {
-        margin: 0 auto;
-
-        font-size: 0.75rem;
-        font-weight: 300;
-        text-decoration: none;
-        color: $blue;
-    }
-}
-
 .stats {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 
-    width: 40rem;
+    width: 35rem;
 
-    margin: 3rem auto;
+    margin: 2rem auto 1rem;
 }
 
 .stat {
@@ -117,13 +86,13 @@
     &-title {
         margin: 0;
 
-        font-size: 2rem;
-        font-weight: 400;
+        font-size: 1.5rem;
+        font-weight: 600;
         color: $gray2;
     }
 
     &-subtitle {
-        font-size: 1rem;
+        font-size: 0.75rem;
         font-weight: 400;
         color: rgba(white, 0.5);
     }
@@ -147,7 +116,7 @@
 
     margin: 0 auto;
 
-    width: 56rem;
+    width: 65vw;
 }
 
 .sh {
