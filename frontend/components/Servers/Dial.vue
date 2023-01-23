@@ -49,7 +49,7 @@ $width: 3.5rem;
 <script setup>
 const props = defineProps({
     id: String,
-    percent: String,
+    percent: Number,
     color: String,
     hex: String
 })

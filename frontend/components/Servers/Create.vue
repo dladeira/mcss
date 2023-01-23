@@ -1,5 +1,5 @@
 <template>
-    <div class="wrapper" v-if="popupCreateServer">
+    <div class="wrapper" v-if="popupCreateServer" @click="clickOuter()">
         <form class="container" @submit.prevent="createServer" @click="clickInner()">
             <div class="header">
                 <h1 class="title">Create Server</h1>
@@ -62,7 +62,9 @@
     height: 100vh;
     width: 100vw;
 
-    background-color: rgba(black, 0.2);
+    background-color: rgba(black, 0.5);
+
+    z-index: 2;
 }
 
 .container {
