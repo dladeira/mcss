@@ -14,7 +14,7 @@
                     Online
                 </div>
                 <div class="tag tag-level">
-                    Level 1 - Server
+                    Server
                 </div>
             </div>
         </div>
@@ -65,7 +65,7 @@
     justify-content: flex-start;
     align-items: center;
 
-    flex-grow: 1;
+    width: 100%;
 }
 
 
@@ -131,7 +131,7 @@
     flex-direction: row;
     justify-content: flex-end;
 
-    width: 20vw;
+    width: 100%;
 }
 
 .button {

@@ -6,9 +6,14 @@
                 <Title>{{ activeServer.name }} - Overview</Title>
             </Head>
 
-            <div class="page">
+            <div class="grid">
+                <OverviewServerStatus class="panel serverStatus" />
+                <div class="panel serverUsage">Server Usage (past 24h)</div>
+                <div class="panel population">Population (past 24h)</div>
+                <div class="panel newPlayers">New Players (past 24h)</div>
+                <div class="panel players">Players (past week)</div>
 
-                <div class="dials">
+                <!-- <div class="dials">
                     <OverviewDial name="CPU" :value="activeServer.stats.live.cpuUsage + '%'" color="#00C2FF" />
                     <OverviewDial name="RAM" :value="activeServer.stats.live.ramUsage + '%'" color="#00FF75" />
                     <OverviewDial name="Storage" :value="activeServer.stats.cache.storageUsage + '%'" color="#FF3030" />
@@ -24,53 +29,52 @@
                     <OverviewChat />
                     <OverviewStorage />
                     <OverviewDataLifetime />
-                </div>
+                </div> -->
             </div>
         </NuxtLayout>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.page {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-rows: 30fr 30fr 40fr;
+    grid-gap: 1.25rem;
 
     height: calc(100vh - 90px);
+    width: 100%;
 
-    padding: 2rem 0;
+    padding: 0.5rem 0 1rem;
+}
+
+.serverStatus {
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+}
+
+.serverUsage {
+    grid-column: 3 / 4;
+    grid-row: 1 / 3;
+}
+
+.population {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+
+.newPlayers {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+.players {
+    grid-column: 1 / 4;
+    grid-row: 3 / 4;
 }
 
 .panel {
-    background-color: $gray6;
-}
-
-.dials,
-.graphs,
-.misc {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-
-    height: 100%;
-}
-
-.dials {
-    width: 10rem;
-
-    margin-right: $gap;
-}
-
-.graphs {
-    width: 60%;
-
-    margin-right: $gap;
-}
-
-.misc {
-    width: 30%;
+    background-color: $panel;
 }
 </style>
 

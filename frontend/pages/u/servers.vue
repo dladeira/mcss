@@ -116,7 +116,7 @@
 
     margin: 0 auto;
 
-    width: 65vw;
+    width: 70vw;
 }
 
 .sh {

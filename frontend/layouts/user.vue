@@ -32,6 +32,8 @@
     max-width: 90%;
 
     margin: 0 auto;
+
+    font-family: 'Inter', sans-serif;
 }
 </style>
 

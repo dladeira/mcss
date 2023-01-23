@@ -15,7 +15,7 @@ async function serverStatsMw(req, res, next) {
         const servers = []
 
         servers.push(generateFakeServer("SpaghettiMC", "KHqSLuyliCO2KUtQ"))
-        servers.push(generateFakeServer("DiamondsAndRoses", "NUUcAI5eaH56DRZL"))
+        servers.push(generateFakeServer("MineDiamonds", "NUUcAI5eaH56DRZL"))
 
         req.servers = servers
 

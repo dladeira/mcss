@@ -6,8 +6,8 @@
 </template>
 
 <style lang="scss" scoped>
-$height: 3.5rem;
-$width: 3.5rem;
+$height: 7rem;
+$width: 7rem;
 
 .wrapper {
     position: relative;
@@ -17,8 +17,6 @@ $width: 3.5rem;
 
     height: $height;
     width: $width;
-
-    margin: 0 0.5rem;
 }
 
 .blue {
@@ -41,7 +39,7 @@ $width: 3.5rem;
 }
 
 .text {
-    font-size: 1rem;
+    font-size: 2rem;
     font-weight: 700;
 }
 </style>
@@ -54,7 +52,7 @@ const props = defineProps({
     hex: String
 })
 
-const scale =2
+const scale = 2
 
 function drawRadius(radius, percent) {
     var canvas = document.getElementById(props.id)
@@ -66,7 +64,7 @@ function drawRadius(radius, percent) {
 
     function drawWedge(ctx, x, y, radius, percent, color) {
         ctx.strokeStyle = color;
-        ctx.lineWidth = 5 * scale;
+        ctx.lineWidth = 10 * scale;
 
         ctx.translate(x, y);        // translate to rotating pivot
         ctx.rotate(Math.PI * 1);  // rotate, here 90° deg
@@ -99,9 +97,13 @@ function resizeCanvas(canvas) {
     return false;
 }
 
+function convertRemToPixels(rem) {    
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
 onMounted(() => {
     setTimeout(() => {
-        drawRadius(25 * scale, props.percent)
+        drawRadius(convertRemToPixels(3.1) * scale, props.percent)
     }, 10)
 })
 </script>
