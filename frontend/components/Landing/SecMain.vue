@@ -40,7 +40,7 @@
     flex-direction: column;
     align-items: center;
 
-    margin-top: 6rem;
+    margin-top: 5rem;
 
     animation: fade-in 2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
