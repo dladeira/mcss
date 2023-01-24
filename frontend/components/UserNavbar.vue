@@ -159,6 +159,8 @@
     border-radius: 5px;
 
     background-color: $gray6;
+
+    z-index: 2;
 }
 
 .select-option {
