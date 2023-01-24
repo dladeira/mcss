@@ -57,7 +57,7 @@
 
     width: 90%;
 
-    margin: 2rem auto 0rem auto;
+    margin: 1rem auto 0rem auto;
 }
 
 .stat {

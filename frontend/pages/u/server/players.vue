@@ -9,32 +9,13 @@
             <div class="grid">
                 <div class="left">
                     <PlayersGlobalStats />
-
                     <PlayersPlayerList />
                 </div>
                 <div class="right">
-                    <div class="panel playerActivity">
-                        Player Activity (past 24h)
-                    </div>
-                    <div class="panel sessionStats">
-                        Session Stats (past 24h)
-                    </div>
-                    <div class="panel recentEvents">
-                        Recent Events
-                    </div>
+                    <PlayersPlayerActivity />
+                    <PlayersSessionStats />
+                    <PlayersRecentEvents />
                 </div>
-                <!-- <div class="top">
-                    <PlayersUsage />
-
-                    <PlayersList />
-                </div>
-                <div class="bottom">
-                    <PlayersPlayerStats />
-                    <PlayersChatStats />
-                    <div class="adv panel">
-
-                    </div>
-                </div> -->
             </div>
         </NuxtLayout>
     </div>
@@ -44,6 +25,7 @@
 .grid {
     display: grid;
     grid-template-columns: minmax(0, 80fr) minmax(0, 20fr);
+    grid-template-rows: minmax(0, 1fr);
     grid-gap: 1.25rem;
 
     height: calc(100vh - 90px);
@@ -54,7 +36,7 @@
 
 .left {
     display: grid;
-    grid-template-rows: minmax(0, 25fr) minmax(0, 75fr);
+    grid-template-rows: minmax(0, 20fr) minmax(0, 80fr);
     grid-gap: 1.25rem;
     grid-column: 1 / 2;
 

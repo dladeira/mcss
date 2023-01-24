@@ -5,30 +5,30 @@
         </h1>
 
         <div class="stats">
-        <div class="front">
-            <h1 class="front-title">
-                533
-            </h1>
-            <h3 class="front-label">
-                recurring players
-            </h3>
-            <div class="front-change">
-                <span class="front-positive">+4</span> vs last 24h
+            <div class="front">
+                <h1 class="front-title">
+                    533
+                </h1>
+                <h3 class="front-label">
+                    recurring players
+                </h3>
+                <div class="front-change">
+                    <span class="front-positive">+4</span> vs last 24h
+                </div>
             </div>
-        </div>
 
-        <div class="back">
-            <h1 class="back-title">
-                17
-            </h1>
-            <h3 class="back-label">
-                new players
-            </h3>
-            <div class="back-change">
-                <span class="back-positive">+2</span> vs last 24h
+            <div class="back">
+                <h1 class="back-title">
+                    17
+                </h1>
+                <h3 class="back-label">
+                    new players
+                </h3>
+                <div class="back-change">
+                    <span class="back-positive">+2</span> vs last 24h
+                </div>
             </div>
         </div>
-    </div>
     </div>
 </template>
 
