@@ -35,9 +35,9 @@
 .title {
     width: fit-content;
 
-    margin: 3rem auto;
+    margin: 1rem auto 3rem auto;
 
-    font-size: 3rem;
+    font-size: 2.75rem;
     font-weight: 700;
 }
 
@@ -54,41 +54,6 @@
     width: 100%;
 
     margin: 0 10px;
-}
-
-.language,
-.bugs,
-.email,
-.password,
-.plan,
-.control {
-    margin-bottom: 20px;
-
-    background-color: $gray6;
-}
-
-.language {
-    height: 8rem;
-}
-
-.bugs {
-    height: 20rem;
-}
-
-.email {
-    height: 11rem;
-}
-
-.password {
-    height: 16rem;
-}
-
-.plan {
-    height: 9rem;
-}
-
-.control {
-    height: 16rem;
 }
 
 .logout {

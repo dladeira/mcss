@@ -1,17 +1,22 @@
 <template>
     <form class="component" @submit.prevent="resetPassword">
-        <h1 class="title">Change Password</h1>
-        <SharedFormInput class="old" label="Old Password" type="password" placeholder="********" name="old" :disabled="success" />
+        <h1 class="panel-title">Change Password</h1>
+        <div class="row">
+            <SharedFormInput class="input" label="Old Password" type="password" placeholder="********" name="old" :disabled="success" />
+            <SharedFormInput class="input" label="New Password" type="password" placeholder="********" name="new1" :disabled="success" />
+        </div>
 
-        <div class="new-password">
-            <SharedFormInput class="new" label="New Password" type="password" placeholder="********" name="new1" :disabled="success" />
-            <SharedFormInput class="new" label="Confirm Password" type="password" placeholder="********" name="new2" :disabled="success" />
+        <div class="row">
+            <SharedFormInput class="input" label="Confirm Password" type="password" placeholder="********" name="new2" :disabled="success" />
+            <div class="submit-wrapper">
+                <button :class="success ? 'submit-success' : 'submit'" type="submit" :disabled="success">
+                    {{ success ? 'Password changed' : 'Change password' }}
+                </button>
+            </div>
         </div>
 
         <div class="bottom">
-            <div class="submit-wrapper"><button :class="success ? 'submit-success' : 'submit'" type="submit" :disabled="success">{{ success ?
-        'Password changed' : 'Change password'
-}}</button></div>
+
             <div class="error" v-if="errorMsg">{{ errorMsg }}</div>
         </div>
     </form>
@@ -26,60 +31,63 @@
 
     margin-bottom: 20px;
 
-    background-color: $gray6;
+    border-radius: 5px;
+
+    font-size: 0.75rem !important;
+    background-color: $panel;
 }
 
-.title {
-    margin: 10px 0 2rem 18px;
+.panel-title {
+    margin: 1rem 0 1.5rem 1rem;
 
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 400;
 }
 
-.old {
-    margin-bottom: 2rem !important;
+.input {
+    width: 49%;
+
+    margin: 0 0 0.5rem 0;
     padding: 0 15px !important;
 }
 
-.new-password {
+.row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 
     padding: 0 5px;
-    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
 }
 
-.new {
-    max-width: 49%;
 
-    padding: 0 10px;
-}
 
 .submit-wrapper {
-    width: fit-content;
+    width: 47%;
 
-    padding: 0 10px;
+    padding-right: 20px;
 }
 
 .submit {
-    width: fit-content;
+    height: 2rem;
+    width: 100%;
 
-    margin: 0 10px 0 5px;
-    padding: 9px 30px;
+    margin: 0.75rem 10px 0 5px;
+    padding: 9px 1.5rem;
 
     border: none;
+    border-radius: 5px;
 
-    font-size: 1rem;
+    font-size: 0.75rem;
     font-weight: 400;
-    background-color: rgba($green, 0.1);
-    color: $green;
+    background-color: rgba($green, 0.3);
+    color: white;
 
     outline: none;
 
     &:hover {
-        background-color: darken(rgba($green, 0.1), 4);
+        background-color: darken(rgba($green, 0.3), 4);
         cursor: pointer;
     }
 

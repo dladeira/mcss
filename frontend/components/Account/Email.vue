@@ -1,6 +1,6 @@
 <template>
     <div class="component">
-        <h1 class="title">Change Email</h1>
+        <h1 class="panel-title">Change Email</h1>
         <div class="forms">
             <form class="form old-email" @submit.prevent="sendOldEmail">
                 <SharedFormInput class="input" label="Old Email" type="email" :value="user.email" name="email-old" disabled />
@@ -29,14 +29,15 @@
 
     margin-bottom: 20px;
 
-    background-color: $gray6;
+    background-color: $panel;
+    border-radius: 5px;
 }
 
-.title {
-    margin: 10px 0 2rem 18px;
+.panel-title {
+    margin: 1rem 0 1.5rem 1rem;
 
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 400;
 }
 
 .forms {
@@ -46,6 +47,8 @@
     align-items: center;
 
     padding: 0 10px;
+
+    font-size: 0.75rem !important;
 }
 
 .form {
@@ -55,27 +58,28 @@
 .submit {
     width: 100%;
 
-    margin-bottom: 10px;
+    margin-bottom: 0.75rem;
     padding: 9px 0;
 
     border: none;
+    border-radius: 5px;
 
-    font-size: 1rem;
+    font-size: 0.75rem;
     font-weight: 500;
-    background-color: rgba($green, 0.1);
-    color: $green;
+    background-color: rgba($green, 0.3);
+    color: white;
 
     outline: none;
 
     &:hover {
-        background-color: darken(rgba($green, 0.1), 4);
+        background-color: darken(rgba($green, 0.3), 4);
         cursor: pointer;
     }
 
     &-waiting {
         @extend .submit;
 
-        background-color: rgba($green, 0.05);
+        background-color: rgba($green, 0.1);
         color: rgba($green, 0.5);
 
         &:hover {
@@ -102,7 +106,7 @@
 }
 
 .input {
-    margin-bottom: 1.5rem !important;
+    margin-bottom: 1rem !important;
 }
 </style>
 
