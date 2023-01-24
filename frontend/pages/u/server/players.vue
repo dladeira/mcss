@@ -6,8 +6,24 @@
                 <Title>{{ activeServer.name }} - Players</Title>
             </Head>
             
-            <div class="page">
-                <div class="top">
+            <div class="grid">
+                <div class="left">
+                    <PlayersGlobalStats />
+
+                    <PlayersPlayerList />
+                </div>
+                <div class="right">
+                    <div class="panel playerActivity">
+                        Player Activity (past 24h)
+                    </div>
+                    <div class="panel sessionStats">
+                        Session Stats (past 24h)
+                    </div>
+                    <div class="panel recentEvents">
+                        Recent Events
+                    </div>
+                </div>
+                <!-- <div class="top">
                     <PlayersUsage />
 
                     <PlayersList />
@@ -18,53 +34,46 @@
                     <div class="adv panel">
 
                     </div>
-                </div>
+                </div> -->
             </div>
         </NuxtLayout>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.page {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+.grid {
+    display: grid;
+    grid-template-columns: minmax(0, 80fr) minmax(0, 20fr);
+    grid-gap: 1.25rem;
 
     height: calc(100vh - 90px);
+    width: 100%;
 
-    padding: 2rem 0;
+    padding: 0.5rem 0 1rem;
 }
 
-.panel {
-    background-color: $gray6;
-}
+.left {
+    display: grid;
+    grid-template-rows: minmax(0, 25fr) minmax(0, 75fr);
+    grid-gap: 1.25rem;
+    grid-column: 1 / 2;
 
-.top,
-.bottom {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-
+    height: 100%;
     width: 100%;
 }
 
-.top {
-    height: 55%;
+.right {
+    display: grid;
+    grid-template-rows: minmax(0, 30fr) minmax(0, 30fr) minmax(0, 40fr);
+    grid-gap: 1.25rem;
+    grid-column: 2 / 3;
 
-    margin-bottom: $gap;
-}
-
-.bottom {
-    height: 45%;
-}
-
-.players,
-.chat,
-.adv {
     height: 100%;
-    width: calc((100% / 3) - ($gap * 2 / 3))
+    width: 100%;
+}
+
+.panel {
+    background-color: $panel;
 }
 </style>
 

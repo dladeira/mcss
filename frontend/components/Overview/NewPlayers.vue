@@ -6,64 +6,64 @@
 
         <div class="list">
             <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <img class="player-img" src="https://cravatar.eu/avatar/Maximimand/20.png" />
+                <p class="player-name">Maximimand</p>
+                <p class="player-time">9:58 AM</p>
+            </div>
+            <div class="player">
+                <img class="player-img" src="https://cravatar.eu/avatar/DaddyBlockbone/20.png" />
+                <p class="player-name">DaddyBlockbone</p>
+                <p class="player-time">7:17 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
             <div class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
                 <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">13:17 PM</p>
+                <p class="player-time">6:37 AM</p>
             </div>
         </div>
     </div>
@@ -133,7 +133,7 @@
 }
 
 .player-time {
-    margin: 0;
+    margin: 0 1rem 0 auto;
 
     font-size: 0.75rem;
     font-weight: 400;

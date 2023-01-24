@@ -56,7 +56,8 @@ const props = defineProps({
 
 const scale =2
 
-function drawRadius(radius, percent) {
+function drawRadius(radius) {
+    console.log("drawing " + props.percent)
     var canvas = document.getElementById(props.id)
     var ctx = canvas.getContext("2d")
 
@@ -81,7 +82,7 @@ function drawRadius(radius, percent) {
     }
 
     drawWedge(ctx, canvas.width / 2, canvas.height / 2, radius, 100, props.hex + "3f")
-    drawWedge(ctx, canvas.width / 2, canvas.height / 2, radius, percent, props.hex)
+    drawWedge(ctx, canvas.width / 2, canvas.height / 2, radius, props.percent, props.hex)
 }
 
 function resizeCanvas(canvas) {
@@ -102,6 +103,6 @@ function resizeCanvas(canvas) {
 onMounted(() => {
     setTimeout(() => {
         drawRadius(25 * scale, props.percent)
-    }, 10)
+    }, 30)
 })
 </script>
