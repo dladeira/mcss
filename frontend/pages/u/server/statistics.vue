@@ -6,11 +6,113 @@
                 <Title>{{ activeServer.name }} - Statistics</Title>
             </Head>
 
-            <div class="page">
-                <div class="container">
+            <div class="grid">
+                <div class="panel statisticsViewer">
+                    <h1 class="panel-title">Statistics Viewer</h1>
                     <div class="chart">
                         <Line :data="getData()" :options="options" />
                     </div>
+                </div>
+                <div class="panel xAxis">
+                    <h1 class="axis-title">X Axis</h1>
+
+                    <div class="selections">
+                        <div class="selection-group">
+                            <div :class="selected == 'day' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'day'">Daily</div>
+                            <div :class="selected == 'month' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'month'">Weekly</div>
+                            <div :class="selected == 'year' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'year'">Monthly</div>
+                        </div>
+                        <div class="selection-group">
+                            <div :class="selected == 'average' ? 'selection-average-selected' : 'selection-average'" @click="selected = 'average'">Average Day</div>
+                            <div :class="selected == 'peak' ? 'selection-peak-selected' : 'selection-peak'" @click="selected = 'peak'">Peak Day</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel yAxis">
+                    <h1 class="axis-title">Y Axis</h1>
+                    <div class="options">
+                        <div class="option-column">
+                            <div class="option" @click="toggleYSelected('cpu')">
+                                <div :class="isYSelected('cpu') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    CPU Usage
+                                </div>
+                            </div>
+                            <div class="option" @click="toggleYSelected('ram')">
+                                <div :class="isYSelected('ram') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    RAM Usage
+                                </div>
+                            </div>
+                            <div class="option" @click="toggleYSelected('storage')">
+                                <div :class="isYSelected('storage') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Storage Usage
+                                </div>
+                            </div>
+                            <div class="option" @click="toggleYSelected('players')">
+                                <div :class="isYSelected('players') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Player Count
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-column">
+                            <div class="option" @click="toggleYSelected('messages')">
+                                <div :class="isYSelected('messages') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Messages sent
+                                </div>
+                            </div>
+                            <div class="option" @click="toggleYSelected('characters')">
+                                <div :class="isYSelected('characters') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Characters sent
+                                </div>
+                            </div>
+                            <div class="option" @click="toggleYSelected('whispers')">
+                                <div :class="isYSelected('whispers') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Whispers sent
+                                </div>
+                            </div>
+                            <div class="option" @click="toggleYSelected('commands')">
+                                <div :class="isYSelected('commands') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Commands sent
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-column">
+                            <div class="option" @click="toggleYSelected('blocksBrokenPerPlayer')">
+                                <div :class="isYSelected('blocksBrokenPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Blocks broken/player
+                                </div>
+                            </div>
+                            <div class="option" @click="toggleYSelected('blocksPlacedPerPlayer')">
+                                <div :class="isYSelected('blocksPlacedPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Blocks placed/player
+                                </div>
+                            </div>
+                            <div class="option" @click="toggleYSelected('blocksTraveledPerPlayer')">
+                                <div :class="isYSelected('blocksTraveledPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Blocks traveled/player
+                                </div>
+                            </div>
+                            <div class="option" @click="toggleYSelected('itemsCraftedPerPlayer')">
+                                <div :class="isYSelected('itemsCraftedPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                                <div class="option-text">
+                                    Items Crafted/player
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="container">
+                    
 
                     <div class="axes">
                         <div class="axis">
@@ -111,25 +213,31 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </NuxtLayout>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.page {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+.grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 75fr) minmax(0, 25fr);
+    grid-gap: 1.25rem;
 
     height: calc(100vh - 90px);
 
     padding: 2rem 0;
 }
 
-.container {
+.statisticsViewer {
+    grid-column: 1 / 3;
+}
+
+.panel {
+    position: relative;
+
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -138,28 +246,25 @@
     height: 100%;
     width: 100%;
 
-    padding-top: 1rem;
+    border-radius: 5px;
 
-    background-color: $gray6;
+    background-color: $panel;
+
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
+}
+
+.panel-title {
+    margin: 1rem 0 0 1rem;
+
+    font-size: 1rem;
+    font-weight: 400;
 }
 
 .chart {
-    height: 100%;
-    width: 100%;
+    height: 87%;
+    width: 98%;
 
-    padding: 0 1rem;
-}
-
-.axes {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-
-    height: 22rem;
-    width: 100%;
-
-    padding: 1.25rem;
+    margin: 1.5rem 0 0 1rem;
 }
 
 .axis {
@@ -187,7 +292,7 @@
 }
 
 .selections {
-    margin-top: 1.25rem;
+    width: 100%;
 }
 
 .selection-group {
@@ -196,78 +301,83 @@
     justify-content: space-between;
     align-items: center;
 
-    width: 80%;
+    width: 90%;
 
-    margin: 0 auto 1rem;
+    margin: 0 auto 0.75rem;
 }
 
 .selection {
-    width: 30%;
+    width: 32%;
 
-    padding: 10px 0;
+    padding: 0.65rem 0;
 
     border-radius: 5px;
 
     text-align: center;
+    font-size: 0.75rem;
     color: white;
 
     &:hover {
         cursor: pointer;
     }
 
+    $regular: 0.3;
+    $hover: 0.4;
+    $selected: 0.6;
+
     &-regular {
         @extend .selection;
 
-        background-color: rgba($green, 0.2);
+        background-color: rgba($green, $regular);
 
         &:hover {
-            background-color: rgba($green, 0.25);
+            background-color: rgba($green, $hover);
         }
 
         &-selected {
             @extend .selection;
 
-            background-color: rgba($green, 0.5);
+            background-color: rgba($green, $selected);
         }
     }
 
     &-average {
         @extend .selection;
 
-        width: 48%;
+        width: 49%;
 
-        background-color: rgba($red, 0.2);
+        background-color: rgba($red, $regular);
 
         &:hover {
-            background-color: rgba($red, 0.25);
+            background-color: rgba($red, $hover);
         }
 
         &-selected {
             @extend .selection;
 
-            width: 48%;
+            width: 49%;
 
-            background-color: rgba($red, 0.5);
+            background-color: rgba($red, $selected);
         }
     }
 
     &-peak {
         @extend .selection;
 
-        width: 48%;
+        width: 49%;
 
-        background-color: rgba($blue, 0.2);
+        background-color: rgba($blue, $regular);
 
         &:hover {
-            background-color: rgba($blue, 0.25);
+            background-color: rgba($blue, $hover);
         }
 
         &-selected {
             @extend .selection;
 
-            width: 48%;
+            width: 49%;
 
-            background-color: rgba($blue, 0.5);
+            background-color: rgba($blue, $selected);
         }
     }
 }
@@ -290,6 +400,8 @@
     align-items: center;
 
     margin-bottom: 0.5rem;
+
+    font-size: 0.75rem;
 
     &:hover {
         cursor: pointer;
