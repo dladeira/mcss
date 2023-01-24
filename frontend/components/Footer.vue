@@ -19,9 +19,15 @@
                 <div class="links">
                     <div class="link-column">
                         <nuxt-link to="/" class="link">Home</nuxt-link>
+                        <nuxt-link to="/pricing" class="link">Pricing</nuxt-link>
+                        <nuxt-link to="/roadmap" class="link">Roadmap</nuxt-link>
+                    </div>
+                    <div class="link-column">
                         <nuxt-link to="/login" class="link">Login</nuxt-link>
                         <nuxt-link to="/login" class="link">Sign up</nuxt-link>
+                        <nuxt-link to="/tos" class="link">TOS</nuxt-link>
                     </div>
+
                     <div class="link-column">
                         <nuxt-link to="/u/servers" class="link">Servers</nuxt-link>
                         <nuxt-link to="/u/account" class="link">Account</nuxt-link>
