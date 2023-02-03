@@ -105,7 +105,7 @@ async function generateServerCache(server, data) {
 
     const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0, 0] // [3m, 6m, 1y, forever]
-    const averagePacket = getAverageDataSize(data)
+    const averagePacket = getAverageDataSize(server.datas)
 
     var now = new Date()
     const month = 30 * 24 * 60 * 60 * 1000
@@ -305,8 +305,8 @@ async function generateServerCache(server, data) {
     graphs.month[firstDateMonth.getDate()].count += skippedMonth
 
     const cache = {
-        storageUsage: Math.round(averagePacket * data.length / (server.storage * 1024) * 100),
-        storageUsed: Math.ceil(averagePacket * data.length / 1024 * 10) / 10,
+        storageUsage: Math.round(averagePacket * server.datas.length / (server.storage * 1024) * 100),
+        storageUsed: Math.ceil(averagePacket * server.datas.length / 1024 * 10) / 10,
         uptime: Math.round(uptimeInfo[0] / (uptimeInfo[0] + uptimeInfo[1]) * 100),
         graphs,
         dataAge: {
