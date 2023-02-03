@@ -22,7 +22,7 @@
                 <div class="player-location">{{player.location}}</div>
                 <div class="player-engagement">58.3</div>
                 <div class="player-messages">{{player.messages}}</div>
-                <div class="player-session">{{player.online ? formatTime(Math.random() * 10000) : "OFFLINE"}}</div>
+                <div class="player-session">{{player.online ? formatTime(player.session) : "---"}}</div>
                 <div class="player-playtime">{{formatTime(player.playtime)}}</div>
                 <div class="player-view">View</div>
             </div>
@@ -203,12 +203,12 @@ function formatTime(seconds) {
     } else if (seconds >= 3600) {
         lead = seconds / 3600
         unit = "h"
-    } else if (seconds => 60) {
+    } else if (seconds >= 60) {
         lead = seconds / 60
-        unit = "m"
+        unit = "min"
     } else {
         lead = seconds
-        unit = "s"
+        unit = "sec"
     }
 
     return lead.toPrecision(2) + unit

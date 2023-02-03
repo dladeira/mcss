@@ -186,19 +186,6 @@ const props = defineProps({
     stats: Object
 })
 
-function deleteServer() {
-    if (confirm("Are you sure you want to delete this server? There is no undo option.")) {
-        useFetch(config.public.origin + '/api/servers/delete', {
-            method: "POST",
-            body: {
-                _id: props._id
-            }
-        })
-
-        window.location.reload(true)
-    }
-}
-
 function openDashboard() {
     activeServerCookie.value = servers.value.find(server => server._id == props._id)
     activeServer.value = servers.value.find(server => server._id == props._id)

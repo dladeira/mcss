@@ -5,7 +5,7 @@ const Server = require('../models/Server')
 const Data = require('../models/Data')
 const config = require('config');
 
-const cacheEnabled = true
+const cacheEnabled = false
 const cacheLife = config.get('serverStats.cacheLife') * 1000
 
 var cachedStats = []
@@ -22,10 +22,11 @@ async function serverStatsMw(req, res, next) {
         return next()
     }
 
-    const servers = await Server.find({ owner: req.user._id }).lean()
+    const servers = await Server.find({ owner: req.user._id }).populate('datas').lean()
 
     for (var server of servers) {
         const data = await Data.find({ server: server._id })
+
         if (data.length > 0) {
             var latestData = data.reduce((prev, current) => prev.time > current.time ? prev : current)
 
@@ -80,23 +81,21 @@ async function serverStatsMw(req, res, next) {
 
 async function loadCache(server, data) {
     const cached = cachedStats.find(i => i.server.toString() == server._id.toString())
-    if (cached && cacheEnabled) {
-        if (cached.life > Date.now()) {
-            return cached.cache
-        } else {
-            return await generateServerCache(server, data)
-        }
-    } else if (cacheEnabled) {
-        return await generateServerCache(server, data)
-    } start
+    // if (cached && cacheEnabled) {
+    //     if (cached.life > Date.now()) {
+    //         return cached.cache
+    //     } else {
+    //         return await generateServerCache(server, data)
+    //     }
+    // }
+
+    return await generateServerCache(server, data)
 }
 
 async function generateServerCache(server, data) {
-    if (!data)
-        data = await Data.find({ server: server._id })
 
     const user = await User.findOne({ _id: server.owner })
-    const updateInterval = user.plan.updateFrequency * 60
+    const updateInterval = user.plan.updateFrequency * 1000
 
     var latestData = data.reduce((prev, current) => prev.time > current.time ? prev : current)
 
@@ -107,16 +106,9 @@ async function generateServerCache(server, data) {
     const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0, 0] // [3m, 6m, 1y, forever]
     const averagePacket = getAverageDataSize(data)
-    if (data.length > 5) {
-        var start = data[data.length - 5].time
-    } else {
-        var start = data[0].time
-    }
 
     var now = new Date()
     const month = 30 * 24 * 60 * 60 * 1000
-
-    const promises = []
 
     const uptimeInfo = [0, 0]
     const players = []
@@ -189,121 +181,112 @@ async function generateServerCache(server, data) {
             graphs[graphTime][graphIndex].blocksTraveledPerPlayer = 0
             graphs[graphTime][graphIndex].itemsCraftedPerPlayer = 0
         }
-
     }
 
     const deletePackets = []
 
-    for (var time = start; time < Date.now(); time += updateInterval * 1000) {
-        promises.push(new Promise(async (resolve) => {
-            var date = new Date(time)
-            const packet = await Data.findOne({ time: { $gt: time - 1, $lt: time + (updateInterval * 1000) + 1 } })
 
+    uptimeInfo[1]++
+    var lastTime = server.firstUpdate
+    var i = 0
 
-            // if (date.getUTCDate() == now.getUTCDate()) {
-            //     registerToGraph(packet, 'day', date.getUTCHours())
-            // }
+    for (var packet of server.datas) {
+        var date = new Date(packet.time)
 
-            if (packet) {
-                if (server.dataLifetime != 0 && now.getTime() - date.getTime() > server.dataLifetime * month)
-                    return deletePackets.push(packet._id)
+        var lastPacketDelay = lastTime % updateInterval
+        var lastPacketExpected = lastTime - lastPacketDelay
+        var packetDelay = packet.time % updateInterval
+        var packetExpected = packet.time - packetDelay
+        var timeSkipped = packetExpected - lastPacketExpected - updateInterval
+        var packetsSkipped = timeSkipped / updateInterval
 
-                if (date.getUTCFullYear() == now.getUTCFullYear()) {
-                    registerToGraph(packet, 'year', date.getUTCMonth())
+        lastTime = packet.time
 
-                    if (date.getUTCMonth() == now.getUTCMonth()) {
-                        registerToGraph(packet, 'month', date.getUTCDate() - 1)
-                        registerToGraph(packet, 'average', date.getUTCHours() - 1)
+        uptimeInfo[0] += 1
+        uptimeInfo[1] += packetsSkipped
 
-                        if (date.getUTCDate() == now.getUTCDate()) {
-                            registerToGraph(packet, 'day', date.getUTCHours() - 1)
-                        }
-                    }
+        if (server.dataLifetime != 0 && now.getTime() - date.getTime() > server.dataLifetime * month)
+            return deletePackets.push(packet._id)
+
+        if (date.getUTCFullYear() == now.getUTCFullYear()) {
+            registerToGraph(packet, 'year', date.getUTCMonth())
+
+            if (date.getUTCMonth() == now.getUTCMonth()) {
+                registerToGraph(packet, 'month', date.getUTCDate() - 1)
+                registerToGraph(packet, 'average', date.getUTCHours())
+
+                if (date.getUTCDate() == now.getUTCDate()) {
+                    registerToGraph(packet, 'day', date.getUTCHours())
                 }
+            }
+        }
 
-                blocks[0] += packet.blocksBroken ? packet.blocksBroken : 0
-                blocks[1] += packet.blocksPlaced ? packet.blocksPlaced : 0
-                blocks[2] += packet.blocksTraveled ? packet.blocksTraveled : 0
-                deaths += packet.deaths ? packet.deaths : 0
-                itemsCrafted += packet.itemsCrafted ? packet.itemsCrafted : 0
+        blocks[0] += packet.blocksBroken ? packet.blocksBroken : 0
+        blocks[1] += packet.blocksPlaced ? packet.blocksPlaced : 0
+        blocks[2] += packet.blocksTraveled ? packet.blocksTraveled : 0
+        deaths += packet.deaths ? packet.deaths : 0
+        itemsCrafted += packet.itemsCrafted ? packet.itemsCrafted : 0
 
-                if (packet.players.length > playerPeak) {
-                    playerpeak = date.getUTCDate()
-                    playerPeak = packet.players.length
-                    clearGraph('peak')
-                }
+        if (packet.players.length > playerPeak) {
+            playerpeak = date.getUTCDate()
+            playerPeak = packet.players.length
+            clearGraph('peak')
+        }
 
-                if (playerpeak == date.getUTCDate())
-                    registerToGraph(packet, 'peak', date.getUTCHours() - 1)
+        if (playerpeak == date.getUTCDate())
+            registerToGraph(packet, 'peak', date.getUTCHours() - 1)
 
-                chat[0] += packet.messages ? packet.messages : 0
-                chat[1] += packet.characters ? packet.characters : 0
-                chat[2] += packet.whispers ? packet.whispers : 0
-                chat[3] += packet.commands ? packet.commands : 0
+        chat[0] += packet.messages
+        chat[1] += packet.characters
+        chat[2] += packet.whispers
+        chat[3] += packet.commands
 
-                main:
-                for (var stats of packet.players) {
-                    for (var player of players) {
-                        if (stats.uuid == player.uuid) {
-                            player.username = stats.username
-                            player.playtime += parseInt(stats.playtime) / 20
-                            player.messages += parseInt(stats.messages)
-                            continue main
-                        }
-                    }
-                    const latestPlayer = latestData.players.find(i => i.uuid == stats.uuid)
-
-                    players.push({
-                        uuid: stats.uuid,
-                        username: stats.username,
-                        playtime: parseInt(stats.playtime) / 20,
-                        messages: parseInt(stats.messages),
-                        location: latestPlayer ? `(${latestPlayer['location.x']}, ${latestPlayer['location.y']}, ${latestPlayer['location.z']})` : "---",
-                        online: latestPlayer ? true : false
-                    })
-                }
-
-                const timeSince = now.getTime() - date.getTime()
-
-
-                if (timeSince < 12 * month) {
-                    if (timeSince > 6 * month) {
-                        dataAge[2]++
-                    } else if (timeSince > 3 * month) {
-                        dataAge[1]++
+        main:
+        for (var stats of packet.players) {
+            for (var player of players) {
+                if (stats.uuid == player.uuid) {
+                    if (packetsSkipped) {
+                        player.session = 0
                     } else {
-                        dataAge[0]++
+                        player.session += user.plan.updateFrequency
                     }
-                } else {
-                    dataAge[3]++
-                }
 
-                uptimeInfo[0]++
+                    player.username = stats.username
+                    player.playtime += parseInt(stats.playtime) / 20
+                    player.messages += parseInt(stats.messages)
+                    continue main
+                }
+            }
+
+            const latestPlayer = latestData.players.find(i => i.uuid == stats.uuid)
+
+            players.push({
+                uuid: stats.uuid,
+                username: stats.username,
+                playtime: parseInt(stats.playtime) / 20,
+                messages: parseInt(stats.messages),
+                location: latestPlayer ? `(${latestPlayer['location.x']}, ${latestPlayer['location.y']}, ${latestPlayer['location.z']})` : null,
+                online: latestPlayer ? true : false,
+                session: latestPlayer ? user.plan.updateFrequency : null
+            })
+        }
+
+        const timeSince = now.getTime() - date.getTime()
+
+        if (timeSince < 12 * month) {
+            if (timeSince > 6 * month) {
+                dataAge[2]++
+            } else if (timeSince > 3 * month) {
+                dataAge[1]++
             } else {
-                uptimeInfo[1]++
+                dataAge[0]++
             }
+        } else {
+            dataAge[3]++
+        }
 
-            if (date.getUTCFullYear() == now.getUTCFullYear()) {
-                graphs.year[date.getUTCMonth()].count += 1
-
-                if (date.getUTCMonth() == now.getUTCMonth()) {
-                    graphs.month[date.getUTCDate() - 1].count += 1
-
-                    if (date.getUTCDate() == now.getUTCDate()) {
-                        graphs.day[date.getUTCHours()].count += 1
-                    }
-                }
-            }
-
-            resolve()
-        }))
+        uptimeInfo[0]++
     }
-
-    await Promise.all(promises)
-
-    await Promise.all(deletePackets.map(async packet => {
-        await Data.deleteOne({ _id: packet })
-    }))
 
     for (var player of players) {
         totalPlaytime += player.playtime
@@ -353,7 +336,7 @@ async function generateServerCache(server, data) {
         server: server._id
     })
 
-    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets) (searched ${(Math.round((Date.now() - start) / (updateInterval * 1000)))})`)
+    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets) (searched ${(Math.round((Date.now() - server.firstUpdate) / (updateInterval * 1000)))})`)
 
     return cache
 }

@@ -70,8 +70,8 @@ async function getUserData() {
 
     if (error.value) {
         // console.log("Forbidden user data")
-        token.value = ""
-        return navigateTo("/")
+        // token.value = ""
+        // return navigateTo("/")
     }
 
     user.value = data.value.user
@@ -90,8 +90,8 @@ async function getServerData() {
 
     if (error.value) {
         // console.log("Forbidden server data")
-        token.value = ""
-        return navigateTo("/")
+        // token.value = ""
+        // return navigateTo("/")
     }
 
     servers.value = data.value.servers

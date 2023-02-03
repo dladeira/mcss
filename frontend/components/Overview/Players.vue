@@ -155,10 +155,10 @@ function getDataset(index, timeFrame) {
     const values = []
 
     // Timezone offset
-    // if (timeFrame == 'day')
-    //     for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
-    //         values.push(undefined)
-    //     }
+    if (timeFrame == 'day')
+        for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
+            values.push(undefined)
+        }
 
     for (var timeFrame of activeServer.value.stats.cache.graphs[timeFrame]) {
         var value = timeFrame[index] / timeFrame.dataCount

@@ -7,7 +7,7 @@
             "storage": 10,
             "serverSlots": 1,
             "maxDataLife": 3,
-            "updateFrequency": 60
+            "updateFrequency": 5
         }
     }
 }

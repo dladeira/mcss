@@ -19,8 +19,7 @@ router.post('/stats-update', async (req, res) => {
         return res.status(404).send("Server not found")
 
     const user = await User.findOne({ _id: server.owner })
-    const updateInterval = user.plan.updateFrequency * 60 * 1000
-
+    const updateInterval = user.plan.updateFrequency * 1000
     const dataPackets = await Data.find({ server: secret })
 
     if (!server.firstUpdate) {
@@ -58,13 +57,17 @@ router.post('/stats-update', async (req, res) => {
 
     const sendIn = (updateInterval) - (Date.now() % (updateInterval))
     server.lastUpdate = Date.now()
+    if (!server.datas)
+        server.datas = []
+
+    server.datas.push(data._id.toString())
 
     await server.save()
     await data.save()
 
     res.status(200).send("SendIn:" + sendIn)
 
-    new Promise((resolve) => { generateServerCache(server); resolve() })
+    // new Promise((resolve) => { generateServerCache(server); resolve() })
 })
 
 router.post('/chat-msg', async (req, res) => {

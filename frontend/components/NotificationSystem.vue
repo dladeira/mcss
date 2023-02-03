@@ -32,11 +32,11 @@
     width: fit-content;
 
     margin-top: 1rem;
-    padding: 0.6rem 1.5rem 0.8rem 1.5rem;
+    padding: 0.4rem 1rem;
 
     border-radius: 1000px;
 
-    font-size: 1rem;
+    font-size: 0.75rem;
     background-color: #626770;
     color: rgba(white, 0.8);
 
@@ -98,12 +98,12 @@
 }
 
 .notif-close {
-    height: 1rem;
-    width: 1rem;
+    height: 0.8rem;
+    width: 0.8rem;
 
-    margin: 0 0 5px 1rem;
+    margin: 0 0 5px 1.5rem;
 
-    font-size: 2.25rem;
+    font-size: 1.25rem;
     font-weight: 200;
     line-height: 1rem;
     color: white;

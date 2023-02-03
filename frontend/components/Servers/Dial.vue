@@ -57,7 +57,6 @@ const props = defineProps({
 const scale =2
 
 function drawRadius(radius) {
-    console.log("drawing " + props.percent)
     var canvas = document.getElementById(props.id)
     var ctx = canvas.getContext("2d")
 

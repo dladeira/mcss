@@ -12,7 +12,11 @@ const serverSchema = new mongoose.Schema({
     firstUpdate: Number,
     lastUpdate: Number,
     dataLifetime: Number,
-    recentMessages: [Object]
+    recentMessages: [Object],
+    datas: {
+        type: [mongoose.ObjectId],
+        ref: 'Data'
+    }
 })
 
 const serverModel = mongoose.model("Server", serverSchema)

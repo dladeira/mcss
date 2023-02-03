@@ -10,8 +10,10 @@
             <SharedFormSlider class="storage" label="Storage Allocated" name="storage" :value="server.storage" :min="server.stats.cache.storageUsed" :max="user.plan.storage" :disabled="connecting" :step="0.1" />
             <SharedFormInput class="secret" type="text" label="Server Secret" :disabled="true" name="_id" :value="server._id" />
             <div class="submit-wrapper">
+
                 <div class="error">{{ error }}</div>
                 <button class="submit" type="submit" :disabled="connecting">Save Server</button>
+                <button @click.prevent="deleteServer" class="delete" :disabled="connecting">Delete Server</button>
             </div>
         </div>
     </form>
@@ -61,8 +63,6 @@
 }
 
 .error {
-    width: 10rem;
-
     margin-right: 1rem;
 
     font-size: 0.75rem;
@@ -78,21 +78,44 @@
     outline: none;
 
     font-size: 0.75rem;
-    font-weight: 600;
-    background-color: rgba($green, 0.2);
-    color: $green;
+    font-weight: 400;
+    background-color: rgba($green, 0.3);
+    color: white;
 
     &:disabled {
         opacity: 0.5;
 
         &:hover {
-            background-color: rgba($green, 0.2);
+            background-color: rgba($green, 0.3);
             cursor: default;
         }
     }
 
     &:hover {
-        background-color: darken(rgba($green, 0.2), 5);
+        background-color: darken(rgba($green, 0.3), 5);
+        cursor: pointer;
+    }
+}
+
+.delete {
+    @extend .submit;
+
+    margin-left: 1rem;
+
+    background-color: rgba($red, 0.3);
+    color: white;
+
+    &:disabled {
+        opacity: 0.5;
+
+        &:hover {
+            background-color: rgba($red, 0.3);
+            cursor: default;
+        }
+    }
+
+    &:hover {
+        background-color: darken(rgba($red, 0.3), 5);
         cursor: pointer;
     }
 }
@@ -109,6 +132,19 @@ const props = defineProps({
 
 const connecting = ref()
 const error = ref()
+
+async function deleteServer() {
+    if (confirm("Are you sure you want to delete this server? There is no undo option.")) {
+        await useFetch(config.public.origin + '/api/servers/delete', {
+            method: "POST",
+            body: {
+                _id: props.server._id
+            }
+        })
+
+        window.location.reload(true)
+    }
+}
 
 async function modifyServer(e) {
     connecting.value = "true"
@@ -128,6 +164,8 @@ async function modifyServer(e) {
         error.value = fetchError.value.data.error
         return
     }
+
+    connecting.value = false
 
     error.value = null
     notifications.value.push({
