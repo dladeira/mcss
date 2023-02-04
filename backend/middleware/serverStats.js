@@ -15,10 +15,17 @@ async function serverStatsMw(req, res, next) {
         return next()
     }
 
-    const servers = await Server.find({ owner: req.user._id }).populate('data').lean()
 
-    for (var server of servers)
+
+    process.stdout.write('FIND operation: ')
+    const startTime = Date.now()
+    const servers = await Server.aggregate().lookup({ from: 'datas', localField: 'data', foreignField: '_id', as: 'data'})
+    console.log(`${Math.round((Date.now() - startTime) / 1000 * 100) / 100}s (${servers.reduce((a, obj) => a + obj.data.length, 0)} packets)`)
+
+    for (var server of servers) {
         server.stats = await generateStats(server)
+        delete server.data
+    }
 
     req.servers = servers
     next()
@@ -54,7 +61,9 @@ const defaultStats = {
 }
 
 async function generateStats(server) {
-    process.stdout.write('ServerStats GEN operation: ')
+    process.stdout.write('GEN operation: ')
+    const startTime = new Date()
+
 
     const user = await User.findOne({ _id: server.owner })
     const updateInterval = user.plan.updateFrequency * 1000
@@ -67,7 +76,6 @@ async function generateStats(server) {
     const dataAge = [0, 0, 0, 0] // [3m, 6m, 1y, forever]
     const averagePacket = getAverageDataSize(server.data)
 
-    var now = new Date()
     const month = 30 * 24 * 60 * 60 * 1000
 
     var totalPacketsSkipped = 0
@@ -93,17 +101,17 @@ async function generateStats(server) {
 
         totalPacketsSkipped += packetsSkipped
 
-        if (server.dataLifetime != 0 && now.getTime() - date.getTime() > server.dataLifetime * month)
+        if (server.dataLifetime != 0 && startTime.getTime() - date.getTime() > server.dataLifetime * month)
             return deletePackets.push(packet._id)
 
-        if (date.getUTCFullYear() == now.getUTCFullYear()) {
+        if (date.getUTCFullYear() == startTime.getUTCFullYear()) {
             graphs.registerPacket(packet, 'year', date.getUTCMonth())
 
-            if (date.getUTCMonth() == now.getUTCMonth()) {
+            if (date.getUTCMonth() == startTime.getUTCMonth()) {
                 graphs.registerPacket(packet, 'month', date.getUTCDate() - 1)
                 graphs.registerPacket(packet, 'average', date.getUTCHours())
 
-                if (date.getUTCDate() == now.getUTCDate()) {
+                if (date.getUTCDate() == startTime.getUTCDate()) {
                     graphs.registerPacket(packet, 'day', date.getUTCHours())
                 }
             }
@@ -168,7 +176,7 @@ async function generateStats(server) {
             })
         }
 
-        const timeSince = now.getTime() - date.getTime()
+        const timeSince = startTime.getTime() - date.getTime()
 
         stats.forever += averagePacket
         if (timeSince < 12 * month)
@@ -197,7 +205,7 @@ async function generateStats(server) {
     stats.ramUsage = latestData.ramUsage
     stats.storageUsage = Math.round(latestData.storageUsage)
     stats.storageUsed = latestData.storageUsed
-    stats.uptime = Math.round(server.data.length / (server.data.length + packetsSkipped) * 100)
+    stats.uptime = Math.round(server.data.length / (server.data.length + totalPacketsSkipped) * 100)
     stats.graphs = graphs.getStats()
     stats.dataAge = {
         months3: Math.round(stats.months3 / 1024 * 10) / 10,
@@ -209,7 +217,7 @@ async function generateStats(server) {
     stats.max_players = latestData.max_players
     stats.runningTime = server.lastUpdate - server.firstUpdate
 
-    console.log(`${Math.round((Date.now() - now) / 1000 * 100) / 100}s (${server.data.length} packets) (elapsed ${Math.round((Date.now() - server.firstUpdate) / updateInterval)})`)
+    console.log(`${Math.round((Date.now() - startTime) / 1000 * 100) / 100}s (${server.data.length} packets) (${Math.round((Date.now() - server.firstUpdate) / updateInterval)} total)`)
 
     return stats
 }

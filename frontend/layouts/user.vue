@@ -77,24 +77,24 @@ async function getUserData() {
     user.value = data.value.user
 }
 
-
 async function getServerData() {
-    const { data, error } = await useFetch(config.public.origin + '/api/servers/get', {
-        method: "POST",
-        credentials: "same-origin",
-        body: {
-            token: getToken(),
-            demo: demo.value
-        },
-    })
+    if (!servers.value) {
+        const { data, error } = await useFetch(config.public.origin + '/api/servers/get', {
+            method: "POST",
+            credentials: "same-origin",
+            body: {
+                token: getToken(),
+                demo: demo.value
+            },
+        })
 
-    if (error.value) {
-        // console.log("Forbidden server data")
-        // token.value = ""
-        // return navigateTo("/")
+        if (error.value) {
+            // console.log("Forbidden server data")
+            // token.value = ""
+            // return navigateTo("/")
+        }
+        servers.value = data.value.servers
     }
-
-    servers.value = data.value.servers
 
     const foundActiveServer = servers.value.find(server => activeServerCookie.value == server._id)
 
