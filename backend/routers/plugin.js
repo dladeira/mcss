@@ -7,11 +7,9 @@ const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 
-const { generateServerCache } = require('../middleware/serverStats')
-
 router.post('/stats-update', async (req, res) => {
     req.body.players = JSON.parse(req.body.players)
-    const { cpu: cpuUsage, ram: ramUsage, players, messages, characters, whispers, commands, blocksBroken, blocksPlaced, blocksTraveled, deaths, secret } = req.body
+    const { cpu: cpuUsage, ram: ramUsage, players, messages, characters, whispers, commands, blocksBroken, blocksPlaced, blocksTraveled, deaths, secret, max_players } = req.body
 
     const server = await Server.findOne({ _id: secret })
 
@@ -52,22 +50,21 @@ router.post('/stats-update', async (req, res) => {
         blocksPlaced,
         blocksTraveled,
         deaths,
+        max_players, 
         time: Date.now() - (Date.now() % (updateInterval)),
     })
 
     const sendIn = (updateInterval) - (Date.now() % (updateInterval))
     server.lastUpdate = Date.now()
-    if (!server.datas)
-        server.datas = []
+    if (!server.data)
+        server.data = []
 
-    server.datas.push(data._id.toString())
+    server.data.push(data._id.toString())
 
     await server.save()
     await data.save()
 
     res.status(200).send("SendIn:" + sendIn)
-
-    // new Promise((resolve) => { generateServerCache(server); resolve() })
 })
 
 router.post('/chat-msg', async (req, res) => {

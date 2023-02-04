@@ -14,6 +14,7 @@ const dataSchema = new mongoose.Schema({
     storageUsage: Number,
     time: Number,
     players: [Object],
+    max_players: Number,
     messages: Number,
     characters: Number,
     whispers: Number,

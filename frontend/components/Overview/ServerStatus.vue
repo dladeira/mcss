@@ -8,23 +8,23 @@
             <div class="dials">
                 <div class="dial">
                     <h2 class="dial-title blue">CPU</h2>
-                    <OverviewServerStatusDial id="overviewDial-cpu" :percent="activeServer.stats.live.cpuUsage" color="blue" hex="#00C2FF" />
+                    <OverviewServerStatusDial id="overviewDial-cpu" :percent="activeServer.stats.cpuUsage" color="blue" hex="#00C2FF" />
                 </div>
 
                 <div class="dial">
                     <h2 class="dial-title green">RAM</h2>
-                    <OverviewServerStatusDial id="overviewDial-ram" :percent="activeServer.stats.live.ramUsage" color="green" hex="#00FF75" />
+                    <OverviewServerStatusDial id="overviewDial-ram" :percent="activeServer.stats.ramUsage" color="green" hex="#00FF75" />
                 </div>
                 <div class="dial">
                     <h2 class="dial-title red">Storage</h2>
-                    <OverviewServerStatusDial id="overviewDial-storage" :percent="activeServer.stats.cache.storageUsage" color="red" hex="#FF3030" />
+                    <OverviewServerStatusDial id="overviewDial-storage" :percent="activeServer.stats.storageUsage" color="red" hex="#FF3030" />
                 </div>
             </div>
             <div class="players">
                 <h2 class="players-title">Players</h2>
                 <div class="players-text">
-                    <span class="playerCount">17</span>
-                    <span class="playerMax">/20</span>
+                    <span class="playerCount">{{ activeServer.stats.players.filter(i => i.online).length }}</span>
+                    <span class="playerMax">/{{ activeServer.stats.max_players }}</span>
                 </div>
             </div>
         </div>
@@ -102,10 +102,16 @@
 }
 
 .players-text {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
     margin-top: 2.25rem;
 }
 
 .playerCount {
+    margin: 0 0.5rem 0.25rem 0;
+
     font-size: 4rem;
     font-weight: 700;
     color: $gold;

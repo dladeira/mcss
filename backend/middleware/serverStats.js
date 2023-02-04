@@ -5,11 +5,6 @@ const Server = require('../models/Server')
 const Data = require('../models/Data')
 const config = require('config');
 
-const cacheEnabled = false
-const cacheLife = config.get('serverStats.cacheLife') * 1000
-
-var cachedStats = []
-
 async function serverStatsMw(req, res, next) {
     if (req.demo) {
         const servers = []
@@ -22,21 +17,20 @@ async function serverStatsMw(req, res, next) {
         return next()
     }
 
-    const servers = await Server.find({ owner: req.user._id }).populate('datas').lean()
+    const servers = await Server.find({ owner: req.user._id }).populate('data').lean()
 
     for (var server of servers) {
-        const data = await Data.find({ server: server._id })
+        if (server.data.length > 0) {
+            // var latestData = server.data.reduce((prev, current) => prev.time > current.time ? prev : current)
 
-        if (data.length > 0) {
-            var latestData = data.reduce((prev, current) => prev.time > current.time ? prev : current)
-
-            server.stats = {
-                live: {
-                    cpuUsage: latestData.cpuUsage,
-                    ramUsage: latestData.ramUsage,
-                },
-                cache: await loadCache(server, data)
-            }
+            server.stats = await loadServerStats(server)
+            // server.stats = {
+            //     live: {
+            //         cpuUsage: latestData.cpuUsage,
+            //         ramUsage: latestData.ramUsage,
+            //     },
+            //     cache: await loadCache(server)
+            // }
         } else {
             server.stats = {
                 live: {
@@ -79,33 +73,17 @@ async function serverStatsMw(req, res, next) {
     next()
 }
 
-async function loadCache(server, data) {
-    const cached = cachedStats.find(i => i.server.toString() == server._id.toString())
-    // if (cached && cacheEnabled) {
-    //     if (cached.life > Date.now()) {
-    //         return cached.cache
-    //     } else {
-    //         return await generateServerCache(server, data)
-    //     }
-    // }
-
-    return await generateServerCache(server, data)
-}
-
-async function generateServerCache(server, data) {
-
+async function loadServerStats(server) {
     const user = await User.findOne({ _id: server.owner })
     const updateInterval = user.plan.updateFrequency * 1000
 
-    var latestData = data.reduce((prev, current) => prev.time > current.time ? prev : current)
+    var latestData = server.data.reduce((prev, current) => prev.time > current.time ? prev : current)
 
-    process.stdout.write('Cache GEN operation: ')
-
-    cachedStats = cachedStats.filter(i => i.server.toString() != server._id.toString())
+    process.stdout.write('ServerStats GEN operation: ')
 
     const graphs = getDefaultGraphs()
     const dataAge = [0, 0, 0, 0] // [3m, 6m, 1y, forever]
-    const averagePacket = getAverageDataSize(server.datas)
+    const averagePacket = getAverageDataSize(server.data)
 
     var now = new Date()
     const month = 30 * 24 * 60 * 60 * 1000
@@ -190,7 +168,7 @@ async function generateServerCache(server, data) {
     var lastTime = server.firstUpdate
     var i = 0
 
-    for (var packet of server.datas) {
+    for (var packet of server.data) {
         var date = new Date(packet.time)
 
         var lastPacketDelay = lastTime % updateInterval
@@ -242,29 +220,29 @@ async function generateServerCache(server, data) {
         chat[3] += packet.commands
 
         main:
-        for (var stats of packet.players) {
-            for (var player of players) {
-                if (stats.uuid == player.uuid) {
+        for (var packetPlayer of packet.players) {
+            for (var statsPlayer of players) {
+                if (packetPlayer.uuid == statsPlayer.uuid) {
                     if (packetsSkipped) {
-                        player.session = 0
+                        statsPlayer.session = 0
                     } else {
-                        player.session += user.plan.updateFrequency
+                        statsPlayer.session += user.plan.updateFrequency
                     }
 
-                    player.username = stats.username
-                    player.playtime += parseInt(stats.playtime) / 20
-                    player.messages += parseInt(stats.messages)
+                    statsPlayer.username = packetPlayer.username
+                    statsPlayer.playtime += user.plan.updateFrequency
+                    statsPlayer.messages += parseInt(packetPlayer.messages)
                     continue main
                 }
             }
 
-            const latestPlayer = latestData.players.find(i => i.uuid == stats.uuid)
+            const latestPlayer = latestData.players.find(i => i.uuid == packetPlayer.uuid)
 
             players.push({
-                uuid: stats.uuid,
-                username: stats.username,
-                playtime: parseInt(stats.playtime) / 20,
-                messages: parseInt(stats.messages),
+                uuid: packetPlayer.uuid,
+                username: packetPlayer.username,
+                playtime: user.plan.updateFrequency,
+                messages: parseInt(packetPlayer.messages),
                 location: latestPlayer ? `(${latestPlayer['location.x']}, ${latestPlayer['location.y']}, ${latestPlayer['location.z']})` : null,
                 online: latestPlayer ? true : false,
                 session: latestPlayer ? user.plan.updateFrequency : null
@@ -288,8 +266,8 @@ async function generateServerCache(server, data) {
         uptimeInfo[0]++
     }
 
-    for (var player of players) {
-        totalPlaytime += player.playtime
+    for (var statsPlayer of players) {
+        totalPlaytime += statsPlayer.playtime
     }
 
     const firstDateYear = new Date(server.firstUpdate)
@@ -298,15 +276,17 @@ async function generateServerCache(server, data) {
     firstDateYear.setDate(1)
     firstDateYear.setHours(0)
     firstDateMonth.setHours(0)
-    var skippedYear = Math.floor((server.firstUpdate - firstDateYear.getTime()) / (updateInterval * 1000))
-    var skippedMonth = Math.floor((server.firstUpdate - firstDateMonth.getTime()) / (updateInterval * 1000))
+    var skippedYear = Math.floor((server.firstUpdate - firstDateYear.getTime()) / (updateInterval))
+    var skippedMonth = Math.floor((server.firstUpdate - firstDateMonth.getTime()) / (updateInterval))
 
     graphs.year[firstDateYear.getMonth()].count += skippedYear
     graphs.month[firstDateMonth.getDate()].count += skippedMonth
 
-    const cache = {
-        storageUsage: Math.round(averagePacket * server.datas.length / (server.storage * 1024) * 100),
-        storageUsed: Math.ceil(averagePacket * server.datas.length / 1024 * 10) / 10,
+    const stats = {
+        cpuUsage: latestData.cpuUsage,
+        ramUsage: latestData.ramUsage,
+        storageUsage: Math.round(averagePacket * server.data.length / (server.storage * 1024) * 100),
+        storageUsed: Math.ceil(averagePacket * server.data.length / 1024 * 10) / 10,
         uptime: Math.round(uptimeInfo[0] / (uptimeInfo[0] + uptimeInfo[1]) * 100),
         graphs,
         dataAge: {
@@ -316,6 +296,7 @@ async function generateServerCache(server, data) {
             forever: Math.round((dataAge[0] + dataAge[1] + dataAge[2] + dataAge[3]) * averagePacket / 1024 * 10) / 10
         },
         players,
+        max_players: latestData.max_players,
         blocksBroken: blocks[0],
         blocksPlaced: blocks[1],
         blocksTraveled: blocks[2],
@@ -330,15 +311,9 @@ async function generateServerCache(server, data) {
         runningTime: server.lastUpdate - server.firstUpdate
     }
 
-    cachedStats.push({
-        cache,
-        life: now.getTime() + cacheLife,
-        server: server._id
-    })
+    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${server.data.length} packets) (elapsed ${Math.round((Date.now() - server.firstUpdate) / updateInterval)})`)
 
-    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${data.length} packets) (searched ${(Math.round((Date.now() - server.firstUpdate) / (updateInterval * 1000)))})`)
-
-    return cache
+    return stats
 }
 
 function generateFakeServer(name, id) {
@@ -554,6 +529,5 @@ function getAverageDataSize(data) { // KiloBytes
 }
 
 module.exports = {
-    serverStatsMw,
-    generateServerCache,
+    serverStatsMw
 }

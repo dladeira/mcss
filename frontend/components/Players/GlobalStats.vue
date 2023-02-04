@@ -5,27 +5,27 @@
         </h1>
         <div class="stats">
             <div class="stat">
-                <h1 class="stat-title">{{ formatNumber(activeServer.stats.cache.blocksBroken) }}</h1>
+                <h1 class="stat-title">{{ formatNumber(activeServer.stats.blocksBroken) }}</h1>
                 <h2 class="stat-label">Blocks Broken</h2>
             </div>
             <div class="stat">
-                <h1 class="stat-title">{{ formatNumber(activeServer.stats.cache.blocksPlaced) }}</h1>
+                <h1 class="stat-title">{{ formatNumber(activeServer.stats.blocksPlaced) }}</h1>
                 <h2 class="stat-label">Blocks Placed</h2>
             </div>
             <div class="stat">
-                <h1 class="stat-title">{{ formatNumber(activeServer.stats.cache.blocksTraveled) }}</h1>
+                <h1 class="stat-title">{{ formatNumber(activeServer.stats.blocksTraveled) }}</h1>
                 <h2 class="stat-label">Blocks Traveled</h2>
             </div>
             <div class="stat">
-                <h1 class="stat-title">{{ formatTime(activeServer.stats.cache.totalPlaytime) }}</h1>
+                <h1 class="stat-title">{{ formatTime(activeServer.stats.totalPlaytime) }}</h1>
                 <h2 class="stat-label">Time Played</h2>
             </div>
             <div class="stat">
-                <h1 class="stat-title">{{ formatNumber(activeServer.stats.cache.messages) }}</h1>
+                <h1 class="stat-title">{{ formatNumber(activeServer.stats.messages) }}</h1>
                 <h2 class="stat-label">Messages Sent</h2>
             </div>
             <div class="stat">
-                <h1 class="stat-title">{{ formatNumber(activeServer.stats.cache.deaths) }}</h1>
+                <h1 class="stat-title">{{ formatNumber(activeServer.stats.deaths) }}</h1>
                 <h2 class="stat-label">Deaths</h2>
             </div>
         </div>

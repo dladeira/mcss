@@ -14,6 +14,7 @@ async function bootstrap() {
     await mongoose.connect(process.env.MONGODB_URI)
     console.log('Connected to MongoDB')
 
+
     server = http.createServer(app)
     console.log("Created HTTP server")
 

@@ -20,9 +20,9 @@
         </div>
 
         <div class="dials">
-            <ServersDial :id="'dial-servers-cpu-' + name" :percent="stats.live.cpuUsage" color="blue" hex="#00C2FF" />
-            <ServersDial :id="'dial-servers-ram-' + name" :percent="stats.live.ramUsage" color="green" hex="#00FF75" />
-            <ServersDial :id="'dial-servers-storage-' + name" :percent="stats.cache.storageUsage" color="red" hex="#FF3030" />
+            <ServersDial :id="'dial-servers-cpu-' + name" :percent="stats.cpuUsage" color="blue" hex="#00C2FF" />
+            <ServersDial :id="'dial-servers-ram-' + name" :percent="stats.ramUsage" color="green" hex="#00FF75" />
+            <ServersDial :id="'dial-servers-storage-' + name" :percent="stats.storageUsage" color="red" hex="#FF3030" />
         </div>
 
         <div class="buttons">

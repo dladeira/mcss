@@ -618,7 +618,7 @@ function getDataset(index, timeFrame) {
             values.push(undefined)
         }
 
-    for (var timeFrame of activeServer.value.stats.cache.graphs[timeFrame]) {
+    for (var timeFrame of activeServer.value.stats.graphs[timeFrame]) {
         var value = timeFrame[index] / timeFrame.dataCount
         values.push(isNaN(value) && index != 'storage' || value == Infinity ? 0 : value)
     }

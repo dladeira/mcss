@@ -13,7 +13,7 @@ const serverSchema = new mongoose.Schema({
     lastUpdate: Number,
     dataLifetime: Number,
     recentMessages: [Object],
-    datas: {
+    data: {
         type: [mongoose.ObjectId],
         ref: 'Data'
     }

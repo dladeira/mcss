@@ -4,7 +4,7 @@
             Player List
         </h1>
 
-        <input class="search" type="text" placeholder="Search..." />
+        <input class="search" type="text" placeholder="Search..." v-model="playerSearch" />
 
         <div class="list">
             <div class="list-header">
@@ -15,11 +15,10 @@
                 <div class="header player-session">Session</div>
                 <div class="header player-playtime">Playtime</div>
             </div>
-
-            <div class="player" v-for="player of activeServer.stats.cache.players">
+            <div class="player" v-for="player of getSearchPlayers()">
                 <img class="player-img" :src="`https://cravatar.eu/avatar/${player.username}/20.png`" />
                 <div class="player-name">{{ player.username }}</div>
-                <div class="player-location">{{player.location}}</div>
+                <div class="player-location">{{player.online ? player.location : "---"}}</div>
                 <div class="player-engagement">58.3</div>
                 <div class="player-messages">{{player.messages}}</div>
                 <div class="player-session">{{player.online ? formatTime(player.session) : "---"}}</div>
@@ -144,6 +143,8 @@
     width: 12rem;
 
     margin-left: 1.5rem;
+
+    color: white;
 }
 
 .player-location {
@@ -175,6 +176,14 @@
 
 <script setup>
 const activeServer = useState('activeServer')
+const playerSearch = ref()
+
+function getSearchPlayers() {
+    if (playerSearch.value && playerSearch.value.length > 0)
+        return activeServer.value.stats.players.filter(i => i.username.includes(playerSearch.value))
+
+    return activeServer.value.stats.players
+}
 
 function formatNumber(number) {
     var lead = 0

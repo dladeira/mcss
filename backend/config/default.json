@@ -1,7 +1,4 @@
 {
-    "serverStats": {
-        "cacheLife": 60
-    },
     "plans": {
         "free": {
             "storage": 5,

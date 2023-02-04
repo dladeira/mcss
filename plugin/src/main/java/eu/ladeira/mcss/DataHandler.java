@@ -43,6 +43,7 @@ public class DataHandler {
 		map.put("players", finalizePlayerStats());
 		map.put("cpu", getCpuUsage());
 		map.put("ram", getRamUsage());
+		map.put("max_players", String.valueOf(Bukkit.getMaxPlayers()));
 		map.putAll(finalizeServerStats());
 		
 		resetStats();
@@ -130,8 +131,6 @@ public class DataHandler {
 		for (String index : this.stats.keySet()) {
 			data.put(index, String.valueOf(stats.get(index)));
 		}
-		
-		
 		
 		return data;
 	}
