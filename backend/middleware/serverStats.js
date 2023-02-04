@@ -2,8 +2,6 @@ const bson = require('bson')
 
 const User = require('../models/User')
 const Server = require('../models/Server')
-const Data = require('../models/Data')
-const config = require('config');
 
 async function serverStatsMw(req, res, next) {
     if (req.demo) {
@@ -19,154 +17,67 @@ async function serverStatsMw(req, res, next) {
 
     const servers = await Server.find({ owner: req.user._id }).populate('data').lean()
 
-    for (var server of servers) {
-        if (server.data.length > 0) {
-            // var latestData = server.data.reduce((prev, current) => prev.time > current.time ? prev : current)
-
-            server.stats = await loadServerStats(server)
-            // server.stats = {
-            //     live: {
-            //         cpuUsage: latestData.cpuUsage,
-            //         ramUsage: latestData.ramUsage,
-            //     },
-            //     cache: await loadCache(server)
-            // }
-        } else {
-            server.stats = {
-                live: {
-                    cpuUsage: 0,
-                    ramUsage: 0
-                },
-                cache: {
-                    storageUsage: 0,
-                    uptime: 0,
-                    storageUsed: 0,
-                    blocksBroken: 0,
-                    blocksPlaced: 0,
-                    blocksTraveld: 0,
-                    deaths: 0,
-                    graphs: getDefaultGraphs(),
-                    dataAge: {
-                        months3: 0,
-                        months6: 0,
-                        months12: 0
-                    },
-                    players: [],
-                    playerPeak: 0,
-                    totalPlaytime: 0,
-                    runningTime: 0,
-                    blocksBroken: 0,
-                    blocksPlaced: 0,
-                    blocksTraveled: 0,
-                    itemsCrafted: 0,
-                    messages: 0,
-                    characters: 0,
-                    whispers: 0,
-                    commands: 0,
-                    deaths: 0,
-                }
-            }
-        }
-    }
+    for (var server of servers)
+        server.stats = await generateStats(server)
 
     req.servers = servers
     next()
 }
 
-async function loadServerStats(server) {
+const defaultStats = {
+    cpuUsage: 0,
+    ramUsage: 0,
+    storageUsage: 0,
+    storageUsed: 0,
+    uptime: 0,
+    graphs: 0,
+    dataAge: {
+        months3: 0,
+        months6: 0,
+        months12: 0,
+        forever: 0
+    },
+    players: [],
+    max_players: 0,
+    blocksBroken: 0,
+    blocksPlaced: 0,
+    blocksTraveled: 0,
+    itemsCrafted: 0,
+    messages: 0,
+    characters: 0,
+    whispers: 0,
+    commands: 0,
+    deaths: 0,
+    totalPlaytime: 0,
+    playerPeak: 0,
+    runningTime: 0
+}
+
+async function generateStats(server) {
+    process.stdout.write('ServerStats GEN operation: ')
+
     const user = await User.findOne({ _id: server.owner })
     const updateInterval = user.plan.updateFrequency * 1000
 
+    var stats = { ...defaultStats }
+
     var latestData = server.data.reduce((prev, current) => prev.time > current.time ? prev : current)
 
-    process.stdout.write('ServerStats GEN operation: ')
-
-    const graphs = getDefaultGraphs()
+    const graphs = new Graphs()
     const dataAge = [0, 0, 0, 0] // [3m, 6m, 1y, forever]
     const averagePacket = getAverageDataSize(server.data)
 
     var now = new Date()
     const month = 30 * 24 * 60 * 60 * 1000
 
-    const uptimeInfo = [0, 0]
+    var totalPacketsSkipped = 0
     const players = []
-    const blocks = [0, 0, 0] // [broken, placed, traveled]
-    var itemsCrafted = 0
-    const chat = [0, 0, 0, 0] // [messages, characters, whispers, commands]
-    var deaths = 0
-    var playerPeak = 0
-    var playerpeak = 0
-    var totalPlaytime = 0
-
-    function registerToGraph(packet, graphTime, graphIndex) {
-        var blocksBroken = 0
-        var blocksPlaced = 0
-        var blocksTraveled = 0
-        var itemsCrafted = 0
-        var players = 0
-
-        if (Array.isArray(packet.players))
-            for (var player of packet.players) {
-                blocksBroken += player.blocksBroken ? parseInt(player.blocksBroken) : 0
-                blocksPlaced += player.blocksPlaced ? parseInt(player.blocksPlaced) : 0
-                blocksTraveled += player.blocksTraveled ? parseInt(player.blocksTraveled) : 0
-                itemsCrafted += player.itemsCrafted ? parseInt(player.itemsCrafted) : 0
-                players++
-            }
-
-        players = players == 0 ? 1 : players
-
-        graphs[graphTime][graphIndex].cpu += packet.cpuUsage
-        graphs[graphTime][graphIndex].ram += packet.ramUsage
-        graphs[graphTime][graphIndex].storage += packet.storageUsage
-        graphs[graphTime][graphIndex].players += packet.players ? packet.players.length : 0
-        graphs[graphTime][graphIndex].messages += packet.messages ? packet.messages : 0
-        graphs[graphTime][graphIndex].characters += packet.characters ? packet.characters : 0
-        graphs[graphTime][graphIndex].whispers += packet.whispers ? packet.whispers : 0
-        graphs[graphTime][graphIndex].commands += packet.commands ? packet.commands : 0
-        graphs[graphTime][graphIndex].dataCount += 1
-
-        graphs[graphTime][graphIndex].blocksBrokenPerPlayer += blocksBroken / players
-        graphs[graphTime][graphIndex].blocksPlacedPerPlayer += blocksPlaced / players
-        graphs[graphTime][graphIndex].blocksTraveledPerPlayer += blocksTraveled / players
-        graphs[graphTime][graphIndex].itemsCraftedPerPlayer += itemsCrafted / players
-
-        // graphs[graphTime][graphIndex].cpu += Math.random() * 100
-        // graphs[graphTime][graphIndex].ram += Math.random() * 100
-        // graphs[graphTime][graphIndex].storage += Math.random() * 10
-        // graphs[graphTime][graphIndex].players += Math.random() * 50
-        // graphs[graphTime][graphIndex].messages += Math.random() * 1000
-        // graphs[graphTime][graphIndex].whispers += Math.random() * 50
-        // graphs[graphTime][graphIndex].dataCount += 1
-
-        // graphs[graphTime][graphIndex].count += 1
-    }
-
-    function clearGraph(graphTime) {
-        for (var graphIndex in graphs[graphTime]) {
-            graphs[graphTime][graphIndex].cpu = 0
-            graphs[graphTime][graphIndex].ram = 0
-            graphs[graphTime][graphIndex].storage = 0
-            graphs[graphTime][graphIndex].players = 0
-            graphs[graphTime][graphIndex].messages = 0
-            graphs[graphTime][graphIndex].characters = 0
-            graphs[graphTime][graphIndex].whispers = 0
-            graphs[graphTime][graphIndex].commands = 0
-            graphs[graphTime][graphIndex].dataCount = 0
-
-            graphs[graphTime][graphIndex].blocksBrokenPerPlayer = 0
-            graphs[graphTime][graphIndex].blocksPlacedPerPlayer = 0
-            graphs[graphTime][graphIndex].blocksTraveledPerPlayer = 0
-            graphs[graphTime][graphIndex].itemsCraftedPerPlayer = 0
-        }
-    }
+    var playerPeakTime = 0
 
     const deletePackets = []
 
 
-    uptimeInfo[1]++
     var lastTime = server.firstUpdate
-    var i = 0
 
     for (var packet of server.data) {
         var date = new Date(packet.time)
@@ -180,44 +91,33 @@ async function loadServerStats(server) {
 
         lastTime = packet.time
 
-        uptimeInfo[0] += 1
-        uptimeInfo[1] += packetsSkipped
+        totalPacketsSkipped += packetsSkipped
 
         if (server.dataLifetime != 0 && now.getTime() - date.getTime() > server.dataLifetime * month)
             return deletePackets.push(packet._id)
 
         if (date.getUTCFullYear() == now.getUTCFullYear()) {
-            registerToGraph(packet, 'year', date.getUTCMonth())
+            graphs.registerPacket(packet, 'year', date.getUTCMonth())
 
             if (date.getUTCMonth() == now.getUTCMonth()) {
-                registerToGraph(packet, 'month', date.getUTCDate() - 1)
-                registerToGraph(packet, 'average', date.getUTCHours())
+                graphs.registerPacket(packet, 'month', date.getUTCDate() - 1)
+                graphs.registerPacket(packet, 'average', date.getUTCHours())
 
                 if (date.getUTCDate() == now.getUTCDate()) {
-                    registerToGraph(packet, 'day', date.getUTCHours())
+                    graphs.registerPacket(packet, 'day', date.getUTCHours())
                 }
             }
         }
 
-        blocks[0] += packet.blocksBroken ? packet.blocksBroken : 0
-        blocks[1] += packet.blocksPlaced ? packet.blocksPlaced : 0
-        blocks[2] += packet.blocksTraveled ? packet.blocksTraveled : 0
-        deaths += packet.deaths ? packet.deaths : 0
-        itemsCrafted += packet.itemsCrafted ? packet.itemsCrafted : 0
 
-        if (packet.players.length > playerPeak) {
-            playerpeak = date.getUTCDate()
-            playerPeak = packet.players.length
-            clearGraph('peak')
+        if (packet.players.length > stats.playerPeak) {
+            playerPeakTime = date
+            stats.playerPeak = packet.players.length
+            graphs.clearGraph('peak')
         }
 
-        if (playerpeak == date.getUTCDate())
-            registerToGraph(packet, 'peak', date.getUTCHours() - 1)
-
-        chat[0] += packet.messages
-        chat[1] += packet.characters
-        chat[2] += packet.whispers
-        chat[3] += packet.commands
+        if (playerPeakTime && playerPeakTime.getUTCDate() == date.getUTCDate() && playerPeakTime.getUTCMonth() == date.getUTCMonth() && playerPeakTime.getUTCFullYear() == date.getUTCFullYear())
+            graphs.registerPacket(packet, 'peak', date.getUTCHours())
 
         main:
         for (var packetPlayer of packet.players) {
@@ -232,6 +132,15 @@ async function loadServerStats(server) {
                     statsPlayer.username = packetPlayer.username
                     statsPlayer.playtime += user.plan.updateFrequency
                     statsPlayer.messages += parseInt(packetPlayer.messages)
+                    statsPlayer.blocksBroken += parseInt(packetPlayer.blocksBroken)
+                    statsPlayer.blocksPlaced += parseInt(packetPlayer.blocksPlaced)
+                    statsPlayer.blocksTraveled += parseInt(packetPlayer.blocksTraveled)
+                    statsPlayer.deaths += parseInt(packetPlayer.deaths)
+                    statsPlayer.itemsCrafted += parseInt(packetPlayer.itemsCrafted)
+                    statsPlayer.messages += parseInt(packetPlayer.messages)
+                    statsPlayer.characters += parseInt(packetPlayer.characters)
+                    statsPlayer.whispers += parseInt(packetPlayer.whispers)
+                    statsPlayer.commands += parseInt(packetPlayer.commands)
                     continue main
                 }
             }
@@ -243,6 +152,16 @@ async function loadServerStats(server) {
                 username: packetPlayer.username,
                 playtime: user.plan.updateFrequency,
                 messages: parseInt(packetPlayer.messages),
+                blocksBroken: parseInt(packetPlayer.blocksBroken),
+                blocksPlaced: parseInt(packetPlayer.blocksPlaced),
+                blocksTraveled: parseInt(packetPlayer.blocksTraveled),
+                deaths: parseInt(packetPlayer.deaths),
+                itemsCrafted: parseInt(packetPlayer.itemsCrafted),
+                messages: parseInt(packetPlayer.messages),
+                characters: parseInt(packetPlayer.characters),
+                whispers: parseInt(packetPlayer.whispers),
+                commands: parseInt(packetPlayer.commands),
+
                 location: latestPlayer ? `(${latestPlayer['location.x']}, ${latestPlayer['location.y']}, ${latestPlayer['location.z']})` : null,
                 online: latestPlayer ? true : false,
                 session: latestPlayer ? user.plan.updateFrequency : null
@@ -251,69 +170,146 @@ async function loadServerStats(server) {
 
         const timeSince = now.getTime() - date.getTime()
 
-        if (timeSince < 12 * month) {
-            if (timeSince > 6 * month) {
-                dataAge[2]++
-            } else if (timeSince > 3 * month) {
-                dataAge[1]++
-            } else {
-                dataAge[0]++
-            }
-        } else {
-            dataAge[3]++
-        }
+        stats.forever += averagePacket
+        if (timeSince < 12 * month)
+            stats.months12 += averagePacket
+        if (timeSince < 6 * month)
+            stats.months6 += averagePacket
+        if (timeSince < 3 * month)
+            stats.months3 += averagePacket
 
-        uptimeInfo[0]++
     }
 
     for (var statsPlayer of players) {
-        totalPlaytime += statsPlayer.playtime
+        stats.totalPlaytime += statsPlayer.playtime
+        stats.blocksBroken += statsPlayer.blocksBroken
+        stats.blocksPlaced += statsPlayer.blocksPlaced
+        stats.blocksTraveled += statsPlayer.blocksTraveled
+        stats.deaths += statsPlayer.deaths
+        stats.itemsCrafted += statsPlayer.itemsCrafted
+        stats.messages += statsPlayer.messages
+        stats.characters += statsPlayer.characters
+        stats.whispers += statsPlayer.whispers
+        stats.commands += statsPlayer.commands
     }
 
-    const firstDateYear = new Date(server.firstUpdate)
-    const firstDateMonth = new Date(server.firstUpdate)
-
-    firstDateYear.setDate(1)
-    firstDateYear.setHours(0)
-    firstDateMonth.setHours(0)
-    var skippedYear = Math.floor((server.firstUpdate - firstDateYear.getTime()) / (updateInterval))
-    var skippedMonth = Math.floor((server.firstUpdate - firstDateMonth.getTime()) / (updateInterval))
-
-    graphs.year[firstDateYear.getMonth()].count += skippedYear
-    graphs.month[firstDateMonth.getDate()].count += skippedMonth
-
-    const stats = {
-        cpuUsage: latestData.cpuUsage,
-        ramUsage: latestData.ramUsage,
-        storageUsage: Math.round(averagePacket * server.data.length / (server.storage * 1024) * 100),
-        storageUsed: Math.ceil(averagePacket * server.data.length / 1024 * 10) / 10,
-        uptime: Math.round(uptimeInfo[0] / (uptimeInfo[0] + uptimeInfo[1]) * 100),
-        graphs,
-        dataAge: {
-            months3: Math.round((dataAge[0]) * averagePacket / 1024 * 10) / 10,
-            months6: Math.round((dataAge[0] + dataAge[1]) * averagePacket / 1024 * 10) / 10,
-            months12: Math.round((dataAge[0] + dataAge[1] + dataAge[2]) * averagePacket / 1024 * 10) / 10,
-            forever: Math.round((dataAge[0] + dataAge[1] + dataAge[2] + dataAge[3]) * averagePacket / 1024 * 10) / 10
-        },
-        players,
-        max_players: latestData.max_players,
-        blocksBroken: blocks[0],
-        blocksPlaced: blocks[1],
-        blocksTraveled: blocks[2],
-        itemsCrafted: itemsCrafted,
-        messages: chat[0],
-        characters: chat[1],
-        whispers: chat[2],
-        commands: chat[3],
-        deaths,
-        totalPlaytime,
-        playerPeak,
-        runningTime: server.lastUpdate - server.firstUpdate
+    stats.cpuUsage = latestData.cpuUsage
+    stats.ramUsage = latestData.ramUsage
+    stats.storageUsage = Math.round(latestData.storageUsage)
+    stats.storageUsed = latestData.storageUsed
+    stats.uptime = Math.round(server.data.length / (server.data.length + packetsSkipped) * 100)
+    stats.graphs = graphs.getStats()
+    stats.dataAge = {
+        months3: Math.round(stats.months3 / 1024 * 10) / 10,
+        months6: Math.round(stats.months6 / 1024 * 10) / 10,
+        months12: Math.round(stats.months12 / 1024 * 10) / 10,
+        forever: Math.round(stats.forever / 1024 * 10) / 10
     }
+    stats.players = players
+    stats.max_players = latestData.max_players
+    stats.runningTime = server.lastUpdate - server.firstUpdate
 
-    console.log(`${Math.round((Date.now() - now) / 1000 * 10) / 10}s (${server.data.length} packets) (elapsed ${Math.round((Date.now() - server.firstUpdate) / updateInterval)})`)
+    console.log(`${Math.round((Date.now() - now) / 1000 * 100) / 100}s (${server.data.length} packets) (elapsed ${Math.round((Date.now() - server.firstUpdate) / updateInterval)})`)
 
     return stats
+}
+
+class Graphs {
+    constructor() {
+        const defaultTime = {
+            cpu: 0,
+            ram: 0,
+            storage: 0,
+            players: 0,
+            messages: 0,
+            characters: 0,
+            whispers: 0,
+            commands: 0,
+            count: 0,
+            dataCount: 0,
+            blocksBrokenPerPlayer: 0,
+            blocksPlacedPerPlayer: 0,
+            blocksTraveledPerPlayer: 0,
+            itemsCraftedPerPlayer: 0
+        }
+
+        this.day = []
+        this.month = []
+        this.year = []
+        this.average = []
+        this.peak = []
+
+        for (var i = 0; i < 24; i++) {
+            this.day.push({ ...defaultTime })
+            this.average.push({ ...defaultTime })
+            this.peak.push({ ...defaultTime })
+        }
+
+        for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++)
+            this.month.push({ ...defaultTime })
+
+        for (var i = 0; i < 12; i++)
+            this.year.push({ ...defaultTime })
+    }
+    registerPacket(packet, graphType, graphIndex) {
+        var blocksBroken = 0
+        var blocksPlaced = 0
+        var blocksTraveled = 0
+        var itemsCrafted = 0
+        var players = 0
+
+        for (var player of packet.players) {
+            blocksBroken += player.blocksBroken ? parseInt(player.blocksBroken) : 0
+            blocksPlaced += player.blocksPlaced ? parseInt(player.blocksPlaced) : 0
+            blocksTraveled += player.blocksTraveled ? parseInt(player.blocksTraveled) : 0
+            itemsCrafted += player.itemsCrafted ? parseInt(player.itemsCrafted) : 0
+            players++
+        }
+
+        players = players == 0 ? 1 : players
+
+        this[graphType][graphIndex].cpu += packet.cpuUsage
+        this[graphType][graphIndex].ram += packet.ramUsage
+        this[graphType][graphIndex].storage += packet.storageUsage
+        this[graphType][graphIndex].players += packet.players ? packet.players.length : 0
+        this[graphType][graphIndex].messages += packet.messages ? packet.messages : 0
+        this[graphType][graphIndex].characters += packet.characters ? packet.characters : 0
+        this[graphType][graphIndex].whispers += packet.whispers ? packet.whispers : 0
+        this[graphType][graphIndex].commands += packet.commands ? packet.commands : 0
+        this[graphType][graphIndex].dataCount += 1
+
+        this[graphType][graphIndex].blocksBrokenPerPlayer += blocksBroken / players
+        this[graphType][graphIndex].blocksPlacedPerPlayer += blocksPlaced / players
+        this[graphType][graphIndex].blocksTraveledPerPlayer += blocksTraveled / players
+        this[graphType][graphIndex].itemsCraftedPerPlayer += itemsCrafted / players
+    }
+    clearGraph(graphType) {
+        for (var graphIndex in this[graphType]) {
+            this[graphType][graphIndex].cpu = 0
+            this[graphType][graphIndex].ram = 0
+            this[graphType][graphIndex].storage = 0
+            this[graphType][graphIndex].players = 0
+            this[graphType][graphIndex].messages = 0
+            this[graphType][graphIndex].characters = 0
+            this[graphType][graphIndex].whispers = 0
+            this[graphType][graphIndex].commands = 0
+            this[graphType][graphIndex].dataCount = 0
+
+            this[graphType][graphIndex].blocksBrokenPerPlayer = 0
+            this[graphType][graphIndex].blocksPlacedPerPlayer = 0
+            this[graphType][graphIndex].blocksTraveledPerPlayer = 0
+            this[graphType][graphIndex].itemsCraftedPerPlayer = 0
+        }
+    }
+    getStats() {
+        return {
+            day: this.day,
+            month: this.month,
+            year: this.year,
+            average: this.average,
+            peak: this.peak
+        }
+    }
 }
 
 function generateFakeServer(name, id) {
@@ -444,7 +440,7 @@ function generateFakeServer(name, id) {
 }
 
 function generateFakeGraphs() {
-    const graphs = getDefaultGraphs()
+    const graphs = getDefaultGraph()
 
     function registerToGraph(graphTime, graphIndex) {
         graphs[graphTime][graphIndex].cpu += Math.round(Math.random() * 50 + 20)
@@ -481,42 +477,6 @@ function generateFakeGraphs() {
 
     return graphs
 }
-
-function getDefaultGraphs() {
-    const defaultTime = {
-        cpu: 0,
-        ram: 0,
-        storage: 0,
-        players: 0,
-        messages: 0,
-        characters: 0,
-        whispers: 0,
-        commands: 0,
-        count: 0,
-        dataCount: 0,
-        blocksBrokenPerPlayer: 0,
-        blocksPlacedPerPlayer: 0,
-        blocksTraveledPerPlayer: 0,
-        itemsCraftedPerPlayer: 0
-    }
-
-    const graphs = { day: [], month: [], year: [], average: [], peak: [] }
-
-    for (var i = 0; i < 24; i++) {
-        graphs.day.push({ ...defaultTime })
-        graphs.average.push({ ...defaultTime })
-        graphs.peak.push({ ...defaultTime })
-    }
-
-    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++)
-        graphs.month.push({ ...defaultTime })
-
-    for (var i = 0; i < 12; i++)
-        graphs.year.push({ ...defaultTime })
-
-    return graphs
-}
-
 function getAverageDataSize(data) { // KiloBytes
     var total = 0
     var samples = 200

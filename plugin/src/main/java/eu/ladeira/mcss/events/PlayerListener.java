@@ -24,11 +24,9 @@ public class PlayerListener implements Listener {
 	HashMap<UUID, Location> locations = new HashMap<UUID, Location>();
 	private DataHandler data;
 	
-	public PlayerListener(DataHandler data) {
+	public PlayerListener(final DataHandler data) {
 		this.data = data;
-	}
-
-	public PlayerListener() {
+		
 		new BukkitRunnable() {
 			public void run() {
 				for (Player online : Bukkit.getOnlinePlayers()) {
