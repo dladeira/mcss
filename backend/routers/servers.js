@@ -67,7 +67,7 @@ router.post('/new', loggedIn(), async (req, res) => {
         storageUsed += server.storage
     }
 
-    if (storageUsed + parseFloat(storageAllocated) > 10)
+    if (storageUsed + parseFloat(storageAllocated) > req.user.plan.maxStorage)
         return res.status(400).json({ error: `Not enough storage (${10 - storageUsed}MB left)` })
 
     if (existingServer)

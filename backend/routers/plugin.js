@@ -59,8 +59,6 @@ router.post('/stats-update', async (req, res) => {
     if (!server.data)
         server.data = []
 
-    server.data.push(data._id.toString())
-
     await server.save()
     await data.save()
 

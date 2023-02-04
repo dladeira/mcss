@@ -2,6 +2,8 @@ const bson = require('bson')
 
 const User = require('../models/User')
 const Server = require('../models/Server')
+const Data = require('../models/Data')
+const mongoose = require('mongoose')
 
 async function serverStatsMw(req, res, next) {
     if (req.demo) {
@@ -15,11 +17,29 @@ async function serverStatsMw(req, res, next) {
         return next()
     }
 
-
-
     process.stdout.write('FIND operation: ')
     const startTime = Date.now()
-    const servers = await Server.aggregate().lookup({ from: 'datas', localField: 'data', foreignField: '_id', as: 'data'})
+    // const servers = await Server.find({ owner: req.user._id })
+    const servers = await Server.aggregate().lookup({
+        from: 'datas', let: {
+            server: "$_id"
+        }, pipeline: [
+            {
+                $match: {
+                    $expr: {
+                        $and: [
+                            { $eq: ["$server", "$$server"] }
+                        ]
+                    }
+                }
+            },
+            {
+                $sort: { time: 1 }
+            }
+        ],
+        as: 'data'
+    })
+
     console.log(`${Math.round((Date.now() - startTime) / 1000 * 100) / 100}s (${servers.reduce((a, obj) => a + obj.data.length, 0)} packets)`)
 
     for (var server of servers) {
