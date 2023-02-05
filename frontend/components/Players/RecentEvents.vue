@@ -1,7 +1,7 @@
 <template>
     <div class="panel">
         <h1 class="panel-title">
-            New Players (past 24h)
+            Recent Events (past 24h)
         </h1>
 
         <div class="list">

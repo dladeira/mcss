@@ -180,7 +180,7 @@ const playerSearch = ref()
 
 function getSearchPlayers() {
     if (playerSearch.value && playerSearch.value.length > 0)
-        return activeServer.value.stats.players.filter(i => i.username.includes(playerSearch.value))
+        return activeServer.value.stats.players.filter(i => i.username.toLowerCase().includes(playerSearch.value.toLowerCase()))
 
     return activeServer.value.stats.players
 }

@@ -131,8 +131,6 @@ function getRecurringPlayers(daysElapsed = 1) {
     const now = Date.now()
 
     for (var player of players) {
-        console.log(player.username + " joined " + (Math.round((now - player.joined) / 1000 / 60 / 60 * 10) / 10) + " hours ago")
-
         if (now - player.lastOnline < daysElapsed * 24 * 60 * 60 * 1000)
             list.push(player)
     }
@@ -146,8 +144,6 @@ function getNewPlayers(daysElapsed = 1) {
     const now = Date.now()
 
     for (var player of players) {
-        console.log(player.username + " joined " + (Math.round((now - player.joined) / 1000 / 60 / 60 * 10) / 10) + " hours ago")
-
         if (now - player.joined < daysElapsed * 24 * 60 * 60 * 1000)
             list.push(player)
     }

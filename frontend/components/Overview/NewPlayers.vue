@@ -96,8 +96,6 @@ function getNewPlayers() {
     const now = Date.now()
 
     for (var player of players) {
-        console.log(player.username + " joined " + (Math.round((now - player.joined) / 1000 / 60 / 60 * 10) / 10) + " hours ago")
-
         if (now - player.joined < 24 * 60 * 60 * 1000)
             list.push(player)
     }

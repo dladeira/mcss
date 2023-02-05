@@ -116,9 +116,9 @@ function formatTime(seconds) {
         lead = seconds / 86400
         unit = "d"
     } else if (seconds >= 3600) {
-        lead = seconds / 36000
+        lead = seconds / 3600
         unit = "h"
-    } else if (seconds => 60) {
+    } else if (seconds >= 60) {
         lead = seconds / 60
         unit = "m"
     } else {

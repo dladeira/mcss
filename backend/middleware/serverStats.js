@@ -96,12 +96,19 @@ async function generateStats(server) {
 
 
     var totalPacketsSkipped = 0
-    var playerPeakTime = 0
+    var playerPeakDate = new Date(server.data[0].time)
 
     const deletePackets = []
 
-
     var lastTime = server.firstUpdate
+
+    // Find out player peak (necessary for peak day calculations)
+    for (var packet of server.data) {
+        if (packet.players.length > stats.playerPeak) {
+            playerPeakDate = new Date(packet.time)
+            stats.playerPeak = packet.players.length
+        }
+    }
 
     for (var packet of server.data) {
         var packetDate = new Date(packet.time)
@@ -133,14 +140,7 @@ async function generateStats(server) {
             }
         }
 
-
-        if (packet.players.length > stats.playerPeak) {
-            playerPeakTime = packetDate
-            stats.playerPeak = packet.players.length
-            graphs.clearGraph('peak')
-        }
-
-        if (playerPeakTime && playerPeakTime.getUTCDate() == packetDate.getUTCDate() && playerPeakTime.getUTCMonth() == packetDate.getUTCMonth() && playerPeakTime.getUTCFullYear() == packetDate.getUTCFullYear())
+        if (playerPeakDate.getUTCDate() == packetDate.getUTCDate() && playerPeakDate.getUTCMonth() == packetDate.getUTCMonth() && playerPeakDate.getUTCFullYear() == packetDate.getUTCFullYear())
             graphs.registerPacket(packet, 'peak', packetDate.getUTCHours())
 
         main:
@@ -151,7 +151,6 @@ async function generateStats(server) {
             for (var statsPlayer of stats.players) {
                 if (packetPlayer.uuid == statsPlayer.uuid) {
                     statsPlayer.username = packetPlayer.username
-                    statsPlayer.messages += parseInt(packetPlayer.messages)
                     statsPlayer.blocksBroken += parseInt(packetPlayer.blocksBroken)
                     statsPlayer.blocksPlaced += parseInt(packetPlayer.blocksPlaced)
                     statsPlayer.blocksTraveled += parseInt(packetPlayer.blocksTraveled)
