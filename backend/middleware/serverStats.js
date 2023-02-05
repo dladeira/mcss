@@ -2,8 +2,37 @@ const bson = require('bson')
 
 const User = require('../models/User')
 const Server = require('../models/Server')
-const Data = require('../models/Data')
-const mongoose = require('mongoose')
+
+const MONTH = 30 * 24 * 60 * 60 * 1000
+
+const DEFAULT_STATS = {
+    cpuUsage: 0,
+    ramUsage: 0,
+    storageUsage: 0,
+    storageUsed: 0,
+    uptime: 0,
+    graphs: 0,
+    dataAge: {
+        months3: 0,
+        months6: 0,
+        months12: 0,
+        forever: 0
+    },
+    players: [],
+    max_players: 0,
+    blocksBroken: 0,
+    blocksPlaced: 0,
+    blocksTraveled: 0,
+    itemsCrafted: 0,
+    messages: 0,
+    characters: 0,
+    whispers: 0,
+    commands: 0,
+    deaths: 0,
+    totalPlaytime: 0,
+    playerPeak: 0,
+    runningTime: 0
+}
 
 async function serverStatsMw(req, res, next) {
     if (req.demo) {
@@ -51,55 +80,22 @@ async function serverStatsMw(req, res, next) {
     next()
 }
 
-const defaultStats = {
-    cpuUsage: 0,
-    ramUsage: 0,
-    storageUsage: 0,
-    storageUsed: 0,
-    uptime: 0,
-    graphs: 0,
-    dataAge: {
-        months3: 0,
-        months6: 0,
-        months12: 0,
-        forever: 0
-    },
-    players: [],
-    max_players: 0,
-    blocksBroken: 0,
-    blocksPlaced: 0,
-    blocksTraveled: 0,
-    itemsCrafted: 0,
-    messages: 0,
-    characters: 0,
-    whispers: 0,
-    commands: 0,
-    deaths: 0,
-    totalPlaytime: 0,
-    playerPeak: 0,
-    runningTime: 0
-}
-
 async function generateStats(server) {
     process.stdout.write('GEN operation: ')
     const startTime = new Date()
 
-
     const user = await User.findOne({ _id: server.owner })
     const updateInterval = user.plan.updateFrequency * 1000
 
-    var stats = { ...defaultStats }
+    var stats = JSON.parse(JSON.stringify(DEFAULT_STATS))
 
     var latestData = server.data.reduce((prev, current) => prev.time > current.time ? prev : current)
 
     const graphs = new Graphs()
-    const dataAge = [0, 0, 0, 0] // [3m, 6m, 1y, forever]
     const averagePacket = getAverageDataSize(server.data)
 
-    const month = 30 * 24 * 60 * 60 * 1000
 
     var totalPacketsSkipped = 0
-    const players = []
     var playerPeakTime = 0
 
     const deletePackets = []
@@ -108,7 +104,7 @@ async function generateStats(server) {
     var lastTime = server.firstUpdate
 
     for (var packet of server.data) {
-        var date = new Date(packet.time)
+        var packetDate = new Date(packet.time)
 
         var lastPacketDelay = lastTime % updateInterval
         var lastPacketExpected = lastTime - lastPacketDelay
@@ -119,46 +115,42 @@ async function generateStats(server) {
 
         lastTime = packet.time
 
-        totalPacketsSkipped += packetsSkipped
+        totalPacketsSkipped += Math.min(packetsSkipped, 0)
 
-        if (server.dataLifetime != 0 && startTime.getTime() - date.getTime() > server.dataLifetime * month)
+        if (server.dataLifetime != 0 && startTime.getTime() - packetDate.getTime() > server.dataLifetime * MONTH)
             return deletePackets.push(packet._id)
 
-        if (date.getUTCFullYear() == startTime.getUTCFullYear()) {
-            graphs.registerPacket(packet, 'year', date.getUTCMonth())
+        if (packetDate.getUTCFullYear() == startTime.getUTCFullYear()) {
+            graphs.registerPacket(packet, 'year', packetDate.getUTCMonth())
 
-            if (date.getUTCMonth() == startTime.getUTCMonth()) {
-                graphs.registerPacket(packet, 'month', date.getUTCDate() - 1)
-                graphs.registerPacket(packet, 'average', date.getUTCHours())
+            if (packetDate.getUTCMonth() == startTime.getUTCMonth()) {
+                graphs.registerPacket(packet, 'month', packetDate.getUTCDate() - 1)
+                graphs.registerPacket(packet, 'average', packetDate.getUTCHours())
 
-                if (date.getUTCDate() == startTime.getUTCDate()) {
-                    graphs.registerPacket(packet, 'day', date.getUTCHours())
+                if (packetDate.getUTCDate() == startTime.getUTCDate()) {
+                    graphs.registerPacket(packet, 'day', packetDate.getUTCHours())
                 }
             }
         }
 
 
         if (packet.players.length > stats.playerPeak) {
-            playerPeakTime = date
+            playerPeakTime = packetDate
             stats.playerPeak = packet.players.length
             graphs.clearGraph('peak')
         }
 
-        if (playerPeakTime && playerPeakTime.getUTCDate() == date.getUTCDate() && playerPeakTime.getUTCMonth() == date.getUTCMonth() && playerPeakTime.getUTCFullYear() == date.getUTCFullYear())
-            graphs.registerPacket(packet, 'peak', date.getUTCHours())
+        if (playerPeakTime && playerPeakTime.getUTCDate() == packetDate.getUTCDate() && playerPeakTime.getUTCMonth() == packetDate.getUTCMonth() && playerPeakTime.getUTCFullYear() == packetDate.getUTCFullYear())
+            graphs.registerPacket(packet, 'peak', packetDate.getUTCHours())
 
         main:
         for (var packetPlayer of packet.players) {
-            for (var statsPlayer of players) {
-                if (packetPlayer.uuid == statsPlayer.uuid) {
-                    if (packetsSkipped) {
-                        statsPlayer.session = 0
-                    } else {
-                        statsPlayer.session += user.plan.updateFrequency
-                    }
+            const latestPlayer = latestData.players.find(i => i.uuid == packetPlayer.uuid)
 
+            // Existing player
+            for (var statsPlayer of stats.players) {
+                if (packetPlayer.uuid == statsPlayer.uuid) {
                     statsPlayer.username = packetPlayer.username
-                    statsPlayer.playtime += user.plan.updateFrequency
                     statsPlayer.messages += parseInt(packetPlayer.messages)
                     statsPlayer.blocksBroken += parseInt(packetPlayer.blocksBroken)
                     statsPlayer.blocksPlaced += parseInt(packetPlayer.blocksPlaced)
@@ -169,13 +161,16 @@ async function generateStats(server) {
                     statsPlayer.characters += parseInt(packetPlayer.characters)
                     statsPlayer.whispers += parseInt(packetPlayer.whispers)
                     statsPlayer.commands += parseInt(packetPlayer.commands)
+
+
+                    statsPlayer.playtime += user.plan.updateFrequency
+                    statsPlayer.session += user.plan.updateFrequency
                     continue main
                 }
             }
 
-            const latestPlayer = latestData.players.find(i => i.uuid == packetPlayer.uuid)
-
-            players.push({
+            // New player
+            stats.players.push({
                 uuid: packetPlayer.uuid,
                 username: packetPlayer.username,
                 playtime: user.plan.updateFrequency,
@@ -190,25 +185,34 @@ async function generateStats(server) {
                 whispers: parseInt(packetPlayer.whispers),
                 commands: parseInt(packetPlayer.commands),
 
+                joined: packetDate.getTime(),
+
                 location: latestPlayer ? `(${latestPlayer['location.x']}, ${latestPlayer['location.y']}, ${latestPlayer['location.z']})` : null,
                 online: latestPlayer ? true : false,
                 session: latestPlayer ? user.plan.updateFrequency : null
             })
         }
 
-        const timeSince = startTime.getTime() - date.getTime()
+        // Reset session for offline players
+        for (var statsPlayer of stats.players) {
+            if (!packet.players.find(i => i.uuid == statsPlayer.uuid)) {
+                statsPlayer.session = 0
+            }
+        }
 
-        stats.forever += averagePacket
-        if (timeSince < 12 * month)
-            stats.months12 += averagePacket
-        if (timeSince < 6 * month)
-            stats.months6 += averagePacket
-        if (timeSince < 3 * month)
-            stats.months3 += averagePacket
-
+        // Add packet age
+        const timeSince = startTime.getTime() - packetDate.getTime()
+        stats.dataAge.forever += averagePacket
+        if (timeSince < 12 * MONTH)
+            stats.dataAge.months12 += averagePacket
+        if (timeSince < 6 * MONTH)
+            stats.dataAge.months6 += averagePacket
+        if (timeSince < 3 * MONTH)
+            stats.dataAge.months3 += averagePacket
     }
 
-    for (var statsPlayer of players) {
+    // Add individual player stats to global stats
+    for (var statsPlayer of stats.players) {
         stats.totalPlaytime += statsPlayer.playtime
         stats.blocksBroken += statsPlayer.blocksBroken
         stats.blocksPlaced += statsPlayer.blocksPlaced
@@ -221,6 +225,7 @@ async function generateStats(server) {
         stats.commands += statsPlayer.commands
     }
 
+    // Set final stats
     stats.cpuUsage = latestData.cpuUsage
     stats.ramUsage = latestData.ramUsage
     stats.storageUsage = Math.round(latestData.storageUsage)
@@ -233,7 +238,6 @@ async function generateStats(server) {
         months12: Math.round(stats.months12 / 1024 * 10) / 10,
         forever: Math.round(stats.forever / 1024 * 10) / 10
     }
-    stats.players = players
     stats.max_players = latestData.max_players
     stats.runningTime = server.lastUpdate - server.firstUpdate
 

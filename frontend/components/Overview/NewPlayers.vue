@@ -5,65 +5,10 @@
         </h1>
 
         <div class="list">
-            <div class="player">
+            <div v-for="player of getNewPlayers()" class="player">
                 <img class="player-img" src="https://cravatar.eu/avatar/Maximimand/20.png" />
-                <p class="player-name">Maximimand</p>
-                <p class="player-time">9:58 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DaddyBlockbone/20.png" />
-                <p class="player-name">DaddyBlockbone</p>
-                <p class="player-time">7:17 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
-            </div>
-            <div class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/DespacitoMaster/20.png" />
-                <p class="player-name">DespacitoMaster</p>
-                <p class="player-time">6:37 AM</p>
+                <p class="player-name">{{player.username}}</p>
+                <p class="player-time">{{ new Date(player.joined).getHours() }}:{{ new Date(player.joined).getMinutes }}</p>
             </div>
         </div>
     </div>
@@ -143,4 +88,19 @@
 
 <script setup>
 const activeServer = useState('activeServer')
+
+function getNewPlayers() {
+    const { players } = activeServer.value.stats
+    const list = []
+    const now = Date.now()
+
+    for (var player of players) {
+        console.log(player.username + " joined " + (Math.round((now - player.joined) / 1000 / 60 / 60 * 10) / 10) + " hours ago")
+
+        if (now - player.joined < 24 * 60 * 60 * 1000)
+            list.push(player)
+    }
+
+    return list
+}
 </script>

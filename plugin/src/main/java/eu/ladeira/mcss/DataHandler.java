@@ -159,6 +159,7 @@ public class DataHandler {
 		}
 		
 		data.put("username", player.username);
+		data.put("uuid", player.uuid.toString());
 		
 		data.put("location.x", String.valueOf(Math.round(bukkitPlayer.getLocation().getX())));
 		data.put("location.y", String.valueOf(Math.round(bukkitPlayer.getLocation().getY())));

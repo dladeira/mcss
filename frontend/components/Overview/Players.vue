@@ -1,7 +1,7 @@
 <template>
     <div class="panel">
         <h1 class="panel-title">
-            Players (past week)
+            Players (past 24h)
         </h1>
 
         <div class="chart">

@@ -58,8 +58,6 @@ function drawRadius(radius) {
     var canvas = document.getElementById(props.id)
     var ctx = canvas.getContext("2d")
 
-    console.log("drawing " + props.percent)
-
     resizeCanvas(canvas)
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
