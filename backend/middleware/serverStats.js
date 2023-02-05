@@ -165,6 +165,7 @@ async function generateStats(server) {
 
                     statsPlayer.playtime += user.plan.updateFrequency
                     statsPlayer.session += user.plan.updateFrequency
+                    statsPlayer.lastOnline = packetDate.getTime()
                     continue main
                 }
             }
@@ -186,6 +187,7 @@ async function generateStats(server) {
                 commands: parseInt(packetPlayer.commands),
 
                 joined: packetDate.getTime(),
+                lastOnline: packetDate.getTime(),
 
                 location: latestPlayer ? `(${latestPlayer['location.x']}, ${latestPlayer['location.y']}, ${latestPlayer['location.z']})` : null,
                 online: latestPlayer ? true : false,

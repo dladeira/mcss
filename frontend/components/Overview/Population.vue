@@ -7,25 +7,25 @@
         <div class="stats">
             <div class="front">
                 <h1 class="front-title">
-                    533
+                    {{getRecurringPlayers()}}
                 </h1>
                 <h3 class="front-label">
                     recurring players
                 </h3>
                 <div class="front-change">
-                    <span class="front-positive">+4</span> vs last 24h
+                    <span :class="getPlayerDiff() > 0 ? 'positive' : getPlayerDiff() < 0 ? 'negative' : 'neutral'">{{ getPlayerDiff() }}</span> vs last 24h
                 </div>
             </div>
 
             <div class="back">
                 <h1 class="back-title">
-                    17
+                    {{getNewPlayers()}}
                 </h1>
                 <h3 class="back-label">
                     new players
                 </h3>
                 <div class="back-change">
-                    <span class="back-positive">+2</span> vs last 24h
+                    <span :class="getNewPlayerDiff() > 0 ? 'positive' : getNewPlayerDiff() < 0 ? 'negative' : 'neutral'">{{ getNewPlayerDiff() }}</span> vs last 24h
                 </div>
             </div>
         </div>
@@ -85,11 +85,6 @@
     color: white;
 }
 
-.front-positive {
-    font-weight: 700;
-    color: $green;
-}
-
 .back-title {
     margin: 1.5rem 0 0;
 
@@ -111,12 +106,72 @@
     color: white;
 }
 
-.back-positive {
+.positive {
     font-weight: 700;
     color: $green;
+}
+
+.negative {
+    font-weight: 700;
+    color: $red;
+}
+
+.neutral {
+    font-weight: 700;
+    color: white;
 }
 </style>
 
 <script setup>
 const activeServer = useState('activeServer')
+
+function getRecurringPlayers(daysElapsed = 1) {
+    const { players } = activeServer.value.stats
+    const list = []
+    const now = Date.now()
+
+    for (var player of players) {
+        console.log(player.username + " joined " + (Math.round((now - player.joined) / 1000 / 60 / 60 * 10) / 10) + " hours ago")
+
+        if (now - player.lastOnline < daysElapsed * 24 * 60 * 60 * 1000)
+            list.push(player)
+    }
+
+    return list.length - getNewPlayers()
+}
+
+function getNewPlayers(daysElapsed = 1) {
+    const { players } = activeServer.value.stats
+    const list = []
+    const now = Date.now()
+
+    for (var player of players) {
+        console.log(player.username + " joined " + (Math.round((now - player.joined) / 1000 / 60 / 60 * 10) / 10) + " hours ago")
+
+        if (now - player.joined < daysElapsed * 24 * 60 * 60 * 1000)
+            list.push(player)
+    }
+
+    return list.length
+}
+
+function getPlayerDiff() {
+    const change = getRecurringPlayers(1) - (getRecurringPlayers(2) - getRecurringPlayers(1))
+    return getSign(change) + Math.abs(change)
+}
+
+function getNewPlayerDiff() {
+    const change = getNewPlayers(1) - (getNewPlayers(2) - getNewPlayers(1))
+    return getSign(change) + Math.abs(change)
+}
+
+function getSign(num) {
+    if (num > 0) {
+        return "+"
+    } else if (num < 0) {
+        return "-"
+    } else {
+        return "~"
+    }
+}
 </script>
