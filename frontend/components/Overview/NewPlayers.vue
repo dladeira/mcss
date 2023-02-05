@@ -6,9 +6,9 @@
 
         <div class="list">
             <div v-for="player of getNewPlayers()" class="player">
-                <img class="player-img" src="https://cravatar.eu/avatar/Maximimand/20.png" />
+                <img class="player-img" :src="`https://cravatar.eu/avatar/${player.username}/20.png`" />
                 <p class="player-name">{{player.username}}</p>
-                <p class="player-time">{{ new Date(player.joined).getHours() }}:{{ new Date(player.joined).getMinutes }}</p>
+                <p class="player-time">{{ format12h(new Date(player.joined)) }}</p>
             </div>
         </div>
     </div>
@@ -46,6 +46,7 @@
     width: calc(100% - ($margin * 2));
 
     margin: 1rem $margin $margin $margin;
+    padding: 5px 0;
     border-radius: 5px;
 
     background-color: rgba(black, 0.3);
@@ -102,5 +103,18 @@ function getNewPlayers() {
     }
 
     return list
+}
+
+function format12h(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var phase = hours >= 12 ? 'PM' : 'AM';
+
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+
+  return hours + ':' + minutes + ' ' + phase;
 }
 </script>
