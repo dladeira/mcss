@@ -185,24 +185,6 @@ function getSearchPlayers() {
     return activeServer.value.stats.players
 }
 
-function formatNumber(number) {
-    var lead = 0
-    var unit = ""
-
-    if (number >= 1000000) {
-        lead = number / 1000000
-        unit = "m"
-    } else if (number >= 1000) {
-        lead = number / 1000
-        unit = "k"
-    } else {
-        lead = number
-        unit = ""
-    }
-
-    return lead.toPrecision(3) + unit
-}
-
 function formatTime(seconds) {
     var lead = 0
     var unit = ""

@@ -2,6 +2,7 @@ const bson = require('bson')
 
 const User = require('../models/User')
 const Server = require('../models/Server')
+const Data = require('../models/Data')
 
 const MONTH = 30 * 24 * 60 * 60 * 1000
 
@@ -35,44 +36,28 @@ const DEFAULT_STATS = {
 }
 
 async function serverStatsMw(req, res, next) {
-    if (req.demo) {
-        const servers = []
+    if (req.demo)
+        return handleDemo(req, res, next)
 
-        servers.push(generateFakeServer("SpaghettiMC", "KHqSLuyliCO2KUtQ"))
-        servers.push(generateFakeServer("MineDiamonds", "NUUcAI5eaH56DRZL"))
+    const servers = await Server.find({ owner: req.user._id }).lean()
+    const count = await Data.countDocuments({})
 
-        req.servers = servers
-
-        return next()
-    }
-
-    process.stdout.write('FIND operation: ')
-    const startTime = Date.now()
-    // const servers = await Server.find({ owner: req.user._id })
-    const servers = await Server.aggregate().lookup({
-        from: 'datas', let: {
-            server: "$_id"
-        }, pipeline: [
-            {
-                $match: {
-                    $expr: {
-                        $and: [
-                            { $eq: ["$server", "$$server"] }
-                        ]
-                    }
-                }
-            },
-            {
-                $sort: { time: 1 }
-            }
-        ],
-        as: 'data'
+    await executeOperation('FIND', async () => {
+        for (var server of servers) {
+            const data = await Data.find({ server: server._id }).sort({ time: 1 }).lean()
+            server.data = data
+        }
     })
 
-    console.log(`${Math.round((Date.now() - startTime) / 1000 * 100) / 100}s (${servers.reduce((a, obj) => a + obj.data.length, 0)} packets)`)
+    await executeOperation('GEN', async () => {
+        for (var server of servers) {
+            server.stats = await generateStats(server)
+        }
+    })
+
+    console.log(`(${formatNumber(servers.reduce((a, obj) => a + obj.data.length, 0))} packets) (${formatNumber(servers.reduce((a, obj) => a + ((Date.now() - obj.firstUpdate) / 1000 / req.user.plan.updateFrequency), 0))} total) (${formatNumber(count)} global)`)
 
     for (var server of servers) {
-        server.stats = await generateStats(server)
         delete server.data
     }
 
@@ -81,7 +66,6 @@ async function serverStatsMw(req, res, next) {
 }
 
 async function generateStats(server) {
-    process.stdout.write('GEN operation: ')
     const startTime = new Date()
 
     const user = await User.findOne({ _id: server.owner })
@@ -230,7 +214,7 @@ async function generateStats(server) {
     stats.cpuUsage = latestData.cpuUsage
     stats.ramUsage = latestData.ramUsage
     stats.storageUsage = Math.round(latestData.storageUsage)
-    stats.storageUsed = latestData.storageUsed
+    stats.storageUsed = averagePacket * server.data.length / 1024
     stats.uptime = Math.round(server.data.length / (server.data.length + totalPacketsSkipped) * 100)
     stats.graphs = graphs.getStats()
     stats.dataAge = {
@@ -242,10 +226,12 @@ async function generateStats(server) {
     stats.max_players = latestData.max_players
     stats.runningTime = server.lastUpdate - server.firstUpdate
 
-    console.log(`${Math.round((Date.now() - startTime) / 1000 * 100) / 100}s (${server.data.length} packets) (${Math.round((Date.now() - server.firstUpdate) / updateInterval)} total)`)
-
     return stats
 }
+
+// ==========
+// HELPERS
+// ==========
 
 class Graphs {
     constructor() {
@@ -343,6 +329,80 @@ class Graphs {
             peak: this.peak
         }
     }
+}
+
+async function executeOperation(opName, op) {
+    const start = Date.now()
+    process.stdout.write(`${opName} operation: `)
+
+    await op()
+
+    var duration = Date.now() - start
+    process.stdout.write(`${formatTime(duration / 1000)}\n`)
+}
+
+function getAverageDataSize(data) { // KiloBytes
+    var total = 0
+    var samples = 200
+    for (var i = 0; i < samples; i++)
+        total += bson.serialize(data[Math.floor(Math.random() * data.length)]).length
+
+    var averageSize = total / samples
+
+    return averageSize / 1024
+}
+
+function formatNumber(number) {
+    var lead = 0
+    var unit = ""
+
+    if (number >= 1000000) {
+        lead = number / 1000000
+        unit = "m"
+    } else if (number >= 1000) {
+        lead = number / 1000
+        unit = "k"
+    } else {
+        lead = number
+        unit = ""
+    }
+
+    return lead.toPrecision(3) + unit
+}
+
+function formatTime(seconds) {
+    var lead = 0
+    var unit = ""
+    if (seconds >= 86400) {
+        lead = seconds / 86400
+        unit = "d"
+    } else if (seconds >= 3600) {
+        lead = seconds / 3600
+        unit = "h"
+    } else if (seconds >= 60) {
+        lead = seconds / 60
+        unit = "m"
+    } else {
+        lead = seconds
+        unit = "s"
+    }
+
+    return lead.toPrecision(2) + unit
+}
+
+// ==========
+// DEMO
+// ==========
+
+function handleDemo(req, res, next) {
+    const servers = []
+
+    servers.push(generateFakeServer("SpaghettiMC", "KHqSLuyliCO2KUtQ"))
+    servers.push(generateFakeServer("MineDiamonds", "NUUcAI5eaH56DRZL"))
+
+    req.servers = servers
+
+    return next()
 }
 
 function generateFakeServer(name, id) {
@@ -509,16 +569,6 @@ function generateFakeGraphs() {
     }
 
     return graphs
-}
-function getAverageDataSize(data) { // KiloBytes
-    var total = 0
-    var samples = 200
-    for (var i = 0; i < samples; i++)
-        total += bson.serialize(data[Math.floor(Math.random() * data.length)]).length
-
-    var averageSize = total / samples
-
-    return averageSize / 1024
 }
 
 module.exports = {
