@@ -1,16 +1,15 @@
+require('dotenv').config({ path: '../.env' })
+
 const mongoose = require('mongoose')
 const app = require('./app')
 const socket = require('./socket')
 const http = require('http')
-const dotenv = require('dotenv')
 const argv = require('minimist')(process.argv.slice(2))
 
 const port = argv["port"]
-let server, io
+let server
 
 async function bootstrap() {
-    dotenv.config()
-
     await mongoose.connect(process.env.MONGODB_URI)
     console.log('Connected to MongoDB')
 

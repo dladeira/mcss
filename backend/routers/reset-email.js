@@ -28,7 +28,7 @@ router.post('/old', loggedIn(), async (req, res) => {
             from: 'MCSS <mcss@ladeira.eu',
             to: `<${req.user.email}>`,
             subject: 'Email Change - Old Verification',
-            html: `To change your email, you need to verify both your new and old email.<br>To verify your old email, press the link below<br><br><a href="${process.env.ORIGIN}/api/auth/reset-email/verify?code=${code}">Verify</a>`
+            html: `To change your email, you need to verify both your new and old email.<br>To verify your old email, press the link below<br><br><a href="${process.env.WEB_SERVER}/api/auth/reset-email/verify?code=${code}">Verify</a>`
         }
 
         await transporter.sendMail(message)
@@ -110,7 +110,7 @@ router.post('/new', loggedIn(), async (req, res) => {
             from: 'MCSS <mcss@ladeira.eu',
             to: `<${email}>`,
             subject: 'Email Change - New Verification',
-            html: `To change your email, you need to verify both your new and old email.<br>To verify your new email, press the link below<br><br><a href="${process.env.ORIGIN}/api/auth/reset-email/verify?code=${code}">Verify</a>`
+            html: `To change your email, you need to verify both your new and old email.<br>To verify your new email, press the link below<br><br><a href="${process.env.WEB_SERVER}/api/auth/reset-email/verify?code=${code}">Verify</a>`
         }
 
         await transporter.sendMail(message)

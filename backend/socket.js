@@ -11,7 +11,7 @@ const sockets = []
 function setup(server) {
     io = new SocketServer(server, {
         cors: {
-            origin: process.env.ORIGIN,
+            origin: process.env.WEB_SERVER,
             methods: ["GET", "POST"],
             credentials: true
         }

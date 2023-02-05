@@ -119,7 +119,7 @@ label {
 }
 
 .text {
-    width: 7.5rem;
+    width: 12rem;
 
     font-weight: 600;
     text-align: right;

@@ -12,6 +12,9 @@ export default defineNuxtConfig({
             }
         },
     },
+    nitro: {
+        compressPublicAssets: true
+    },
     modules: [
         'nuxt-proxy',
         '@nuxt/image-edge',
@@ -22,7 +25,7 @@ export default defineNuxtConfig({
         sockets: [
             {
                 name: 'main',
-                url: process.env.SOCKET_SERVER,
+                url: process.env.API_SERVER,
                 default: true
             }
         ]
@@ -41,10 +44,7 @@ export default defineNuxtConfig({
             }]
         },
         public: {
-            origin: process.env.ORIGIN
+            origin: process.env.WEB_SERVER
         }
-    },
-    app: {
-        pageTransition: { name: 'page', mode: 'out-in' }
-    },
+    }
 })
