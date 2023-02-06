@@ -428,148 +428,222 @@ function generateFakeServer(name, id) {
             { msg: "(Do it faster, makes us stronger)", sender: "Maximimand" },
         ],
         stats: {
-            live: { cpuUsage: Math.round(Math.random() * 100), ramUsage: Math.round(Math.random() * 100) },
-            cache: {
-                storageUsed: 2.6,
-                storageUsage: Math.round(Math.random() * 100),
-                uptime: 97,
-                blocksBroken: Math.round(Math.random() * 1000000),
-                blocksPlaced: Math.round(Math.random() * 1000000),
-                blocksTraveled: Math.round(Math.random() * 10000000),
-                deaths: Math.round(Math.random() * 300),
-                dataAge: {
-                    months3: 0.5,
-                    months6: 1.1,
-                    months12: 1.7,
-                    forever: 2.6
+            cpuUsage: Math.round(Math.random() * 100),
+            ramUsage: Math.round(Math.random() * 100),
+            storageUsed: 2.6,
+            storageUsage: Math.round(Math.random() * 100),
+            uptime: 97,
+            blocksBroken: Math.round(Math.random() * 1000000),
+            blocksPlaced: Math.round(Math.random() * 1000000),
+            blocksTraveled: Math.round(Math.random() * 10000000),
+            deaths: Math.round(Math.random() * 300),
+            dataAge: {
+                months3: 0.5,
+                months6: 1.1,
+                months12: 1.7,
+                forever: 2.6
+            },
+            messages: Math.round(Math.random() * 100000),
+            characters: Math.round(Math.random() * 10000),
+            whispers: Math.round(Math.random() * 1000),
+            commands: Math.round(Math.random() * 1000),
+            runningTime: 864000000,
+            playerPeak: 4,
+            max_players: 20,
+            totalPlaytime: Math.round(Math.random() * 100000) + 300000,
+            players: [
+                {
+                    playtime: Math.random() * 50000 + 100000,
+                    blocksBroken: Math.round(Math.random() * 10000),
+                    blocksPlaced: Math.round(Math.random() * 10000),
+                    blocksTraveled: Math.round(Math.random() * 10000),
+                    deaths: Math.round(Math.random() * 10),
+                    itemsCrafted: Math.round(Math.random() * 1000),
+                    messages: Math.round(Math.random() * 1000),
+                    characters: Math.round(Math.random() * 10000),
+                    whispers: Math.round(Math.random() * 100),
+                    commands: Math.round(Math.random() * 100),
+                    location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
+                    username: 'DespacitoMaster',
+                    session: 1078,
+                    online: true,
                 },
-                messages: Math.round(Math.random() * 100000),
-                characters: Math.round(Math.random() * 10000),
-                whispers: Math.round(Math.random() * 1000),
-                commands: Math.round(Math.random() * 1000),
-                runningTime: 864000000,
-                playerPeak: 4,
-                totalPlaytime: Math.round(Math.random() * 100000) + 300000,
-                players: [
-                    {
-                        playtime: Math.random() * 50000 + 100000,
-                        blocksBroken: Math.round(Math.random() * 10000),
-                        blocksPlaced: Math.round(Math.random() * 10000),
-                        blocksTraveled: Math.round(Math.random() * 10000),
-                        deaths: Math.round(Math.random() * 10),
-                        itemsCrafted: Math.round(Math.random() * 1000),
-                        messages: Math.round(Math.random() * 1000),
-                        characters: Math.round(Math.random() * 10000),
-                        whispers: Math.round(Math.random() * 100),
-                        commands: Math.round(Math.random() * 100),
-                        location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
-                        username: 'DespacitoMaster',
-                        online: true,
-                    },
-                    {
-                        playtime: Math.random() * 50000 + 100000,
-                        blocksBroken: Math.round(Math.random() * 10000),
-                        blocksPlaced: Math.round(Math.random() * 10000),
-                        blocksTraveled: Math.round(Math.random() * 10000),
-                        deaths: Math.round(Math.random() * 40),
-                        itemsCrafted: Math.round(Math.random() * 1000),
-                        messages: Math.round(Math.random() * 1000),
-                        characters: Math.round(Math.random() * 10000),
-                        whispers: Math.round(Math.random() * 100),
-                        commands: Math.round(Math.random() * 100),
-                        location: `---`,
-                        username: 'Maximimand',
-                        online: false,
-                    },
-                    {
-                        playtime: Math.random() * 50000 + 100000,
-                        blocksBroken: Math.round(Math.random() * 10000),
-                        blocksPlaced: Math.round(Math.random() * 10000),
-                        blocksTraveled: Math.round(Math.random() * 10000),
-                        deaths: Math.round(Math.random() * 40),
-                        itemsCrafted: Math.round(Math.random() * 1000),
-                        messages: Math.round(Math.random() * 1000),
-                        characters: Math.round(Math.random() * 10000),
-                        whispers: Math.round(Math.random() * 100),
-                        commands: Math.round(Math.random() * 100),
-                        location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
-                        username: 'Xx_420No0B420_xX',
-                        online: true,
-                    },
-                    {
-                        playtime: Math.random() * 50000 + 100000,
-                        blocksBroken: Math.round(Math.random() * 10000),
-                        blocksPlaced: Math.round(Math.random() * 10000),
-                        blocksTraveled: Math.round(Math.random() * 10000),
-                        deaths: Math.round(Math.random() * 40),
-                        itemsCrafted: Math.round(Math.random() * 1000),
-                        messages: Math.round(Math.random() * 1000),
-                        characters: Math.round(Math.random() * 10000),
-                        whispers: Math.round(Math.random() * 100),
-                        commands: Math.round(Math.random() * 100),
-                        location: `---`,
-                        username: 'DaddyBlockbone',
-                        online: false
-                    },
-                    {
-                        playtime: Math.random() * 50000 + 100000,
-                        blocksBroken: Math.round(Math.random() * 10000),
-                        blocksPlaced: Math.round(Math.random() * 10000),
-                        blocksTraveled: Math.round(Math.random() * 10000),
-                        deaths: Math.round(Math.random() * 40),
-                        itemsCrafted: Math.round(Math.random() * 1000),
-                        messages: Math.round(Math.random() * 1000),
-                        characters: Math.round(Math.random() * 10000),
-                        whispers: Math.round(Math.random() * 100),
-                        commands: Math.round(Math.random() * 100),
-                        location: `---`,
-                        username: 'Wolfie2024',
-                        online: false
-                    }
-                ],
-                graphs: generateFakeGraphs()
-            }
+                {
+                    playtime: Math.random() * 50000 + 100000,
+                    blocksBroken: Math.round(Math.random() * 10000),
+                    blocksPlaced: Math.round(Math.random() * 10000),
+                    blocksTraveled: Math.round(Math.random() * 10000),
+                    deaths: Math.round(Math.random() * 40),
+                    itemsCrafted: Math.round(Math.random() * 1000),
+                    messages: Math.round(Math.random() * 1000),
+                    characters: Math.round(Math.random() * 10000),
+                    whispers: Math.round(Math.random() * 100),
+                    commands: Math.round(Math.random() * 100),
+                    location: `---`,
+                    username: 'Maximimand',
+                    session: Math.round(Math.random * 1000),
+                    online: false,
+                },
+                {
+                    playtime: Math.random() * 50000 + 100000,
+                    blocksBroken: Math.round(Math.random() * 10000),
+                    blocksPlaced: Math.round(Math.random() * 10000),
+                    blocksTraveled: Math.round(Math.random() * 10000),
+                    deaths: Math.round(Math.random() * 40),
+                    itemsCrafted: Math.round(Math.random() * 1000),
+                    messages: Math.round(Math.random() * 1000),
+                    characters: Math.round(Math.random() * 10000),
+                    whispers: Math.round(Math.random() * 100),
+                    commands: Math.round(Math.random() * 100),
+                    location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
+                    username: 'Xx_420No0B420_xX',
+                    session: 644,
+                    online: true,
+                },
+                {
+                    playtime: Math.random() * 50000 + 100000,
+                    blocksBroken: Math.round(Math.random() * 10000),
+                    blocksPlaced: Math.round(Math.random() * 10000),
+                    blocksTraveled: Math.round(Math.random() * 10000),
+                    deaths: Math.round(Math.random() * 40),
+                    itemsCrafted: Math.round(Math.random() * 1000),
+                    messages: Math.round(Math.random() * 1000),
+                    characters: Math.round(Math.random() * 10000),
+                    whispers: Math.round(Math.random() * 100),
+                    commands: Math.round(Math.random() * 100),
+                    location: `---`,
+                    username: 'DaddyBlockbone',
+                    session: Math.round(Math.random * 1000),
+                    online: false
+                },
+                {
+                    playtime: Math.random() * 50000 + 100000,
+                    blocksBroken: Math.round(Math.random() * 10000),
+                    blocksPlaced: Math.round(Math.random() * 10000),
+                    blocksTraveled: Math.round(Math.random() * 10000),
+                    deaths: Math.round(Math.random() * 40),
+                    itemsCrafted: Math.round(Math.random() * 1000),
+                    messages: Math.round(Math.random() * 1000),
+                    characters: Math.round(Math.random() * 10000),
+                    whispers: Math.round(Math.random() * 100),
+                    commands: Math.round(Math.random() * 100),
+                    location: `---`,
+                    username: 'Wolfie2024',
+                    session: Math.round(Math.random * 1000),
+                    online: false
+                }
+            ],
+            graphs: generateFakeGraphs()
         }
     }
 }
 
 function generateFakeGraphs() {
-    const graphs = getDefaultGraph()
+    const graphs = new Graphs()
 
-    function registerToGraph(graphTime, graphIndex) {
-        graphs[graphTime][graphIndex].cpu += Math.round(Math.random() * 50 + 20)
-        graphs[graphTime][graphIndex].ram += Math.round(Math.random() * 20 + 60)
-        graphs[graphTime][graphIndex].storage += Math.round(Math.random() * 20)
-        graphs[graphTime][graphIndex].players += Math.round(Math.random() * 5)
-        graphs[graphTime][graphIndex].messages += Math.round(Math.random() * 300)
-        graphs[graphTime][graphIndex].characters += Math.round(Math.random() * 1000)
-        graphs[graphTime][graphIndex].whispers += Math.round(Math.random() * 30)
-        graphs[graphTime][graphIndex].commands += Math.round(Math.random() * 40)
+    function generateFakePacket() {
+        const packet = {}
 
-        graphs[graphTime][graphIndex].blocksBrokenPerPlayer += Math.random() * 1000
-        graphs[graphTime][graphIndex].blocksPlacedPerPlayer += Math.random() * 1000
-        graphs[graphTime][graphIndex].blocksTraveledPerPlayer += Math.random() * 1000
-        graphs[graphTime][graphIndex].itemsCraftedPerPlayer += Math.random() * 100
+        packet.players = [
+            {
+                playtime: Math.random() * 50000 + 100000,
+                blocksBroken: Math.round(Math.random() * 10000),
+                blocksPlaced: Math.round(Math.random() * 10000),
+                blocksTraveled: Math.round(Math.random() * 10000),
+                deaths: Math.round(Math.random() * 10),
+                itemsCrafted: Math.round(Math.random() * 1000),
+                messages: Math.round(Math.random() * 1000),
+                characters: Math.round(Math.random() * 10000),
+                whispers: Math.round(Math.random() * 100),
+                commands: Math.round(Math.random() * 100),
+                location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
+                username: 'DespacitoMaster',
+                online: true,
+            },
+            {
+                playtime: Math.random() * 50000 + 100000,
+                blocksBroken: Math.round(Math.random() * 10000),
+                blocksPlaced: Math.round(Math.random() * 10000),
+                blocksTraveled: Math.round(Math.random() * 10000),
+                deaths: Math.round(Math.random() * 40),
+                itemsCrafted: Math.round(Math.random() * 1000),
+                messages: Math.round(Math.random() * 1000),
+                characters: Math.round(Math.random() * 10000),
+                whispers: Math.round(Math.random() * 100),
+                commands: Math.round(Math.random() * 100),
+                location: `---`,
+                username: 'Maximimand',
+                online: false,
+            },
+            {
+                playtime: Math.random() * 50000 + 100000,
+                blocksBroken: Math.round(Math.random() * 10000),
+                blocksPlaced: Math.round(Math.random() * 10000),
+                blocksTraveled: Math.round(Math.random() * 10000),
+                deaths: Math.round(Math.random() * 40),
+                itemsCrafted: Math.round(Math.random() * 1000),
+                messages: Math.round(Math.random() * 1000),
+                characters: Math.round(Math.random() * 10000),
+                whispers: Math.round(Math.random() * 100),
+                commands: Math.round(Math.random() * 100),
+                location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
+                username: 'Xx_420No0B420_xX',
+                online: true,
+            },
+            {
+                playtime: Math.random() * 50000 + 100000,
+                blocksBroken: Math.round(Math.random() * 10000),
+                blocksPlaced: Math.round(Math.random() * 10000),
+                blocksTraveled: Math.round(Math.random() * 10000),
+                deaths: Math.round(Math.random() * 40),
+                itemsCrafted: Math.round(Math.random() * 1000),
+                messages: Math.round(Math.random() * 1000),
+                characters: Math.round(Math.random() * 10000),
+                whispers: Math.round(Math.random() * 100),
+                commands: Math.round(Math.random() * 100),
+                location: `---`,
+                username: 'DaddyBlockbone',
+                online: false
+            },
+            {
+                playtime: Math.random() * 50000 + 100000,
+                blocksBroken: Math.round(Math.random() * 10000),
+                blocksPlaced: Math.round(Math.random() * 10000),
+                blocksTraveled: Math.round(Math.random() * 10000),
+                deaths: Math.round(Math.random() * 40),
+                itemsCrafted: Math.round(Math.random() * 1000),
+                messages: Math.round(Math.random() * 1000),
+                characters: Math.round(Math.random() * 10000),
+                whispers: Math.round(Math.random() * 100),
+                commands: Math.round(Math.random() * 100),
+                location: `---`,
+                username: 'Wolfie2024',
+                online: false
+            }
+        ]
 
-        graphs[graphTime][graphIndex].dataCount += 1
-        graphs[graphTime][graphIndex].count += 1
+        packet.cpuUsage = Math.round(Math.random() * 50 + 20)
+        packet.ramUsage = Math.round(Math.random() * 20 + 60)
+        packet.storageUsage = Math.round(Math.random() * 20)
+
+        return packet
     }
 
     for (var i = 0; i < 24; i++) {
-        registerToGraph('day', i)
-        registerToGraph('average', i)
-        registerToGraph('peak', i)
+        graphs.registerPacket(generateFakePacket(), 'day', i )
+        graphs.registerPacket(generateFakePacket(), 'average', i )
+        graphs.registerPacket(generateFakePacket(), 'peak', i )
     }
 
     for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++) {
-        registerToGraph('month', i)
+        graphs.registerPacket(generateFakePacket(), 'month', i )
     }
 
     for (var i = 0; i < 12; i++) {
-        registerToGraph('year', i)
+        graphs.registerPacket(generateFakePacket(), 'year', i )
     }
 
-    return graphs
+    return graphs.getStats()
 }
 
 module.exports = {
