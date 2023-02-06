@@ -28,7 +28,7 @@
                 </div>
                 <div class="stat">
                     <h1 class="stat-title">
-                        <span class="stat-blue">{{ servers.reduce((acc, obj) => acc + obj.storage, 0) }}</span>/{{ user.plan.storage }}MB
+                        <span class="stat-blue">{{ Math.round(servers.reduce((acc, obj) => acc + obj.storage, 0)) }}</span>/{{ user.plan.storage }}MB
                     </h1>
 
                     <h2 class="stat-subtitle">

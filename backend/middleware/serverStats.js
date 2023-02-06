@@ -39,27 +39,28 @@ async function serverStatsMw(req, res, next) {
     if (req.demo)
         return handleDemo(req, res, next)
 
-    const servers = await Server.find({ owner: req.user._id }).lean()
-    const count = await Data.countDocuments({})
+    var servers, globalCount, serverCount, expectedCount
 
     await executeOperation('FIND', async () => {
+        servers = await Server.find({ owner: req.user._id }).lean()
+
+        globalCount = await Data.countDocuments({})
         for (var server of servers) {
             const data = await Data.find({ server: server._id }).sort({ time: 1 }).lean()
             server.data = data
         }
+        serverCount = servers.reduce((a, obj) => a + obj.data.length, 0)
+        expectedCount = servers.reduce((a, obj) => a + ((Date.now() - obj.firstUpdate) / 1000 / req.user.plan.updateFrequency), 0)
     })
 
     await executeOperation('GEN', async () => {
         for (var server of servers) {
             server.stats = await generateStats(server)
+            delete server.data
         }
     })
 
-    console.log(`(${formatNumber(servers.reduce((a, obj) => a + obj.data.length, 0))} packets) (${formatNumber(servers.reduce((a, obj) => a + ((Date.now() - obj.firstUpdate) / 1000 / req.user.plan.updateFrequency), 0))} total) (${formatNumber(count)} global)`)
-
-    for (var server of servers) {
-        delete server.data
-    }
+    console.log(`(${formatNumber(serverCount)} packets) (${formatNumber(expectedCount)} total) (${formatNumber(globalCount)} global)`)
 
     req.servers = servers
     next()
