@@ -135,7 +135,7 @@ function getRecurringPlayers(daysElapsed = 1) {
             list.push(player)
     }
 
-    return list.length - getNewPlayers()
+    return list.length - getNewPlayers(daysElapsed)
 }
 
 function getNewPlayers(daysElapsed = 1) {
