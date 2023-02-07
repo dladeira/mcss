@@ -5,7 +5,7 @@
             <Head>
                 <Title>{{ activeServer.name }} - Players</Title>
             </Head>
-            
+
             <div class="grid">
                 <div class="left">
                     <PlayersGlobalStats />
@@ -17,6 +17,7 @@
                     <PlayersRecentEvents />
                 </div>
             </div>
+            <PlayersPlayerCard />
         </NuxtLayout>
     </div>
 </template>

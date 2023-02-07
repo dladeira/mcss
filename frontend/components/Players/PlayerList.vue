@@ -18,12 +18,12 @@
             <div class="player" v-for="player of getSearchPlayers()">
                 <img class="player-img" :src="`https://cravatar.eu/avatar/${player.username}/20.png`" />
                 <div class="player-name">{{ player.username }}</div>
-                <div class="player-location">{{player.online ? player.location : "---"}}</div>
+                <div class="player-location">{{ player.online ? player.location : "---" }}</div>
                 <div class="player-engagement">58.3</div>
-                <div class="player-messages">{{player.messages}}</div>
-                <div class="player-session">{{player.online ? formatTime(player.session) : "---"}}</div>
-                <div class="player-playtime">{{formatTime(player.playtime)}}</div>
-                <div class="player-view">View</div>
+                <div class="player-messages">{{ player.messages }}</div>
+                <div class="player-session">{{ player.online ? formatTime(player.session) : "---" }}</div>
+                <div class="player-playtime">{{ formatTime(player.playtime) }}</div>
+                <div class="player-view" @click="openPlayerCard(player)">View</div>
             </div>
         </div>
     </div>
@@ -57,7 +57,7 @@
     position: absolute;
     top: 10px;
     right: 0.6rem;
-    
+
     width: 16rem;
 
     padding: 0.5rem 0.5rem;
@@ -171,11 +171,17 @@
     margin: 0 1rem 0 auto;
 
     color: $blue;
+
+    &:hover {
+        color: darken($blue, 8);
+        cursor: pointer;
+    }
 }
 </style>
 
 <script setup>
 const activeServer = useState('activeServer')
+const playerCard = useState('playerCard')
 const playerSearch = ref()
 
 function getSearchPlayers() {
@@ -203,5 +209,9 @@ function formatTime(seconds) {
     }
 
     return lead.toPrecision(2) + unit
+}
+
+function openPlayerCard(player) {
+    playerCard.value = player
 }
 </script>
