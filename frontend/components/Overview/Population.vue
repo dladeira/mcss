@@ -13,7 +13,7 @@
                     recurring players
                 </h3>
                 <div class="front-change">
-                    <span :class="getPlayerDiff() > 0 ? 'positive' : getPlayerDiff() < 0 ? 'negative' : 'neutral'">{{ getPlayerDiff() }}</span> vs last 24h
+                    <span :class="getPlayerDiff() > 0 ? 'positive' : getPlayerDiff() < 0 ? 'negative' : 'neutral'">{{ getSign(getPlayerDiff()) + Math.abs(getPlayerDiff()) }}</span> vs last 24h
                 </div>
             </div>
 
@@ -25,7 +25,7 @@
                     new players
                 </h3>
                 <div class="back-change">
-                    <span :class="getNewPlayerDiff() > 0 ? 'positive' : getNewPlayerDiff() < 0 ? 'negative' : 'neutral'">{{ getNewPlayerDiff() }}</span> vs last 24h
+                    <span :class="getNewPlayerDiff() > 0 ? 'positive' : getNewPlayerDiff() < 0 ? 'negative' : 'neutral'">{{ getSign(getNewPlayerDiff()) + Math.abs(getNewPlayerDiff()) }}</span> vs last 24h
                 </div>
             </div>
         </div>
@@ -153,12 +153,12 @@ function getNewPlayers(daysElapsed = 1) {
 
 function getPlayerDiff() {
     const change = getRecurringPlayers(1) - (getRecurringPlayers(2) - getRecurringPlayers(1))
-    return getSign(change) + Math.abs(change)
+    return change
 }
 
 function getNewPlayerDiff() {
     const change = getNewPlayers(1) - (getNewPlayers(2) - getNewPlayers(1))
-    return getSign(change) + Math.abs(change)
+    return change
 }
 
 function getSign(num) {

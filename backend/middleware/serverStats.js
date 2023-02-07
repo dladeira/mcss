@@ -175,13 +175,16 @@ async function generateStats(server) {
 
                 location: latestPlayer ? `(${latestPlayer['location.x']}, ${latestPlayer['location.y']}, ${latestPlayer['location.z']})` : null,
                 online: latestPlayer ? true : false,
-                session: latestPlayer ? user.plan.updateFrequency : null
+                session: latestPlayer ? user.plan.updateFrequency : null,
+                sessions: []
             })
         }
 
         // Reset session for offline players
         for (var statsPlayer of stats.players) {
             if (!packet.players.find(i => i.uuid == statsPlayer.uuid)) {
+                if (statsPlayer.session > 0)
+                    statsPlayer.sessions.push({ time: packetDate.getTime(), length: statsPlayer.session })
                 statsPlayer.session = 0
             }
         }
@@ -630,17 +633,17 @@ function generateFakeGraphs() {
     }
 
     for (var i = 0; i < 24; i++) {
-        graphs.registerPacket(generateFakePacket(), 'day', i )
-        graphs.registerPacket(generateFakePacket(), 'average', i )
-        graphs.registerPacket(generateFakePacket(), 'peak', i )
+        graphs.registerPacket(generateFakePacket(), 'day', i)
+        graphs.registerPacket(generateFakePacket(), 'average', i)
+        graphs.registerPacket(generateFakePacket(), 'peak', i)
     }
 
     for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++) {
-        graphs.registerPacket(generateFakePacket(), 'month', i )
+        graphs.registerPacket(generateFakePacket(), 'month', i)
     }
 
     for (var i = 0; i < 12; i++) {
-        graphs.registerPacket(generateFakePacket(), 'year', i )
+        graphs.registerPacket(generateFakePacket(), 'year', i)
     }
 
     return graphs.getStats()

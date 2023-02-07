@@ -10,16 +10,16 @@
 
         <div class="front">
             <h1 class="front-title">
-                57min
+                {{ formatTime(getSessions())}}
             </h1>
             <h3 class="front-label">
                 AVG Session Playtime
             </h3>
             <div class="front-change">
-                <span class="front-negative">-3.8m</span> vs last 24h
+                <span :class="get24h() > 0 ? 'positive' : get24h() < 0 ? 'negative' : 'neutral'">{{ getSign(get24h()) + formatTime(Math.abs(get24h())) }}</span> vs last 24h
             </div>
             <div class="front-change">
-                <span class="front-negative">-1.0m</span> vs last week
+                <span :class="getLastWeek() > 0 ? 'positive' : getLastWeek() < 0 ? 'negative' : 'neutral'">{{ getSign(getLastWeek()) + formatTime(Math.abs(getLastWeek())) }}</span> vs last week
             </div>
         </div>
     </div>
@@ -101,17 +101,81 @@
     color: white;
 }
 
-.front-positive {
+.positive {
     font-weight: 700;
     color: $green;
 }
 
-.front-negative {
+.negative {
     font-weight: 700;
     color: $red;
+}
+
+.neutral {
+    font-weight: 700;
+    color: white;
 }
 </style>
 
 <script setup>
 const activeServer = useState('activeServer')
+
+function getSessions(daysElapsed = 1) {
+    const { players } = activeServer.value.stats
+    const list = []
+    const now = Date.now()
+
+    for (var player of players) {
+        for (var session of player.sessions) {
+            if (now - session.time < daysElapsed * 24 * 60 * 60 * 1000)
+                list.push(session.length)
+        }
+    }
+
+    return getAverage(list)
+}
+
+function getAverage(arr) {
+    return arr.reduce((acc, obj) => acc + obj) / arr.length
+}
+
+function get24h() {
+    var diff = getSessions(1) - (getSessions(2) - getSessions(1))
+    return diff
+}
+
+function getLastWeek() {
+    var diff = getSessions(7) - (getSessions(14) - getSessions(7))
+    return diff
+}
+
+function getSign(num) {
+    if (num > 0) {
+        return "+"
+    } else if (num < 0) {
+        return "-"
+    } else {
+        return "~"
+    }
+}
+
+function formatTime(seconds) {
+    var lead = 0
+    var unit = ""
+    if (seconds >= 86400) {
+        lead = seconds / 86400
+        unit = "d"
+    } else if (seconds >= 3600) {
+        lead = seconds / 3600
+        unit = "h"
+    } else if (seconds >= 60) {
+        lead = seconds / 60
+        unit = "min"
+    } else {
+        lead = seconds
+        unit = "s"
+    }
+
+    return lead.toPrecision(2) + unit
+}
 </script>

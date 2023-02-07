@@ -199,7 +199,7 @@ function formatTime(seconds) {
         unit = "min"
     } else {
         lead = seconds
-        unit = "sec"
+        unit = "s"
     }
 
     return lead.toPrecision(2) + unit
