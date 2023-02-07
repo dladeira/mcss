@@ -136,7 +136,9 @@ function getSessions(daysElapsed = 1) {
 }
 
 function getAverage(arr) {
-    return arr.reduce((acc, obj) => acc + obj) / arr.length
+    if (arr.length > 0)
+        return arr.reduce((acc, obj) => acc + obj) / arr.length
+    return 0
 }
 
 function get24h() {
