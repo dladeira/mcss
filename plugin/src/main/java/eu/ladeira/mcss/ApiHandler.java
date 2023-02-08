@@ -225,7 +225,8 @@ public class ApiHandler {
 					Bukkit.getLogger().warning("[IMPORTANT] No storage left on MCSS server! Please allocate or buy more. Canceling future requests");
 					return;
 				default:
-					Bukkit.getLogger().severe("Request failed for unexpected reason! Canceling future requests (Response Code: " + statusCode + ")");
+					Bukkit.getLogger().severe("Request failed for unexpected reason! Retrying in 100 seconds (Response Code: " + statusCode + ")");
+					transportDataDelayed(100000);
 					return;
 				}
 
