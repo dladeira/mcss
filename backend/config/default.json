@@ -1,4 +1,7 @@
 {
+    "cache": {
+        "enabled": true
+    },
     "plans": {
         "free": {
             "storage": 5,

@@ -7,18 +7,23 @@ const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 
+const { removeCache } = require('../middleware/serverStats')
+
 router.post('/stats-update', async (req, res) => {
     req.body.players = JSON.parse(req.body.players)
     const { cpu: cpuUsage, ram: ramUsage, players, messages, characters, whispers, commands, blocksBroken, blocksPlaced, blocksTraveled, deaths, secret, max_players } = req.body
 
     const server = await Server.findOne({ _id: secret })
 
+    removeCache(server)
+
     if (!server)
         return res.status(404).send("Server not found")
 
     const user = await User.findOne({ _id: server.owner })
     const updateInterval = user.plan.updateFrequency * 1000
-    const dataPackets = await Data.find({ server: secret })
+    const dataCount = await Data.countDocuments({ server: secret }).lean()
+    const dataPackets = await Data.find({ server: secret }).skip(Math.floor(Math.random() * dataCount)).limit(20).lean()
 
     if (!server.firstUpdate) {
         server.firstUpdate = Date.now()
@@ -30,7 +35,7 @@ router.post('/stats-update', async (req, res) => {
         return res.status(425).send("Throttle:" + throttle)
     }
 
-    const storageUsage = getAverageDataSize(dataPackets) * dataPackets.length / 1024 / server.storage * 100
+    const storageUsage = getAverageDataSize(dataPackets) * dataCount / 1024 / server.storage * 100
 
     if (storageUsage / 1024 > server.storage)
         return res.status(429).send("No storage left")
@@ -50,14 +55,12 @@ router.post('/stats-update', async (req, res) => {
         blocksPlaced,
         blocksTraveled,
         deaths,
-        max_players, 
+        max_players,
         time: Date.now() - (Date.now() % (updateInterval)),
     })
 
     const sendIn = (updateInterval) - (Date.now() % (updateInterval))
     server.lastUpdate = Date.now()
-    if (!server.data)
-        server.data = []
 
     await server.save()
     await data.save()
@@ -79,11 +82,10 @@ router.post('/chat-msg', async (req, res) => {
 
 function getAverageDataSize(data) { // KiloBytes
     var total = 0
-    var samples = 200
-    for (var i = 0; i < samples; i++)
+    for (var i = 0; i < data.length; i++)
         total += bson.serialize(data[Math.floor(Math.random() * data.length)]).length
 
-    var averageSize = total / samples
+    var averageSize = total / data.length
 
     return averageSize / 1024
 }

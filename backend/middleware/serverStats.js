@@ -1,10 +1,13 @@
 const bson = require('bson')
+const config = require('config')
 
 const User = require('../models/User')
 const Server = require('../models/Server')
 const Data = require('../models/Data')
 
 const MONTH = 30 * 24 * 60 * 60 * 1000
+
+const cache = []
 
 const DEFAULT_STATS = {
     cpuUsage: 0,
@@ -32,38 +35,76 @@ const DEFAULT_STATS = {
     deaths: 0,
     totalPlaytime: 0,
     playerPeak: 0,
-    runningTime: 0
+    runningTime: 0,
+    dataCount: 0
 }
 
 async function serverStatsMw(req, res, next) {
     if (req.demo)
         return handleDemo(req, res, next)
 
-    var servers, globalCount, serverCount, expectedCount
+    var servers, globalCount, serverCount, expectedCount, cachedCount
 
     await executeOperation('FIND', async () => {
         servers = await Server.find({ owner: req.user._id }).lean()
+        globalCount = await Data.countDocuments({}).lean()
 
-        globalCount = await Data.countDocuments({})
         for (var server of servers) {
-            const data = await Data.find({ server: server._id }).sort({ time: 1 }).lean()
-            server.data = data
+            const cached = findCache(server)
+
+            if (cached) {
+                server.stats = cached
+                continue
+            }
+
+            server.data = await Data.find({ server: server._id }).sort({ time: 1 }).lean()
         }
-        serverCount = servers.reduce((a, obj) => a + obj.data.length, 0)
+
+        serverCount = servers.reduce((a, obj) => a + (obj.data ? obj.data.length : obj.stats.dataCount), 0)
+        cachedCount = servers.reduce((a, obj) => a + (obj.data ? 0 : obj.stats.dataCount), 0)
         expectedCount = servers.reduce((a, obj) => a + ((Date.now() - obj.firstUpdate) / 1000 / req.user.plan.updateFrequency), 0)
     })
 
     await executeOperation('GEN', async () => {
         for (var server of servers) {
+            if (server.stats) // Stats are already cached
+                continue
             server.stats = await generateStats(server)
             delete server.data
         }
     })
 
-    console.log(`(${formatNumber(serverCount)} packets) (${formatNumber(expectedCount)} total) (${formatNumber(globalCount)} global)`)
+    console.log(`(${formatNumber(serverCount)} packets) (${formatNumber(cachedCount)} cached) (${formatNumber(expectedCount)} total) (${formatNumber(globalCount)} global)`)
 
     req.servers = servers
     next()
+}
+
+function cacheStats(server, stats, lifespan) {
+    if (config.get("cache.enabled")) {
+        removeCache(server)
+
+        cache.push({
+            _id: server._id,
+            stats: stats,
+            expire: Date.now() + lifespan
+        })
+    }
+}
+
+function findCache(server) {
+    if (config.get("cache.enabled")) {
+        const cachedStats = cache.find(i => toString(i._id) == toString(server._id) && Date.now() < i.expire)
+        return cachedStats ? cachedStats.stats : undefined
+    }
+}
+
+function removeCache(server) {
+    const index = cache.findIndex(i => toString(i._id) == toString(server._id))
+
+    if (index > -1) {
+        cache.splice(index, 1)
+    }
 }
 
 async function generateStats(server) {
@@ -229,6 +270,9 @@ async function generateStats(server) {
     }
     stats.max_players = latestData.max_players
     stats.runningTime = server.lastUpdate - server.firstUpdate
+    stats.dataCount = server.data.length
+
+    cacheStats(server, stats, user.plan.updateFrequency * 1000)
 
     return stats
 }
@@ -371,7 +415,7 @@ function formatNumber(number) {
         unit = ""
     }
 
-    return lead.toPrecision(3) + unit
+    return (lead > 0 ? lead.toPrecision(3) : lead) + unit
 }
 
 function formatTime(seconds) {
@@ -650,5 +694,6 @@ function generateFakeGraphs() {
 }
 
 module.exports = {
-    serverStatsMw
+    serverStatsMw,
+    removeCache
 }
