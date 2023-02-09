@@ -112,7 +112,6 @@ import {
 import { Line } from 'vue-chartjs'
 
 const activeServer = useState('activeServer')
-const selected = useState('selectedTime', () => "day")
 
 ChartJS.register(
     CategoryScale,
@@ -151,7 +150,7 @@ let options = {
 
 function getLabels() {
     var values = []
-    switch (selected.value) {
+    switch ("day") {
         case "day":
             for (var i = 0; i < 24; i++) {
                 values.push(i)
@@ -194,7 +193,7 @@ function getData() {
                 label: 'CPU Usage',
                 backgroundColor: '#00C2FF',
                 borderColor: "#00C2FF",
-                data: getDataset('cpu', selected.value),
+                data: getDataset('cpu', "day"),
                 fill: {
                     target: 'origin',
                     above: '#00C2FF44',   // Area will be red above the origin
@@ -205,7 +204,7 @@ function getData() {
                 label: 'RAM Usage',
                 backgroundColor: '#00FF75',
                 borderColor: "#00FF75",
-                data: getDataset('ram', selected.value),
+                data: getDataset('ram', "day"),
                 fill: {
                     target: 'origin',
                     above: '#00FF7544',   // Area will be red above the origin
@@ -216,7 +215,7 @@ function getData() {
                 label: 'Storage Usage',
                 backgroundColor: '#FF3030',
                 borderColor: "#FF3030",
-                data: getDataset('storage', selected.value),
+                data: getDataset('storage', "day"),
                 fill: {
                     target: 'origin',
                     above: '#FF303044',   // Area will be red above the origin

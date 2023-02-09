@@ -95,7 +95,6 @@ import {
 import { Line } from 'vue-chartjs'
 
 const activeServer = useState('activeServer')
-const selected = useState('selectedTime', () => "day")
 
 ChartJS.register(
     CategoryScale,
@@ -133,7 +132,7 @@ let options = {
 
 function getLabels() {
     var values = []
-    switch (selected.value) {
+    switch ("day") {
         case "day":
             for (var i = 0; i < 24; i++) {
                 values.push(i)
@@ -176,7 +175,7 @@ function getData() {
                 label: 'Players',
                 backgroundColor: '#FFD600',
                 borderColor: "#FFD600",
-                data: getDataset('players', selected.value),
+                data: getDataset('players', "day"),
                 fill: {
                     target: 'origin',
                     above: '#FFD6003F',
