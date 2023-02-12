@@ -323,17 +323,34 @@ class Graphs {
         var blocksPlaced = 0
         var blocksTraveled = 0
         var itemsCrafted = 0
-        var players = 0
+        var playerCount = 0
+        var playerPlaytime = this[graphType][graphIndex].playerPlaytime ? this[graphType][graphIndex].playerPlaytime : []
 
         for (var player of packet.players) {
             blocksBroken += player.blocksBroken ? parseInt(player.blocksBroken) : 0
             blocksPlaced += player.blocksPlaced ? parseInt(player.blocksPlaced) : 0
             blocksTraveled += player.blocksTraveled ? parseInt(player.blocksTraveled) : 0
             itemsCrafted += player.itemsCrafted ? parseInt(player.itemsCrafted) : 0
-            players++
+            playerCount++
+
+            var found = false
+            for (var i of playerPlaytime) {
+                if (i.uuid == player.uuid) {
+                    i.playtime += 1
+                    found = true
+                    break
+                }
+            }
+
+            if (!found) {
+                playerPlaytime.push({
+                    uuid: player.uuid,
+                    playtime: 1
+                })
+            }
         }
 
-        players = players == 0 ? 1 : players
+        playerCount = playerCount == 0 ? 1 : playerCount
 
         this[graphType][graphIndex].cpu += packet.cpuUsage
         this[graphType][graphIndex].ram += packet.ramUsage
@@ -345,10 +362,12 @@ class Graphs {
         this[graphType][graphIndex].commands += packet.commands ? packet.commands : 0
         this[graphType][graphIndex].dataCount += 1
 
-        this[graphType][graphIndex].blocksBrokenPerPlayer += blocksBroken / players
-        this[graphType][graphIndex].blocksPlacedPerPlayer += blocksPlaced / players
-        this[graphType][graphIndex].blocksTraveledPerPlayer += blocksTraveled / players
-        this[graphType][graphIndex].itemsCraftedPerPlayer += itemsCrafted / players
+        this[graphType][graphIndex].blocksBrokenPerPlayer += blocksBroken / playerCount
+        this[graphType][graphIndex].blocksPlacedPerPlayer += blocksPlaced / playerCount
+        this[graphType][graphIndex].blocksTraveledPerPlayer += blocksTraveled / playerCount
+        this[graphType][graphIndex].itemsCraftedPerPlayer += itemsCrafted / playerCount
+
+        this[graphType][graphIndex].playerPlaytime = playerPlaytime
     }
     clearGraph(graphType) {
         for (var graphIndex in this[graphType]) {

@@ -2,22 +2,26 @@
     <div class="wrapper" v-if="player" @click="clickOuter()">
         <div class="container" @click="clickInner()">
             <div class="top">
-                <div class="username-container">
+                <div class="panel username-container">
                     <img class="username-img" :src="`https://cravatar.eu/avatar/${player.username}/40.png`" />
                     <div class="username-username">{{ player.username }}</div>
                     <div class="username-country">{{ "Poland" }}</div>
                 </div>
-                <div class="online-container">
+                <div class="panel online-container">
                     <div :class="'online-status ' + (player.online ? 'online' : 'offline')">{{ player.online ? "Online" : "Offline" }}</div>
                     <div class="online-last" v-if="!player.online">Last online <span class="online-highlight">{{ getTimeAgo(player.lastOnline) }}</span></div>
                     <div class="online-last" v-else>Session: <span class="online-highlight">{{ getSession(player.session) }}</span></div>
                 </div>
             </div>
-            <div class="mid">
-
-            </div>
-            <div class="bot">
-
+            <!-- <div class="mid">
+            </div> -->
+            <div class="bot playtime panel">
+                <h1 class="panel-title">
+                    Playtime (this week)
+                </h1>
+                <div class="playtime-graph">
+                    <Line :data="getPlaytimeData()" :options="playtimeOptions" />
+                </div>
             </div>
         </div>
     </div>
@@ -72,10 +76,27 @@
     align-items: center;
 
     width: 100%;
+
+    margin-top: 1.25rem;
 }
 
 .top {
     height: 4.5rem;
+
+    margin-top: 0;
+}
+
+.panel {
+    background-color: $panel;
+
+    border-radius: 5px;
+}
+
+.panel-title {
+    margin: 1rem 0 0 1rem;
+
+    font-size: 1rem;
+    font-weight: 400;
 }
 
 // ==========
@@ -92,10 +113,6 @@
     width: 50%;
 
     padding: 0 1rem;
-
-    background-color: $panel;
-
-    border-radius: 5px;
 }
 
 .username-img {
@@ -134,11 +151,6 @@
 
     margin-left: auto;
     padding: 0.5rem 1.25rem;
-
-    border-radius: 5px;
-
-
-    background-color: $panel;
 }
 
 .online-status {
@@ -165,10 +177,58 @@
 .online-highlight {
     color: white;
 }
+
+// ==========
+// BOT
+// ==========
+
+.playtime {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    height: 25%;
+    width: 100%;
+}
+
+.playtime-graph {
+    position: relative;
+
+    height: 87%;
+    width: 100%;
+
+    padding: 1rem 1rem;
+}
 </style>
 
 <script setup>
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+} from 'chart.js'
+import { Line } from 'vue-chartjs'
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+)
+
+const user = useState('user')
 const player = useState('playerCard')
+const activeServer = useState('activeServer')
 const innerClick = ref()
 
 function clickInner() {
@@ -207,5 +267,95 @@ function formatTime(seconds) {
     }
 
     return lead.toPrecision(2) + " " + unit
+}
+
+// ==========
+// PLAYTIME
+// ==========
+function getLabels(value) {
+    var values = []
+    switch (value) {
+        case "day":
+            for (var i = 0; i < 24; i++) {
+                values.push(i)
+            }
+            return values
+        case "month":
+            for (var i = 1; i <= new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++) {
+                values.push(i)
+            }
+            return values
+        case "year":
+            values = ['Jan', 'Feb', 'Mar', 'Apr', 'Mar', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    }
+
+    return values
+}
+
+function getPlayerDataset() {
+    const values = []
+
+    // Timezone offset
+    // for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
+    //     values.push(undefined)
+    // }
+
+
+    for (var timeFrame of activeServer.value.stats.graphs.month) {
+        if (timeFrame.playerPlaytime) {
+            const datasetPlayer = timeFrame.playerPlaytime.find(i => i.uuid == player.value.uuid)
+            var value = datasetPlayer ? datasetPlayer.playtime : 0 / timeFrame.dataCount
+            values.push(isNaN(value) || value == Infinity ? 0 : value * user.value.plan.updateFrequency / 3600)
+        } else {
+            values.push(0)
+        }
+    }
+
+    return values
+}
+
+let playtimeOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            display: false
+        }
+    },
+    scales: {
+        x: {
+            grid: {
+                display: false,
+            }
+        },
+        y: {
+            grid: {
+                display: false,
+            },
+            ticks: {
+                callback: (value, index, ticks) => value + "h"
+            },
+            min: 0
+        }
+    }
+}
+
+function getPlaytimeData() {
+    return {
+        labels: getLabels("month"),
+        datasets: [
+            {
+                label: 'Playtime',
+                backgroundColor: '#00C2FF',
+                borderColor: "#00C2FF",
+                data: getPlayerDataset(),
+                fill: {
+                    target: 'origin',
+                    above: '#00C2FF44',
+                },
+                lineTension: 0.1
+            },
+        ]
+    }
 }
 </script>
