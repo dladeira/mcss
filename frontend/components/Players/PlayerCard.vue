@@ -17,7 +17,7 @@
             </div> -->
             <div class="bot playtime panel">
                 <h1 class="panel-title">
-                    Playtime (this week)
+                    Playtime (this month)
                 </h1>
                 <div class="playtime-graph">
                     <Line :data="getPlaytimeData()" :options="playtimeOptions" />
@@ -302,8 +302,8 @@ function getPlayerDataset() {
 
 
     for (var timeFrame of activeServer.value.stats.graphs.month) {
-        if (timeFrame.playerPlaytime) {
-            const datasetPlayer = timeFrame.playerPlaytime.find(i => i.uuid == player.value.uuid)
+        if (timeFrame.playerStats) {
+            const datasetPlayer = timeFrame.playerStats.find(i => i.uuid == player.value.uuid)
             var value = datasetPlayer ? datasetPlayer.playtime : 0 / timeFrame.dataCount
             values.push(isNaN(value) || value == Infinity ? 0 : value * user.value.plan.updateFrequency / 3600)
         } else {

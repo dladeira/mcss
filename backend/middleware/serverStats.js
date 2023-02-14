@@ -297,7 +297,8 @@ class Graphs {
             blocksBrokenPerPlayer: 0,
             blocksPlacedPerPlayer: 0,
             blocksTraveledPerPlayer: 0,
-            itemsCraftedPerPlayer: 0
+            itemsCraftedPerPlayer: 0,
+            playerStats: []
         }
 
         this.day = []
@@ -324,7 +325,7 @@ class Graphs {
         var blocksTraveled = 0
         var itemsCrafted = 0
         var playerCount = 0
-        var playerPlaytime = this[graphType][graphIndex].playerPlaytime ? this[graphType][graphIndex].playerPlaytime : []
+        var playerStats = [...this[graphType][graphIndex].playerStats]
 
         for (var player of packet.players) {
             blocksBroken += player.blocksBroken ? parseInt(player.blocksBroken) : 0
@@ -334,18 +335,22 @@ class Graphs {
             playerCount++
 
             var found = false
-            for (var i of playerPlaytime) {
+            for (var i of playerStats) {
                 if (i.uuid == player.uuid) {
                     i.playtime += 1
+                    i.blocksBroken += parseInt(player.blocksBroken)
+                    i.blocksPlaced += parseInt(player.blocksPlaced)
                     found = true
                     break
                 }
             }
 
             if (!found) {
-                playerPlaytime.push({
+                playerStats.push({
                     uuid: player.uuid,
-                    playtime: 1
+                    playtime: 1,
+                    blocksBroken: 0,
+                    blocksPlaced: 0
                 })
             }
         }
@@ -367,7 +372,7 @@ class Graphs {
         this[graphType][graphIndex].blocksTraveledPerPlayer += blocksTraveled / playerCount
         this[graphType][graphIndex].itemsCraftedPerPlayer += itemsCrafted / playerCount
 
-        this[graphType][graphIndex].playerPlaytime = playerPlaytime
+        this[graphType][graphIndex].playerStats = playerStats
     }
     clearGraph(graphType) {
         for (var graphIndex in this[graphType]) {

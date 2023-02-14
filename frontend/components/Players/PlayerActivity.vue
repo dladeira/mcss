@@ -10,16 +10,16 @@
 
         <div class="front">
             <h1 class="front-title">
-                27.8
+                {{ formatNumber(getEngagementScore()) }}
             </h1>
             <h3 class="front-label">
-                Engagement Score
+                Egagement Score
             </h3>
             <div class="front-change">
-                <span class="front-negative">-0.3</span> vs last 24h
+                <span :class="get24h() > 0 ? 'positive' : get24h() < 0 ? 'negative' : 'neutral'">{{ getSign(get24h()) + formatNumber(Math.abs(get24h())) }}</span> vs last 24h
             </div>
             <div class="front-change">
-                <span class="front-positive">+3.9</span> vs last week
+                <span :class="getLastWeek() > 0 ? 'positive' : getLastWeek() < 0 ? 'negative' : 'neutral'">{{ getSign(getLastWeek()) + formatNumber(Math.abs(getLastWeek())) }}</span> vs last week
             </div>
         </div>
     </div>
@@ -101,17 +101,102 @@
     color: white;
 }
 
-.front-positive {
+.positive {
     font-weight: 700;
     color: $green;
 }
 
-.front-negative {
+.negative {
     font-weight: 700;
     color: $red;
+}
+
+.neutral {
+    font-weight: 700;
+    color: white;
 }
 </style>
 
 <script setup>
 const activeServer = useState('activeServer')
+
+function getPlayerDataset(player) {
+    const values = []
+
+    for (var timeFrame of activeServer.value.stats.graphs.month) {
+        if (timeFrame.playerStats) {
+            const datasetPlayer = timeFrame.playerStats.find(i => i.uuid == player.uuid)
+            values.push(datasetPlayer)
+        } else {
+            values.push(null)
+        }
+    }
+
+    return values
+}
+
+function getEngagementScore(daysElapsed = 1) {
+    const { players } = activeServer.value.stats
+    const list = []
+    const now = Date.now()
+
+    for (var player of players) {
+        if (now - player.lastOnline < daysElapsed * 24 * 60 * 60 * 1000)
+            list.push(calculatedEngagement(player, daysElapsed))
+    }
+
+    return getAverage(list)
+}
+
+function calculatedEngagement(player, daysElapsed) {
+    var startDay = new Date().getDate() - daysElapsed
+    var endDay = new Date().getDate()
+
+    var blocksBroken = 0
+    var blocksPlaced = 0
+
+    var i = 1
+    for (var data of getPlayerDataset(player)) {
+        if (data) {
+            if (i > startDay && i <= endDay) {
+                blocksBroken += data.blocksBroken
+                blocksPlaced += data.blocksPlaced
+            }
+        }
+
+        i++
+    }
+
+    return Math.min(blocksBroken / 10000 + blocksPlaced / 5000, 1) * 100
+}
+
+function getAverage(arr) {
+    if (arr.length > 0)
+        return arr.reduce((acc, obj) => acc + obj) / arr.length
+    return 0
+}
+
+function get24h() {
+    var diff = getEngagementScore(1) - (getEngagementScore(2) - getEngagementScore(1))
+    return diff
+}
+
+function getLastWeek() {
+    var diff = getEngagementScore(7) - (getEngagementScore(14) - getEngagementScore(7))
+    return diff
+}
+
+function formatNumber(num) {
+    return Math.round(num * 10) / 10
+}
+
+function getSign(num) {
+    if (num > 0) {
+        return "+"
+    } else if (num < 0) {
+        return "-"
+    } else {
+        return "~"
+    }
+}
 </script>
