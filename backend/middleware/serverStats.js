@@ -118,6 +118,7 @@ async function generateStats(server) {
     var latestData = server.data.reduce((prev, current) => prev.time > current.time ? prev : current)
 
     const graphs = new Graphs()
+    const timeline = new Timeline(server.firstUpdate)
     const averagePacket = getAverageDataSize(server.data)
 
 
@@ -152,6 +153,8 @@ async function generateStats(server) {
 
         if (server.dataLifetime != 0 && startTime.getTime() - packetDate.getTime() > server.dataLifetime * MONTH)
             return deletePackets.push(packet._id)
+
+        timeline.registerPacket(packet)
 
         if (packetDate.getUTCFullYear() == startTime.getUTCFullYear()) {
             graphs.registerPacket(packet, 'year', packetDate.getUTCMonth())
@@ -262,6 +265,7 @@ async function generateStats(server) {
     stats.storageUsed = averagePacket * server.data.length / 1024
     stats.uptime = Math.round(server.data.length / (server.data.length + totalPacketsSkipped) * 100)
     stats.graphs = graphs.getStats()
+    stats.timeline = timeline.getStats()
     stats.dataAge = {
         months3: Math.round(stats.months3 / 1024 * 10) / 10,
         months6: Math.round(stats.months6 / 1024 * 10) / 10,
@@ -281,26 +285,26 @@ async function generateStats(server) {
 // HELPERS
 // ==========
 
+const defaultTime = {
+    cpu: 0,
+    ram: 0,
+    storage: 0,
+    players: 0,
+    messages: 0,
+    characters: 0,
+    whispers: 0,
+    commands: 0,
+    count: 0,
+    dataCount: 0,
+    blocksBrokenPerPlayer: 0,
+    blocksPlacedPerPlayer: 0,
+    blocksTraveledPerPlayer: 0,
+    itemsCraftedPerPlayer: 0,
+    playerStats: []
+}
+
 class Graphs {
     constructor() {
-        const defaultTime = {
-            cpu: 0,
-            ram: 0,
-            storage: 0,
-            players: 0,
-            messages: 0,
-            characters: 0,
-            whispers: 0,
-            commands: 0,
-            count: 0,
-            dataCount: 0,
-            blocksBrokenPerPlayer: 0,
-            blocksPlacedPerPlayer: 0,
-            blocksTraveledPerPlayer: 0,
-            itemsCraftedPerPlayer: 0,
-            playerStats: []
-        }
-
         this.day = []
         this.month = []
         this.year = []
@@ -400,6 +404,94 @@ class Graphs {
             average: this.average,
             peak: this.peak
         }
+    }
+}
+
+class Timeline {
+    constructor(start) {
+        this.start = start - (start % 3600000)
+        this.data = []
+
+        for (var i = this.start; i < Date.now() + (Date.now() % 3600 * 1000); i += 3600 * 1000) {
+            const date = new Date(i)
+            this.data.push({
+                hour: date.getUTCHours(),
+                day: date.getUTCDate(),
+                month: date.getUTCMonth(),
+                year: date.getUTCFullYear(),
+                time: i,
+                stats: {...defaultTime}
+            })
+        }
+    }
+    findTimestamp(time) {
+        const date = new Date(time)
+
+        return this.data.find(timestamp => (date.getUTCHours() == timestamp.hour) && (date.getUTCDate() == timestamp.day) && (date.getUTCMonth() == timestamp.month) && (date.getUTCFullYear() == timestamp.year))
+
+        // 10MS faster but not sure if data is accurate
+        // return this.data[((time - this.start) - ((time - this.start) % 3600000)) / 3600000]
+    }
+    registerPacket(packet) {
+        const timeStamp = this.findTimestamp(packet.time)
+        timeStamp.stats = timeStamp.stats
+
+        var blocksBroken = 0
+        var blocksPlaced = 0
+        var blocksTraveled = 0
+        var itemsCrafted = 0
+        var playerCount = 0
+        var playerStats = [...timeStamp.stats.playerStats]
+
+        for (var player of packet.players) {
+            blocksBroken += player.blocksBroken ? parseInt(player.blocksBroken) : 0
+            blocksPlaced += player.blocksPlaced ? parseInt(player.blocksPlaced) : 0
+            blocksTraveled += player.blocksTraveled ? parseInt(player.blocksTraveled) : 0
+            itemsCrafted += player.itemsCrafted ? parseInt(player.itemsCrafted) : 0
+            playerCount++
+
+            var found = false
+            for (var i of playerStats) {
+                if (i.uuid == player.uuid) {
+                    i.playtime += 1
+                    i.blocksBroken += parseInt(player.blocksBroken)
+                    i.blocksPlaced += parseInt(player.blocksPlaced)
+                    found = true
+                    break
+                }
+            }
+
+            if (!found) {
+                playerStats.push({
+                    uuid: player.uuid,
+                    playtime: 1,
+                    blocksBroken: 0,
+                    blocksPlaced: 0
+                })
+            }
+        }
+
+        playerCount = playerCount == 0 ? 1 : playerCount
+
+        timeStamp.stats.cpu += packet.cpuUsage
+        timeStamp.stats.ram += packet.ramUsage
+        timeStamp.stats.storage += packet.storageUsage
+        timeStamp.stats.players += packet.players ? packet.players.length : 0
+        timeStamp.stats.messages += packet.messages ? packet.messages : 0
+        timeStamp.stats.characters += packet.characters ? packet.characters : 0
+        timeStamp.stats.whispers += packet.whispers ? packet.whispers : 0
+        timeStamp.stats.commands += packet.commands ? packet.commands : 0
+        timeStamp.stats.dataCount += 1
+
+        timeStamp.stats.blocksBrokenPerPlayer += blocksBroken / playerCount
+        timeStamp.stats.blocksPlacedPerPlayer += blocksPlaced / playerCount
+        timeStamp.stats.blocksTraveledPerPlayer += blocksTraveled / playerCount
+        timeStamp.stats.itemsCraftedPerPlayer += itemsCrafted / playerCount
+
+        timeStamp.stats.playerStats = playerStats
+    }
+    getStats() {
+        return this.data
     }
 }
 

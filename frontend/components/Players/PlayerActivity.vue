@@ -120,54 +120,58 @@
 <script setup>
 const activeServer = useState('activeServer')
 
-function getPlayerDataset(player) {
-    const values = []
+// function getPlayerDataset(player) {
+//     const values = []
+//     const date = new Date()
 
-    for (var timeFrame of activeServer.value.stats.graphs.month) {
-        if (timeFrame.playerStats) {
-            const datasetPlayer = timeFrame.playerStats.find(i => i.uuid == player.uuid)
-            values.push(datasetPlayer)
-        } else {
-            values.push(null)
-        }
-    }
 
-    return values
-}
 
-function getEngagementScore(daysElapsed = 1) {
+//     for (var timeFrame of activeServer.value.stats.graphs.month) {
+//         if (timeFrame.playerStats) {
+//             const datasetPlayer = timeFrame.playerStats.find(i => i.uuid == player.uuid)
+//             values.push(datasetPlayer)
+//         } else {
+//             values.push(null)
+//         }
+//     }
+
+//     return values
+// }
+
+function getEngagementScore(daysElapsed = 1, daysSkipped = 0) {
     const { players } = activeServer.value.stats
     const list = []
     const now = Date.now()
 
     for (var player of players) {
         if (now - player.lastOnline < daysElapsed * 24 * 60 * 60 * 1000)
-            list.push(calculatedEngagement(player, daysElapsed))
+            list.push(calculatedEngagement(player, daysElapsed, daysSkipped))
     }
 
     return getAverage(list)
 }
 
-function calculatedEngagement(player, daysElapsed) {
-    var startDay = new Date().getDate() - daysElapsed
-    var endDay = new Date().getDate()
-
+function calculatedEngagement(player, daysElapsed, daysSkipped) {
     var blocksBroken = 0
     var blocksPlaced = 0
 
-    var i = 1
-    for (var data of getPlayerDataset(player)) {
-        if (data) {
-            if (i > startDay && i <= endDay) {
-                blocksBroken += data.blocksBroken
-                blocksPlaced += data.blocksPlaced
-            }
+    var timestamps = []
+    for (var timestamp of activeServer.value.stats.timeline) {
+        if ((Date.now() - timestamp.time < (daysElapsed + daysSkipped) * 24 * 60 * 60 * 1000) && (Date.now() - timestamp.time > daysSkipped * 24 * 60 * 60 * 1000)) {
+            timestamps.push(timestamp)
         }
-
-        i++
     }
 
-    return Math.min(blocksBroken / 10000 + blocksPlaced / 5000, 1) * 100
+    for (var timestamp of timestamps) {
+        const statsPlayer = timestamp.stats.playerStats.find(i => i.uuid == player.uuid)
+
+        if (statsPlayer) {
+            blocksBroken += statsPlayer.blocksBroken
+            blocksPlaced += statsPlayer.blocksPlaced
+        }
+    }
+
+    return Math.min(blocksBroken / (150 * daysElapsed) + blocksPlaced / (100 * daysElapsed), 1) * 100
 }
 
 function getAverage(arr) {
@@ -177,12 +181,12 @@ function getAverage(arr) {
 }
 
 function get24h() {
-    var diff = getEngagementScore(1) - (getEngagementScore(2) - getEngagementScore(1))
+    var diff = getEngagementScore(1) - getEngagementScore(2, 1)
     return diff
 }
 
 function getLastWeek() {
-    var diff = getEngagementScore(7) - (getEngagementScore(14) - getEngagementScore(7))
+    var diff = getEngagementScore(14, 7) - (getEngagementScore(14) - getEngagementScore(7))
     return diff
 }
 
