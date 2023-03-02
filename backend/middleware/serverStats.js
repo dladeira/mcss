@@ -258,8 +258,6 @@ async function generateStats(server) {
         stats.commands += statsPlayer.commands
     }
 
-    console.log(`Storage Real: ${Math.round(bson.calculateObjectSize(server.data) / 1024 / 1024 / server.storage * 1000) / 10}`)
-
     // Set final stats
     stats.cpuUsage = latestData.cpuUsage
     stats.ramUsage = latestData.ramUsage
