@@ -258,11 +258,13 @@ async function generateStats(server) {
         stats.commands += statsPlayer.commands
     }
 
+    console.log(`Storage Real: ${Math.round(bson.calculateObjectSize(server.data) / 1024 / 1024 / server.storage * 1000) / 10}`)
+
     // Set final stats
     stats.cpuUsage = latestData.cpuUsage
     stats.ramUsage = latestData.ramUsage
-    stats.storageUsage = Math.round(latestData.storageUsage)
-    stats.storageUsed = averagePacket * server.data.length / 1024
+    stats.storageUsage = Math.floor(bson.calculateObjectSize(server.data) / 1024 / 1024 / server.storage * 100)
+    stats.storageUsed = bson.calculateObjectSize(server.data) / 1024 / 1024
     stats.uptime = Math.round(server.data.length / (server.data.length + totalPacketsSkipped) * 100)
     stats.graphs = graphs.getStats()
     stats.timeline = timeline.getStats()
@@ -420,7 +422,7 @@ class Timeline {
                 month: date.getUTCMonth(),
                 year: date.getUTCFullYear(),
                 time: i,
-                stats: {...defaultTime}
+                stats: { ...defaultTime }
             })
         }
     }
@@ -507,7 +509,7 @@ async function executeOperation(opName, op) {
 
 function getAverageDataSize(data) { // KiloBytes
     var total = 0
-    var samples = 200
+    var samples = 10
     for (var i = 0; i < samples; i++)
         total += bson.serialize(data[Math.floor(Math.random() * data.length)]).length
 
