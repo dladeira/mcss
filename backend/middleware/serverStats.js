@@ -57,7 +57,7 @@ async function serverStatsMw(req, res, next) {
                 continue
             }
 
-            server.data = await Data.find({ server: server._id }).sort({ time: 1 }).lean()
+            server.data = await Data.find({ server: server._id }).sort({ time: 1 }).allowDiskUse(true).lean()
         }
 
         serverCount = servers.reduce((a, obj) => a + (obj.data ? obj.data.length : obj.stats.dataCount), 0)
