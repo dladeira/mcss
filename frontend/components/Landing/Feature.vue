@@ -14,7 +14,7 @@
     justify-content: space-between;
     align-items: center;
 
-    margin-bottom: 15rem;
+    margin-bottom: 9rem;
 
     &-left {
         @extend .container;

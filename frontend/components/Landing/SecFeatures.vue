@@ -14,9 +14,9 @@
 
 <style lang="scss" scoped>
 .main {
-    height: 360vh;
+    height: fit-content;
 
-    margin-top: 3rem;
+    margin-top: 6rem;
     padding-top: 2rem;
 }
 

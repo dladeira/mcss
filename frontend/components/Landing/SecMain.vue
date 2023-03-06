@@ -22,17 +22,22 @@
             </div>
         </div>
         <div class="images">
-            <div class="image sec-main-panel image-left" />
-            <div class="image sec-main-panel image-right" />
-            <div class="image sec-main-panel image-center" />
+            <img src="/preview2.png" class="image sec-main-panel image-left" />
+            <img src="/preview3.png" class="image sec-main-panel image-right" />
+            <img src="/preview1.png" class="image sec-main-panel image-center" />
         </div>
     </section>
 </template>
 
 <style lang="scss" scoped>
 .main {
-    height: 100vh;
-    min-height: 900px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    height: calc(100vh - 6rem);
+    width: 100%;
 }
 
 .text {
@@ -157,8 +162,12 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    flex-grow: 1;
 
-    margin-top: 5rem;
+    width: 100%;
+
+    margin-top: 8vh;
+
 }
 
 $panelHeight: 62rem;
@@ -168,8 +177,7 @@ $panelCenterScale: 1.2;
 $panelOffset: 4rem;
 
 .image {
-    height: calc($panelHeight * $panelScale);
-    width: calc($panelWidth * $panelScale);
+    height: 80%;
 
     border-radius: 10px;
 
@@ -185,23 +193,26 @@ $panelOffset: 4rem;
 
 .image-left {
     position: absolute;
-    left: -$panelOffset;
 
     background-image: url("/preview2.png");
+
+    transform: translateX(-40vh);
 }
 
 .image-right {
     position: absolute;
-    right: -$panelOffset;
 
     background-image: url("/preview3.png");
+
+    transform: translateX(40vh);
 }
 
 .image-center {
-    background-image: url("/preview1.png");
+    position: absolute;
 
-    height: calc($panelHeight * $panelScale * $panelCenterScale);
-    width: calc($panelWidth * $panelScale * $panelCenterScale);
+    height: 90%;
+
+    background-image: url("/preview1.png");
 
     z-index: 2;
 }
