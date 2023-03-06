@@ -36,7 +36,7 @@
     justify-content: flex-start;
     align-items: center;
 
-    height: calc(100vh - 6rem);
+    height: calc(100vh - 5rem);
     width: 100%;
 }
 
@@ -210,7 +210,7 @@ $panelOffset: 4rem;
 .image-center {
     position: absolute;
 
-    height: 90%;
+    height: 95%;
 
     background-image: url("/preview1.png");
 
