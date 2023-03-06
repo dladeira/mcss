@@ -108,6 +108,8 @@
 
 .header {
     color: $gray3;
+
+    transform: translateY(5px);
 }
 
 .links {
