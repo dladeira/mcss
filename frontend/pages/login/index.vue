@@ -24,7 +24,7 @@
                 <h2 class="panel-title">Login</h2>
                 <SharedFormInput type="email" placeholder="user@example.com" label="Email" name="email" :disabled="connecting" />
                 <SharedFormInput type="password" placeholder="********" label="Password" name="password" helper="Forgot Passowrd?" :disabled="connecting" @helper="navigateTo('/login/reset-pwd')" />
-                <SharedCheckInput label="Stay logged in" name="remember" :disabled="connecting" />
+                <SharedCheckInput label="Stay logged in" name="remember" :value="true" :disabled="connecting" />
 
                 <button v-if="!registerSuccess" class="submit login" type="submit" :disabled="connecting" :class="connecting ? 'login-connecting' : ''">Login</button>
                 <button v-if="registerSuccess" class="submit login" :disabled="connecting" :class="connecting ? 'login-connecting' : ''">Login</button>

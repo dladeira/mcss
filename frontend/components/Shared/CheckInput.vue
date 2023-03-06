@@ -1,6 +1,6 @@
 <template>
     <div class="term">
-        <input :id="name" class="term-input" type="checkbox" :name="name" :disabled="disabled" />
+        <input :id="name" class="term-input" type="checkbox" :name="name" :checked="value" :disabled="disabled" />
         <label tabindex=0 class="term-box" :for="name" />
         <label v-if="tos" :for="name" class="term-text">
             I have read and agreed to the
@@ -67,6 +67,7 @@ const props = defineProps({
     label: String,
     disabled: Boolean,
     name: String,
-    tos: Boolean
+    tos: Boolean,
+    value: Boolean
 })
 </script>
