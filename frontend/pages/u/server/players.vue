@@ -1,25 +1,22 @@
 <template>
-    <div>
-        <NuxtLayout name="server">
+    <NuxtLayout name="server">
+        <Head>
+            <Title>{{ activeServer.name }} - Players</Title>
+        </Head>
 
-            <Head>
-                <Title>{{ activeServer.name }} - Players</Title>
-            </Head>
-
-            <div class="grid">
-                <div class="left">
-                    <PlayersGlobalStats />
-                    <PlayersPlayerList />
-                </div>
-                <div class="right">
-                    <PlayersPlayerActivity />
-                    <PlayersSessionStats />
-                    <PlayersRecentEvents />
-                </div>
+        <div class="grid">
+            <div class="left">
+                <PlayersGlobalStats />
+                <PlayersPlayerList />
             </div>
-            <PlayersPlayerCard />
-        </NuxtLayout>
-    </div>
+            <div class="right">
+                <PlayersPlayerActivity />
+                <PlayersSessionStats />
+                <PlayersRecentEvents />
+            </div>
+        </div>
+        <PlayersPlayerCard />
+    </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
@@ -62,4 +59,11 @@
 
 <script setup>
 const activeServer = useState('activeServer')
+
+definePageMeta({
+    pageTransition: {
+        name: 'blur'
+    },
+    layout: 'user'
+})
 </script>

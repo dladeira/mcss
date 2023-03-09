@@ -1,7 +1,8 @@
 <template>
-    <NuxtLayout name="user">
+    <div>
         <slot v-if="activeServer" />
-    </NuxtLayout>
+
+    </div>
 </template>
 
 <style lang="scss" scoped>

@@ -1,117 +1,116 @@
 <template>
-    <div>
-        <NuxtLayout name="server">
+    <NuxtLayout name="server">
 
-            <Head>
-                <Title>{{ activeServer.name }} - Statistics</Title>
-            </Head>
+        <Head>
+            <Title>{{ activeServer.name }} - Statistics</Title>
+        </Head>
 
-            <div class="grid">
-                <div class="panel statisticsViewer">
-                    <h1 class="panel-title">Statistics Viewer</h1>
-                    <div class="chart">
-                        <Line :data="getData()" :options="options" />
+        <div class="grid">
+            <div class="panel statisticsViewer">
+                <h1 class="panel-title">Statistics Viewer</h1>
+                <div class="chart">
+                    <Line :data="getData()" :options="options" />
+                </div>
+            </div>
+            <div class="panel xAxis">
+                <h1 class="axis-title">X Axis</h1>
+
+                <div class="selections">
+                    <div class="selection-group">
+                        <div :class="selected == 'day' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'day'">Daily</div>
+                        <div :class="selected == 'month' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'month'">Weekly</div>
+                        <div :class="selected == 'year' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'year'">Monthly</div>
+                    </div>
+                    <div class="selection-group">
+                        <div :class="selected == 'average' ? 'selection-average-selected' : 'selection-average'" @click="selected = 'average'">Average Day</div>
+                        <div :class="selected == 'peak' ? 'selection-peak-selected' : 'selection-peak'" @click="selected = 'peak'">Peak Day</div>
                     </div>
                 </div>
-                <div class="panel xAxis">
-                    <h1 class="axis-title">X Axis</h1>
-
-                    <div class="selections">
-                        <div class="selection-group">
-                            <div :class="selected == 'day' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'day'">Daily</div>
-                            <div :class="selected == 'month' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'month'">Weekly</div>
-                            <div :class="selected == 'year' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'year'">Monthly</div>
-                        </div>
-                        <div class="selection-group">
-                            <div :class="selected == 'average' ? 'selection-average-selected' : 'selection-average'" @click="selected = 'average'">Average Day</div>
-                            <div :class="selected == 'peak' ? 'selection-peak-selected' : 'selection-peak'" @click="selected = 'peak'">Peak Day</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel yAxis">
-                    <h1 class="axis-title">Y Axis</h1>
-                    <div class="options">
-                        <div class="option-column">
-                            <div class="option" @click="toggleYSelected('cpu')">
-                                <div :class="isYSelected('cpu') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    CPU Usage
-                                </div>
-                            </div>
-                            <div class="option" @click="toggleYSelected('ram')">
-                                <div :class="isYSelected('ram') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    RAM Usage
-                                </div>
-                            </div>
-                            <div class="option" @click="toggleYSelected('storage')">
-                                <div :class="isYSelected('storage') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Storage Usage
-                                </div>
-                            </div>
-                            <div class="option" @click="toggleYSelected('players')">
-                                <div :class="isYSelected('players') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Player Count
-                                </div>
+            </div>
+            <div class="panel yAxis">
+                <h1 class="axis-title">Y Axis</h1>
+                <div class="options">
+                    <div class="option-column">
+                        <div class="option" @click="toggleYSelected('cpu')">
+                            <div :class="isYSelected('cpu') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                CPU Usage
                             </div>
                         </div>
-                        <div class="option-column">
-                            <div class="option" @click="toggleYSelected('messages')">
-                                <div :class="isYSelected('messages') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Messages sent
-                                </div>
-                            </div>
-                            <div class="option" @click="toggleYSelected('characters')">
-                                <div :class="isYSelected('characters') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Characters sent
-                                </div>
-                            </div>
-                            <div class="option" @click="toggleYSelected('whispers')">
-                                <div :class="isYSelected('whispers') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Whispers sent
-                                </div>
-                            </div>
-                            <div class="option" @click="toggleYSelected('commands')">
-                                <div :class="isYSelected('commands') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Commands sent
-                                </div>
+                        <div class="option" @click="toggleYSelected('ram')">
+                            <div :class="isYSelected('ram') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                RAM Usage
                             </div>
                         </div>
-                        <div class="option-column">
-                            <div class="option" @click="toggleYSelected('blocksBrokenPerPlayer')">
-                                <div :class="isYSelected('blocksBrokenPerPlayer') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Blocks broken/player
-                                </div>
+                        <div class="option" @click="toggleYSelected('storage')">
+                            <div :class="isYSelected('storage') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Storage Usage
                             </div>
-                            <div class="option" @click="toggleYSelected('blocksPlacedPerPlayer')">
-                                <div :class="isYSelected('blocksPlacedPerPlayer') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Blocks placed/player
-                                </div>
-                            </div>
-                            <div class="option" @click="toggleYSelected('blocksTraveledPerPlayer')">
-                                <div :class="isYSelected('blocksTraveledPerPlayer') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Blocks traveled/player
-                                </div>
-                            </div>
-                            <div class="option" @click="toggleYSelected('itemsCraftedPerPlayer')">
-                                <div :class="isYSelected('itemsCraftedPerPlayer') ? 'option-button-selected' : 'option-button'" />
-                                <div class="option-text">
-                                    Items Crafted/player
-                                </div>
+                        </div>
+                        <div class="option" @click="toggleYSelected('players')">
+                            <div :class="isYSelected('players') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Player Count
                             </div>
                         </div>
                     </div>
+                    <div class="option-column">
+                        <div class="option" @click="toggleYSelected('messages')">
+                            <div :class="isYSelected('messages') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Messages sent
+                            </div>
+                        </div>
+                        <div class="option" @click="toggleYSelected('characters')">
+                            <div :class="isYSelected('characters') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Characters sent
+                            </div>
+                        </div>
+                        <div class="option" @click="toggleYSelected('whispers')">
+                            <div :class="isYSelected('whispers') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Whispers sent
+                            </div>
+                        </div>
+                        <div class="option" @click="toggleYSelected('commands')">
+                            <div :class="isYSelected('commands') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Commands sent
+                            </div>
+                        </div>
+                    </div>
+                    <div class="option-column">
+                        <div class="option" @click="toggleYSelected('blocksBrokenPerPlayer')">
+                            <div :class="isYSelected('blocksBrokenPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Blocks broken/player
+                            </div>
+                        </div>
+                        <div class="option" @click="toggleYSelected('blocksPlacedPerPlayer')">
+                            <div :class="isYSelected('blocksPlacedPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Blocks placed/player
+                            </div>
+                        </div>
+                        <div class="option" @click="toggleYSelected('blocksTraveledPerPlayer')">
+                            <div :class="isYSelected('blocksTraveledPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Blocks traveled/player
+                            </div>
+                        </div>
+                        <div class="option" @click="toggleYSelected('itemsCraftedPerPlayer')">
+                            <div :class="isYSelected('itemsCraftedPerPlayer') ? 'option-button-selected' : 'option-button'" />
+                            <div class="option-text">
+                                Items Crafted/player
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- <div class="container">
+            </div>
+            <!-- <div class="container">
                     
 
                     <div class="axes">
@@ -214,9 +213,8 @@
                         </div>
                     </div>
                 </div> -->
-            </div>
-        </NuxtLayout>
-    </div>
+        </div>
+    </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
@@ -632,4 +630,11 @@ function getData() {
         datasets: getDatasets()
     }
 }
+
+definePageMeta({
+    pageTransition: {
+        name: 'blur'
+    },
+    layout: 'user'
+})
 </script>

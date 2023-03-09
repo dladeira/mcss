@@ -24,6 +24,7 @@
 }
 
 .page {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -34,6 +35,8 @@
     margin: 0 auto;
 
     font-family: 'Inter', sans-serif;
+
+    overflow: hidden;
 }
 </style>
 

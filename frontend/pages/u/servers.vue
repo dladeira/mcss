@@ -4,60 +4,56 @@
         <Head>
             <Title>Servers</Title>
         </Head>
+        <div class="stats">
+            <div class="stat">
+                <h1 class="stat-title">
+                    <span class="stat-green">0</span>/{{ 0 }}
+                </h1>
 
-        <NuxtLayout name="user">
+                <h2 class="stat-subtitle">
+                    BungeeCord Slots
+                </h2>
+            </div>
+            <div class="stat">
+                <h1 class="stat-title">
+                    <span class="stat-green">{{ servers.length }}</span>/{{ user.plan.serverSlots }}
+                </h1>
 
-            <div class="stats">
-                <div class="stat">
-                    <h1 class="stat-title">
-                        <span class="stat-green">0</span>/{{ 0 }}
-                    </h1>
+                <h2 class="stat-subtitle">
+                    Server Slots
+                </h2>
+            </div>
+            <div class="stat">
+                <h1 class="stat-title">
+                    <span class="stat-blue">{{ Math.round(servers.reduce((acc, obj) => acc + obj.storage, 0)) }}</span>/{{ user.plan.storage }}MB
+                </h1>
 
-                    <h2 class="stat-subtitle">
-                        BungeeCord Slots
-                    </h2>
-                </div>
-                <div class="stat">
-                    <h1 class="stat-title">
-                        <span class="stat-green">{{ servers.length }}</span>/{{ user.plan.serverSlots }}
-                    </h1>
+                <h2 class="stat-subtitle">
+                    Storage Used
+                </h2>
+            </div>
+        </div>
 
-                    <h2 class="stat-subtitle">
-                        Server Slots
-                    </h2>
-                </div>
-                <div class="stat">
-                    <h1 class="stat-title">
-                        <span class="stat-blue">{{ Math.round(servers.reduce((acc, obj) => acc + obj.storage, 0)) }}</span>/{{ user.plan.storage }}MB
-                    </h1>
+        <div class="servers">
+            <div class="sh">
+                <a class="sh-servers sh-link" :class="currentPanel == 'servers' ? 'sh-active' : ''" @click="setPanel('servers')">
+                    Servers
+                </a>
 
-                    <h2 class="stat-subtitle">
-                        Storage Used
-                    </h2>
-                </div>
+                <a class="sh-create sh-link" :class="currentPanel == 'create' ? 'sh-active' : ''" @click="createServer()">
+                    Create Server
+                </a>
             </div>
 
-            <div class="servers">
-                <div class="sh">
-                    <a class="sh-servers sh-link" :class="currentPanel == 'servers' ? 'sh-active' : ''" @click="setPanel('servers')">
-                        Servers
-                    </a>
+            <ServersCreate />
 
-                    <a class="sh-create sh-link" :class="currentPanel == 'create' ? 'sh-active' : ''" @click="createServer()">
-                        Create Server
-                    </a>
-                </div>
-
-                <ServersCreate />
-
-                <div v-if="currentPanel == 'servers'" class="panel">
-                    <ServersServer v-for="server in servers" :name="server.name" :_id="server._id" :stats="server.stats" @settings="openSettings(server._id)" />
-                </div>
-                <div v-if="currentPanel == 'settings'" class="panel">
-                    <ServersSettings :server="serverSettings" />
-                </div>
+            <div v-if="currentPanel == 'servers'" class="panel">
+                <ServersServer v-for="server in servers" :name="server.name" :_id="server._id" :stats="server.stats" @settings="openSettings(server._id)" />
             </div>
-        </NuxtLayout>
+            <div v-if="currentPanel == 'settings'" class="panel">
+                <ServersSettings :server="serverSettings" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -180,4 +176,11 @@ function openSettings(serverId) {
     serverSettings.value = servers.value.find(i => i._id == serverId)
     setPanel("settings")
 }
+
+definePageMeta({
+    pageTransition: {
+        name: 'blur'
+    },
+    layout: 'user'
+})
 </script>

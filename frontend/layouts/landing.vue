@@ -40,6 +40,7 @@ function getToken() {
     return token.value && token.value.length > 0 ? token.value : undefined
 }
 
+
 if (getToken() || demo.value)
     navigateTo("/u/servers")
 </script>

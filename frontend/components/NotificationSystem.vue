@@ -13,7 +13,7 @@
     top: 1rem;
     left: 50%;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     justify-content: flex-end;
     align-items: center;
 

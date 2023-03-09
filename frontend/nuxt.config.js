@@ -46,5 +46,8 @@ export default defineNuxtConfig({
         public: {
             origin: process.env.WEB_SERVER
         }
+    },
+    app: {
+        layoutTransition: { name: 'blur', mode: 'out-in' }
     }
 })

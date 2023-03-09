@@ -5,29 +5,27 @@
             <Title>Account</Title>
         </Head>
 
-        <NuxtLayout name="user">
-            <div class="title">Account</div>
+        <div class="title">Account</div>
 
-            <div class="grid">
-                <div class="column">
-                    <!-- <AccountLanguage /> -->
-                    <!-- <AccountBugs /> -->
-                    <AccountPassword />
-                </div>
-                <div class="column">
-                    <AccountEmail />
-                    <!-- <AccountPassword /> -->
-                </div>
-                <div class="column">
-                    <!-- <div class="plan"></div> -->
-                    <!-- <div class="control"></div> -->
-                </div>
+        <div class="grid">
+            <div class="column">
+                <!-- <AccountLanguage /> -->
+                <!-- <AccountBugs /> -->
+                <AccountPassword />
             </div>
+            <div class="column">
+                <AccountEmail />
+                <!-- <AccountPassword /> -->
+            </div>
+            <div class="column">
+                <!-- <div class="plan"></div> -->
+                <!-- <div class="control"></div> -->
+            </div>
+        </div>
 
-            <button @click="logout" class="logout">
-                Logout
-            </button>
-        </NuxtLayout>
+        <button @click="logout" class="logout">
+            Logout
+        </button>
     </div>
 </template>
 
@@ -57,10 +55,11 @@
 }
 
 .logout {
+    position: absolute;
+    left: 50%;
+
     width: fit-content;
 
-    margin: auto;
-    margin-bottom: 2rem;
     padding: 0.5rem 3rem;
 
     border: none;
@@ -68,6 +67,8 @@
     font-size: 1.25rem;
     background-color: rgba($red, 0.1);
     color: $red;
+
+    transform: translate(-50%, 100%);
 
     &:hover {
         background-color: darken(rgba($red, 0.1), 4);
@@ -92,10 +93,15 @@ const activeServerCookie = useCookie("activeServer", {
 
 function logout() {
     demo.value = false
-    servers.value = undefined
-    user.value = undefined
-    token.value = ""
     activeServerCookie.value = ""
+    token.value = undefined
     navigateTo("/")
 }
+
+definePageMeta({
+    pageTransition: {
+        name: 'blur'
+    },
+    layout: 'user'
+})
 </script>
