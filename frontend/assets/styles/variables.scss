@@ -30,9 +30,23 @@ $gradient-main: linear-gradient(to right,
 // ==========
 
 $desktop-width: 1600px;
+$xs-height: 800px;
+$s-height: 870px;
 
-@mixin desktop-only {
+@mixin desktop {
     @media (min-width: $desktop-width) {
+        @content;
+    }
+}
+
+@mixin short {
+    @media (max-height: $s-height) {
+        @content;
+    }
+}
+
+@mixin extra-short {
+    @media (max-height: $xs-height) {
         @content;
     }
 }
