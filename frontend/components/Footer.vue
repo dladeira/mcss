@@ -165,8 +165,6 @@
 
 <script setup>
 const demo = useState('demo')
-const servers = useState('servers')
-const user = useState('user')
 const token = useCookie("token", {
     maxAge: 2592000,
     sameSite: 'lax'
@@ -178,8 +176,6 @@ const activeServerCookie = useCookie("activeServer", {
 
 function logout() {
     demo.value = false
-    servers.value = undefined
-    user.value = undefined
     token.value = ""
     activeServerCookie.value = ""
     navigateTo("/")
