@@ -14,7 +14,7 @@
                 <div class="first-column">
                     <SharedFormInput class="serverName" type="text" placeholder="Server Name" label="Server Name" name="serverName" :disabled="connecting" />
                     <SharedFormInput class="serverType" type="text" placeholder="Regular" label="Server Type" name="serverType" disabled />
-                    <SharedFormSlider class="storage" type="text" placeholder="None" label="Storage Allocated" name="storage" :min="0" :max="user.plan.storage" :disabled="connecting" />
+                    <SharedFormSlider class="storage" type="text" placeholder="None" label="Storage Allocated" name="storage" :min="0" :max="user.plan.storage" :disabled="connecting" step="1" />
                 </div>
 
                 <div class="bottom">

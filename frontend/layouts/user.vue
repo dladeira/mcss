@@ -236,7 +236,7 @@ onMounted(() => {
         }
     }
 
-    var timeForChange = 300
+    var timeForChange = 400
 
     setDots(1)
 

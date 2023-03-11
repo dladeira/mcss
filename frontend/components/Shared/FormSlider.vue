@@ -13,7 +13,7 @@
         <div class="input">
             <input class="slider" :min="min" :max="max" :id="name" type="range" :name="name" :placeholder="placeholder" :disabled="disabled" @input="sliderChange" :step="step" :value="value" />
             <div class="text">
-                <span class="text-bolded">{{ Number.parseFloat(value).toFixed(1) }}</span>/{{max}}MB
+                <span class="text-bolded">{{ Number.parseFloat(value).toFixed(0) }}</span>/{{max}}MB
             </div>
         </div>
     </div>
@@ -119,7 +119,7 @@ label {
 }
 
 .text {
-    width: 12rem;
+    width: 10rem;
 
     font-weight: 600;
     text-align: right;
