@@ -23,8 +23,6 @@ router.post('/stats-update', async (req, res) => {
     const user = await User.findOne({ _id: server.owner })
     const updateInterval = user.plan.updateFrequency * 1000
     const dataCount = await Data.countDocuments({ server: secret }).lean()
-    // const dataPackets = await Data.find({ server: secret }).skip(Math.floor(Math.random() * dataCount)).limit(1000).lean()
-    const dataPackets = await Data.aggregate().sample(dataCount / 10)
 
     if (!server.firstUpdate) {
         server.firstUpdate = Date.now()
@@ -36,7 +34,7 @@ router.post('/stats-update', async (req, res) => {
         return res.status(425).send("Throttle:" + throttle)
     }
 
-    const storageUsage = getAverageDataSize(dataPackets) * dataCount / 1024 / server.storage * 100 // Just an estimate +- 2%
+    const storageUsage = (dataCount / 1024) / server.storage * 100
 
     if (storageUsage > 100)
         return res.status(429).send("No storage left")
@@ -80,15 +78,5 @@ router.post('/chat-msg', async (req, res) => {
     socket.sendChatMessage(server.owner, { msg, sender, server: server._id })
     return res.status(200).send("Success")
 })
-
-function getAverageDataSize(data) { // KiloBytes
-    var total = 0
-    for (var i = 0; i < data.length; i++)
-        total += bson.serialize(data[i]).length
-
-    var averageSize = total / data.length
-
-    return averageSize / 1024
-}
 
 module.exports = router

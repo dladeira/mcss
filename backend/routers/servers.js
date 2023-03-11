@@ -115,22 +115,19 @@ router.post('/update', loggedIn(), async (req, res) => {
         return res.status(404).json({ error: "Server not found?" })
 
     const dataCount = await Data.countDocuments({ server: foundServer._id }).lean()
-    const dataPackets = await Data.aggregate([
-        { $match: { server: foundServer._id } }
-    ]).sample(dataCount / 10)
-    const storageUsage = getAverageDataSize(dataPackets) * dataCount / 1024 // Just an estimate +- 2%
+    const storageUsed = dataCount / 1024
     
-    if (storageAllocated <= storageUsage)
-        return res.status(400).json({ error: "Already used " + Math.round(storageUsage) + "MB of storage" })
+    if (storageAllocated <= storageUsed)
+        return res.status(400).json({ error: "Already used " + Math.round(storageUsed) + "MB of storage" })
 
-    var storageUsed = 0
+    var totalStorageUsed = 0
     for (var server of servers) {
         if (server._id != _id)
-            storageUsed += server.storage
+            totalStorageUsed += server.storage
     }
 
-    if (storageUsed + parseFloat(storageAllocated) > req.user.plan.storage)
-        return res.status(400).json({ error: `Not enough storage (${req.user.plan.storage - storageUsed}MB left)` })
+    if (totalStorageUsed + parseFloat(storageAllocated) > req.user.plan.storage)
+        return res.status(400).json({ error: `Not enough storage (${req.user.plan.storage - totalStorageUsed}MB left)` })
 
     if (existingServers.length > 1)
         return res.status(404).json({ error: "Name already in use" })
@@ -166,15 +163,5 @@ router.post('/lifetime', loggedIn(), async (req, res) => {
 
     return res.status(200).json({ success: 'Server lifetime updated' })
 })
-
-function getAverageDataSize(data) { // KiloBytes
-    var total = 0
-    for (var i = 0; i < data.length; i++)
-        total += bson.serialize(data[i]).length
-
-    var averageSize = total / data.length
-
-    return averageSize / 1024
-}
 
 module.exports = router

@@ -115,12 +115,11 @@ async function generateStats(server) {
 
     var stats = JSON.parse(JSON.stringify(DEFAULT_STATS))
 
-    var latestData = server.data.reduce((prev, current) => prev.time > current.time ? prev : current)
+    var latestData = server.data[server.data.length - 1]
 
     const graphs = new Graphs()
     const timeline = new Timeline(server.firstUpdate)
     const averagePacket = getAverageDataSize(server.data)
-
 
     var totalPacketsSkipped = 0
     var playerPeakDate = new Date(server.data[0].time)
@@ -257,12 +256,11 @@ async function generateStats(server) {
         stats.whispers += statsPlayer.whispers
         stats.commands += statsPlayer.commands
     }
-
     // Set final stats
     stats.cpuUsage = latestData.cpuUsage
     stats.ramUsage = latestData.ramUsage
-    stats.storageUsage = Math.floor(bson.calculateObjectSize(server.data) / 1024 / 1024 / server.storage * 100)
-    stats.storageUsed = bson.calculateObjectSize(server.data) / 1024 / 1024
+    stats.storageUsage = Math.floor(server.data.length / 1024 / server.storage * 100)
+    stats.storageUsed = server.data.length / 1024
     stats.uptime = Math.round(server.data.length / (server.data.length + totalPacketsSkipped) * 100)
     stats.graphs = graphs.getStats()
     stats.timeline = timeline.getStats()
