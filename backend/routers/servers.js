@@ -114,10 +114,14 @@ router.post('/update', loggedIn(), async (req, res) => {
     if (!foundServer)
         return res.status(404).json({ error: "Server not found?" })
 
-    const data = await Data.find({ server: foundServer._id })
-
-    if (storageAllocated <= Math.ceil(getDataSize(data) / 1024 * 2) / 2)
-        return res.status(400).json({ error: "Already used " + (Math.ceil(getDataSize(data) / 1024 * 2) / 2) + "MB of storage" })
+    const dataCount = await Data.countDocuments({ server: foundServer._id }).lean()
+    const dataPackets = await Data.aggregate([
+        { $match: { server: foundServer._id } }
+    ]).sample(dataCount / 10)
+    const storageUsage = getAverageDataSize(dataPackets) * dataCount / 1024 // Just an estimate +- 2%
+    
+    if (storageAllocated <= storageUsage)
+        return res.status(400).json({ error: "Already used " + Math.round(storageUsage) + "MB of storage" })
 
     var storageUsed = 0
     for (var server of servers) {
@@ -163,15 +167,14 @@ router.post('/lifetime', loggedIn(), async (req, res) => {
     return res.status(200).json({ success: 'Server lifetime updated' })
 })
 
-function getDataSize(data) { // KiloBytes
+function getAverageDataSize(data) { // KiloBytes
     var total = 0
-    var samples = 50
-    for (var i = 0; i < samples; i++)
-        total += bson.serialize(data[Math.floor(Math.random() * data.length)]).length
+    for (var i = 0; i < data.length; i++)
+        total += bson.serialize(data[i]).length
 
-    var averageSize = total / samples
+    var averageSize = total / data.length
 
-    return averageSize * data.length / 1024
+    return averageSize / 1024
 }
 
 module.exports = router
