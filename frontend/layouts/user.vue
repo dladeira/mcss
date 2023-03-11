@@ -153,9 +153,9 @@ async function getUserData() {
     })
 
     if (error.value) {
-        // console.log("Forbidden user data")
-        // token.value = ""
-        // return navigateTo("/")
+        console.log("Forbidden user data")
+        token.value = ""
+        return navigateTo("/")
     }
 
     user.value = data.value.user
@@ -171,6 +171,14 @@ async function getServerData() {
                 demo: demo.value
             },
             server: false
+        })
+
+        watch(error, () => {
+            if (error.value) {
+                console.log("Forbidden server data")
+                token.value = ""
+                return navigateTo("/")
+            }
         })
 
         serversPending.value = pending.value
