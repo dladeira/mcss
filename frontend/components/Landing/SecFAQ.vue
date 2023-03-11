@@ -6,7 +6,7 @@
         <div class="question" @mouseover="openDropdown(0)" @mouseleave="closeDropdowns()">
             <div class="header">
                 <h1 class="question-title">Is this free?</h1>
-                <div class="dropdown">\/</div>
+                <div :class="dropdowns[0] ? 'dropdown-open' : 'dropdown-closed'"><nuxt-img src="/dropdown.svg" height="40" /></div>
             </div>
 
             <div :class="dropdowns[0] ? 'body-open' : 'body-closed'">
@@ -17,7 +17,7 @@
         <div class="question" @mouseover="openDropdown(1)" @mouseleave="closeDropdowns()">
             <div class="header">
                 <h1 class="question-title">What versions can I use?</h1>
-                <div class="dropdown">\/</div>
+                <div :class="dropdowns[1] ? 'dropdown-open' : 'dropdown-closed'"><nuxt-img src="/dropdown.svg" height="40" /></div>
             </div>
 
             <div :class="dropdowns[1] ? 'body-open' : 'body-closed'">
@@ -28,7 +28,7 @@
         <div class="question" @mouseover="openDropdown(2)" @mouseleave="closeDropdowns()">
             <div class="header">
                 <h1 class="question-title">What types of servers are supported?</h1>
-                <div class="dropdown">\/</div>
+                <div :class="dropdowns[2] ? 'dropdown-open' : 'dropdown-closed'"><nuxt-img src="/dropdown.svg" height="40" /></div>
             </div>
 
             <div :class="dropdowns[2] ? 'body-open' : 'body-closed'">
@@ -39,7 +39,7 @@
         <div class="question" @mouseover="openDropdown(3)" @mouseleave="closeDropdowns()">
             <div class="header">
                 <h1 class="question-title">What about BungeeCord?</h1>
-                <div class="dropdown">\/</div>
+                <div :class="dropdowns[3] ? 'dropdown-open' : 'dropdown-closed'"><nuxt-img src="/dropdown.svg" height="40" /></div>
             </div>
 
             <div :class="dropdowns[3] ? 'body-open' : 'body-closed'">
@@ -114,7 +114,18 @@
 }
 
 .dropdown {
-    color: rgba(white, 0.5);
+    &-open {
+        transition: all 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+
+        transform: rotate(180deg) translateY(25%);
+        opacity: 1;
+    }
+
+    &-closed {
+        transition: all 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+        opacity: 0.5;
+
+    }
 }
 
 .body {
@@ -127,7 +138,7 @@
     &-open {
         @extend .body;
 
-        height: 4rem;
+        height: 6rem;
     }
 
     &-closed {
