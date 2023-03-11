@@ -65,6 +65,10 @@
     animation-name: opacity-keyframes;
     animation-duration: 2s;
     animation-timing-function: ease-in-out;
+
+    &-finished {
+        opacity: 1;
+    }
 }
 </style>
 
@@ -222,30 +226,42 @@ onMounted(() => {
             dots += "."
         }
 
-        if (loadingText)
+        console.log('setting dots to ' + dotCount)
+
+        if (loadingText) {
             loadingText.innerHTML = `Loading server data${dots}`
+            return true
+        } else {
+            return false
+        }
     }
 
     var timeForChange = 300
 
     setDots(1)
 
+    document.getElementById('loading-text').classList.add("loading-finished")
+
     setTimeout(() => {
         setDots(2)
-        setInterval(() => {
-            setDots(2)
+        var interval1 = setInterval(() => {
+            if (!setDots(2))
+                clearTimeout(interval1)
         }, timeForChange * 3)
     }, timeForChange)
 
     setTimeout(() => {
         setDots(3)
-        setInterval(() => {
-            setDots(3)
+        var interval2 = setInterval(() => {
+            if (!setDots(3))
+                clearTimeout(interval2)
         }, timeForChange * 3)
     }, timeForChange * 2)
 
-    setInterval(() => {
-        setDots(1)
+    var interval3 = setInterval(() => {
+        if (!setDots(1)) {
+            clearTimeout(interval3)
+        }
     }, timeForChange * 3)
 })
 </script>
