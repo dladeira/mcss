@@ -36,9 +36,9 @@ router.post('/stats-update', async (req, res) => {
         return res.status(425).send("Throttle:" + throttle)
     }
 
-    const storageUsage = getAverageDataSize(dataPackets) * dataCount / 1024 // Just an estimate +- 2%
+    const storageUsage = getAverageDataSize(dataPackets) * dataCount / 1024 / server.storage * 100 // Just an estimate +- 2%
 
-    if (storageUsage > server.storage)
+    if (storageUsage > 100)
         return res.status(429).send("No storage left")
 
     const data = new Data({
