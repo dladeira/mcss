@@ -274,6 +274,8 @@ async function generateStats(server) {
     stats.runningTime = server.lastUpdate - server.firstUpdate
     stats.dataCount = server.data.length
 
+    console.log(bson.calculateObjectSize(timeline.getStats()))
+
     cacheStats(server, stats, user.plan.updateFrequency * 1000)
 
     return stats
@@ -491,6 +493,9 @@ class Timeline {
     getStats() {
         return this.data
     }
+    loadStats(stats) {
+        this.data = stats
+    }
 }
 
 async function executeOperation(opName, op) {
@@ -628,27 +633,27 @@ function generateFakeServer(name, id) {
                     username: 'DespacitoMaster',
                     session: 1078,
                     sessions: [
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 }
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
+                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 }
                     ],
                     online: true,
                 },

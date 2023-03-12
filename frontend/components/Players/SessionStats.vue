@@ -10,7 +10,7 @@
 
         <div class="front">
             <h1 class="front-title">
-                {{ formatTime(getSessions())}}
+                {{ formatTime(getSessions()) }}
             </h1>
             <h3 class="front-label">
                 AVG Session Playtime

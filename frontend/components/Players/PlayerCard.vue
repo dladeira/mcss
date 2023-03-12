@@ -110,7 +110,7 @@
     align-items: center;
 
     height: 100%;
-    width: 50%;
+    width: 55%;
 
     padding: 0 1rem;
 }
@@ -294,12 +294,6 @@ function getLabels(value) {
 
 function getPlayerDataset() {
     const values = []
-
-    // Timezone offset
-    // for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
-    //     values.push(undefined)
-    // }
-
 
     for (var timeFrame of activeServer.value.stats.graphs.month) {
         if (timeFrame.playerStats) {
