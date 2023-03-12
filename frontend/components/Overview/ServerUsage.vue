@@ -90,7 +90,7 @@
 
 .label-text {
     margin-left: 0.25rem;
-    
+
     font-size: 0.75rem;
     font-weight: 400;
     color: rgba(white, 0.75);
@@ -168,18 +168,19 @@ function getLabels() {
     return values
 }
 
-function getDataset(index, timeFrame) {
+function getDataset(index) {
     const values = []
 
-    // Timezone offset
-    if (timeFrame == 'day')
-        for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
-            values.push(undefined)
-        }
+    for (var i = 0; i <= 23; i++) {
+        var timeline = activeServer.value.stats.timeline
+        const date = new Date()
 
-    for (var timeFrame of activeServer.value.stats.graphs[timeFrame]) {
-        var value = timeFrame[index] / timeFrame.dataCount
-        values.push(isNaN(value) && index != 'storage' || value == Infinity ? 0 : value)
+        var timestamp = timeline.find(timestamp => {
+            const timelineDate = new Date(timestamp.time)
+            return timelineDate.getDate() == date.getDate() && timelineDate.getMonth() == date.getMonth() && timelineDate.getFullYear() == date.getFullYear() && timelineDate.getHours() == i
+        })
+
+        values.push(timestamp ? timestamp.stats.dataCount == 0 ? 0 : timestamp.stats[index] / timestamp.stats.dataCount : 0)
     }
 
     return values
@@ -193,7 +194,7 @@ function getData() {
                 label: 'CPU Usage',
                 backgroundColor: '#00C2FF',
                 borderColor: "#00C2FF",
-                data: getDataset('cpu', "day"),
+                data: getDataset('cpu'),
                 fill: {
                     target: 'origin',
                     above: '#00C2FF44',   // Area will be red above the origin
@@ -204,7 +205,7 @@ function getData() {
                 label: 'RAM Usage',
                 backgroundColor: '#00FF75',
                 borderColor: "#00FF75",
-                data: getDataset('ram', "day"),
+                data: getDataset('ram'),
                 fill: {
                     target: 'origin',
                     above: '#00FF7544',   // Area will be red above the origin
@@ -215,7 +216,7 @@ function getData() {
                 label: 'Storage Usage',
                 backgroundColor: '#FF3030',
                 borderColor: "#FF3030",
-                data: getDataset('storage', "day"),
+                data: getDataset('storage'),
                 fill: {
                     target: 'origin',
                     above: '#FF303044',   // Area will be red above the origin

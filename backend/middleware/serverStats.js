@@ -493,9 +493,6 @@ class Timeline {
     getStats() {
         return this.data
     }
-    loadStats(stats) {
-        this.data = stats
-    }
 }
 
 async function executeOperation(opName, op) {

@@ -150,18 +150,19 @@ function getLabels() {
     return values
 }
 
-function getDataset(index, timeFrame) {
+function getDataset(index) {
     const values = []
 
-    // Timezone offset
-    if (timeFrame == 'day')
-        for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
-            values.push(undefined)
-        }
+    for (var i = 0; i <= 23; i++) {
+        var timeline = activeServer.value.stats.timeline
+        const date = new Date()
 
-    for (var timeFrame of activeServer.value.stats.graphs[timeFrame]) {
-        var value = timeFrame[index] / timeFrame.dataCount
-        values.push(isNaN(value) && index != 'storage' || value == Infinity ? 0 : value)
+        var timestamp = timeline.find(timestamp => {
+            const timelineDate = new Date(timestamp.time)
+            return timelineDate.getDate() == date.getDate() && timelineDate.getMonth() == date.getMonth() && timelineDate.getFullYear() == date.getFullYear() && timelineDate.getHours() == i
+        })
+
+        values.push(timestamp ? timestamp.stats.dataCount == 0 ? 0 : timestamp.stats[index] / timestamp.stats.dataCount : 0)
     }
 
     return values
@@ -175,7 +176,7 @@ function getData() {
                 label: 'Players',
                 backgroundColor: '#FFD600',
                 borderColor: "#FFD600",
-                data: getDataset('players', "day"),
+                data: getDataset('players'),
                 fill: {
                     target: 'origin',
                     above: '#FFD6003F',

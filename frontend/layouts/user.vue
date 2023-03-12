@@ -234,8 +234,6 @@ onMounted(() => {
             dots += "."
         }
 
-        console.log('setting dots to ' + dotCount)
-
         if (loadingText) {
             loadingText.innerHTML = `Loading server data${dots}`
             return true
