@@ -294,15 +294,22 @@ function getLabels(value) {
 
 function getPlayerDataset() {
     const values = []
+    const date = new Date()
+    var timeline = activeServer.value.stats.timeline
 
-    for (var timeFrame of activeServer.value.stats.graphs.month) {
-        if (timeFrame.playerStats) {
-            const datasetPlayer = timeFrame.playerStats.find(i => i.uuid == player.value.uuid)
-            var value = datasetPlayer ? datasetPlayer.playtime : 0 / timeFrame.dataCount
-            values.push(isNaN(value) || value == Infinity ? 0 : value * user.value.plan.updateFrequency / 3600)
-        } else {
-            values.push(0)
-        }
+    for (var i = 0; i <= new Date(parseInt(date.getFullYear()), date.getMonth() + 1, 0).getDate(); i++) {
+        var timestamps = timeline.filter(timestamp => {
+            const timelineDate = new Date(timestamp.time)
+            return timelineDate.getDate() == i && timelineDate.getMonth() == date.getMonth() && timelineDate.getFullYear() == date.getFullYear()
+        })
+
+        var dataCount = timestamps.reduce((acc, cur) => acc + cur.stats.dataCount, 0)
+        var value = timestamps.reduce((acc, cur) => {
+            var playerStats = cur.stats.playerStats.find(i => i.uuid == player.value.uuid)
+            return acc + (playerStats ? playerStats.playtime : 0)
+        }, 0)
+
+        values.push(timestamps.length > 0 ? dataCount == 0 ? 0 : value / dataCount : 0)
     }
 
     return values
@@ -327,7 +334,7 @@ let playtimeOptions = {
                 display: false,
             },
             ticks: {
-                callback: (value, index, ticks) => value + "h"
+                callback: (value) => value + "h"
             },
             min: 0
         }

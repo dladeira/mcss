@@ -120,24 +120,6 @@
 <script setup>
 const activeServer = useState('activeServer')
 
-// function getPlayerDataset(player) {
-//     const values = []
-//     const date = new Date()
-
-
-
-//     for (var timeFrame of activeServer.value.stats.graphs.month) {
-//         if (timeFrame.playerStats) {
-//             const datasetPlayer = timeFrame.playerStats.find(i => i.uuid == player.uuid)
-//             values.push(datasetPlayer)
-//         } else {
-//             values.push(null)
-//         }
-//     }
-
-//     return values
-// }
-
 function getEngagementScore(daysElapsed = 1, daysSkipped = 0) {
     const { players } = activeServer.value.stats
     const list = []

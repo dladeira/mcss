@@ -186,6 +186,8 @@ function getDataset(index) {
     return values
 }
 
+console.log(activeServer.value.stats.timeline)
+
 function getData() {
     return {
         labels: getLabels(),

@@ -116,10 +116,7 @@ async function generateStats(server) {
     var stats = JSON.parse(JSON.stringify(DEFAULT_STATS))
 
     var latestData = server.data[server.data.length - 1]
-
-    const graphs = new Graphs()
     const timeline = new Timeline(server.firstUpdate)
-    const averagePacket = getAverageDataSize(server.data)
 
     var totalPacketsSkipped = 0
     var playerPeakDate = new Date(server.data[0].time)
@@ -133,6 +130,11 @@ async function generateStats(server) {
         if (packet.players.length > stats.playerPeak) {
             playerPeakDate = new Date(packet.time)
             stats.playerPeak = packet.players.length
+            stats.peakInfo = {
+                day: playerPeakDate.getUTCDate(),
+                year: playerPeakDate.getUTCFullYear(),
+                month: playerPeakDate.getUTCMonth()
+            }
         }
     }
 
@@ -154,22 +156,6 @@ async function generateStats(server) {
             return deletePackets.push(packet._id)
 
         timeline.registerPacket(packet)
-
-        if (packetDate.getUTCFullYear() == startTime.getUTCFullYear()) {
-            graphs.registerPacket(packet, 'year', packetDate.getUTCMonth())
-
-            if (packetDate.getUTCMonth() == startTime.getUTCMonth()) {
-                graphs.registerPacket(packet, 'month', packetDate.getUTCDate() - 1)
-                graphs.registerPacket(packet, 'average', packetDate.getUTCHours())
-
-                if (packetDate.getUTCDate() == startTime.getUTCDate()) {
-                    graphs.registerPacket(packet, 'day', packetDate.getUTCHours())
-                }
-            }
-        }
-
-        if (playerPeakDate.getUTCDate() == packetDate.getUTCDate() && playerPeakDate.getUTCMonth() == packetDate.getUTCMonth() && playerPeakDate.getUTCFullYear() == packetDate.getUTCFullYear())
-            graphs.registerPacket(packet, 'peak', packetDate.getUTCHours())
 
         main:
         for (var packetPlayer of packet.players) {
@@ -234,13 +220,13 @@ async function generateStats(server) {
 
         // Add packet age
         const timeSince = startTime.getTime() - packetDate.getTime()
-        stats.dataAge.forever += averagePacket
+        stats.dataAge.forever += 1000
         if (timeSince < 12 * MONTH)
-            stats.dataAge.months12 += averagePacket
+            stats.dataAge.months12 += 1000
         if (timeSince < 6 * MONTH)
-            stats.dataAge.months6 += averagePacket
+            stats.dataAge.months6 += 1000
         if (timeSince < 3 * MONTH)
-            stats.dataAge.months3 += averagePacket
+            stats.dataAge.months3 += 1000
     }
 
     // Add individual player stats to global stats
@@ -262,7 +248,6 @@ async function generateStats(server) {
     stats.storageUsage = Math.floor(server.data.length / 1024 / server.storage * 100)
     stats.storageUsed = server.data.length / 1024
     stats.uptime = Math.round(server.data.length / (server.data.length + totalPacketsSkipped) * 100)
-    stats.graphs = graphs.getStats()
     stats.timeline = timeline.getStats()
     stats.dataAge = {
         months3: Math.round(stats.months3 / 1024 * 10) / 10,
@@ -273,8 +258,6 @@ async function generateStats(server) {
     stats.max_players = latestData.max_players
     stats.runningTime = server.lastUpdate - server.firstUpdate
     stats.dataCount = server.data.length
-
-    console.log(bson.calculateObjectSize(timeline.getStats()))
 
     cacheStats(server, stats, user.plan.updateFrequency * 1000)
 
@@ -301,110 +284,6 @@ const defaultTime = {
     blocksTraveledPerPlayer: 0,
     itemsCraftedPerPlayer: 0,
     playerStats: []
-}
-
-class Graphs {
-    constructor() {
-        this.day = []
-        this.month = []
-        this.year = []
-        this.average = []
-        this.peak = []
-
-        for (var i = 0; i < 24; i++) {
-            this.day.push({ ...defaultTime })
-            this.average.push({ ...defaultTime })
-            this.peak.push({ ...defaultTime })
-        }
-
-        for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++)
-            this.month.push({ ...defaultTime })
-
-        for (var i = 0; i < 12; i++)
-            this.year.push({ ...defaultTime })
-    }
-    registerPacket(packet, graphType, graphIndex) {
-        var blocksBroken = 0
-        var blocksPlaced = 0
-        var blocksTraveled = 0
-        var itemsCrafted = 0
-        var playerCount = 0
-        var playerStats = [...this[graphType][graphIndex].playerStats]
-
-        for (var player of packet.players) {
-            blocksBroken += player.blocksBroken ? parseInt(player.blocksBroken) : 0
-            blocksPlaced += player.blocksPlaced ? parseInt(player.blocksPlaced) : 0
-            blocksTraveled += player.blocksTraveled ? parseInt(player.blocksTraveled) : 0
-            itemsCrafted += player.itemsCrafted ? parseInt(player.itemsCrafted) : 0
-            playerCount++
-
-            var found = false
-            for (var i of playerStats) {
-                if (i.uuid == player.uuid) {
-                    i.playtime += 1
-                    i.blocksBroken += parseInt(player.blocksBroken)
-                    i.blocksPlaced += parseInt(player.blocksPlaced)
-                    found = true
-                    break
-                }
-            }
-
-            if (!found) {
-                playerStats.push({
-                    uuid: player.uuid,
-                    playtime: 1,
-                    blocksBroken: 0,
-                    blocksPlaced: 0
-                })
-            }
-        }
-
-        playerCount = playerCount == 0 ? 1 : playerCount
-
-        this[graphType][graphIndex].cpu += packet.cpuUsage
-        this[graphType][graphIndex].ram += packet.ramUsage
-        this[graphType][graphIndex].storage += packet.storageUsage
-        this[graphType][graphIndex].players += packet.players ? packet.players.length : 0
-        this[graphType][graphIndex].messages += packet.messages ? packet.messages : 0
-        this[graphType][graphIndex].characters += packet.characters ? packet.characters : 0
-        this[graphType][graphIndex].whispers += packet.whispers ? packet.whispers : 0
-        this[graphType][graphIndex].commands += packet.commands ? packet.commands : 0
-        this[graphType][graphIndex].dataCount += 1
-
-        this[graphType][graphIndex].blocksBrokenPerPlayer += blocksBroken / playerCount
-        this[graphType][graphIndex].blocksPlacedPerPlayer += blocksPlaced / playerCount
-        this[graphType][graphIndex].blocksTraveledPerPlayer += blocksTraveled / playerCount
-        this[graphType][graphIndex].itemsCraftedPerPlayer += itemsCrafted / playerCount
-
-        this[graphType][graphIndex].playerStats = playerStats
-    }
-    clearGraph(graphType) {
-        for (var graphIndex in this[graphType]) {
-            this[graphType][graphIndex].cpu = 0
-            this[graphType][graphIndex].ram = 0
-            this[graphType][graphIndex].storage = 0
-            this[graphType][graphIndex].players = 0
-            this[graphType][graphIndex].messages = 0
-            this[graphType][graphIndex].characters = 0
-            this[graphType][graphIndex].whispers = 0
-            this[graphType][graphIndex].commands = 0
-            this[graphType][graphIndex].dataCount = 0
-
-            this[graphType][graphIndex].blocksBrokenPerPlayer = 0
-            this[graphType][graphIndex].blocksPlacedPerPlayer = 0
-            this[graphType][graphIndex].blocksTraveledPerPlayer = 0
-            this[graphType][graphIndex].itemsCraftedPerPlayer = 0
-        }
-    }
-    getStats() {
-        return {
-            day: this.day,
-            month: this.month,
-            year: this.year,
-            average: this.average,
-            peak: this.peak
-        }
-    }
 }
 
 class Timeline {
@@ -505,17 +384,6 @@ async function executeOperation(opName, op) {
     process.stdout.write(`${formatTime(duration / 1000)}\n`)
 }
 
-function getAverageDataSize(data) { // KiloBytes
-    var total = 0
-    var samples = 10
-    for (var i = 0; i < samples; i++)
-        total += bson.serialize(data[Math.floor(Math.random() * data.length)]).length
-
-    var averageSize = total / samples
-
-    return averageSize / 1024
-}
-
 function formatNumber(number) {
     var lead = 0
     var unit = ""
@@ -612,6 +480,11 @@ function generateFakeServer(name, id) {
             commands: Math.round(Math.random() * 1000),
             runningTime: 864000000,
             playerPeak: 4,
+            peakInfo: {
+                day: new Date(Date.now() - (68 * 60 * 60 * 1000)).getUTCDate(),
+                year: new Date(Date.now() - (68 * 60 * 60 * 1000)).getUTCFullYear(),
+                month: new Date(Date.now() - (68 * 60 * 60 * 1000)).getUTCMonth()
+            },
             max_players: 20,
             totalPlaytime: Math.round(Math.random() * 100000) + 300000,
             players: [
@@ -811,15 +684,15 @@ function generateFakeServer(name, id) {
                     online: false
                 }
             ],
-            graphs: generateFakeGraphs()
+            timeline: generateFakeTimeline()
         }
     }
 }
 
-function generateFakeGraphs() {
-    const graphs = new Graphs()
+function generateFakeTimeline() {
+    const timeline = new Timeline(Date.now() - (2920 * 60 * 60 * 1000))
 
-    function generateFakePacket() {
+    function generateFakePacket(time) {
         const packet = {}
 
         packet.players = [
@@ -903,25 +776,16 @@ function generateFakeGraphs() {
         packet.cpuUsage = Math.round(Math.random() * 50 + 20)
         packet.ramUsage = Math.round(Math.random() * 20 + 60)
         packet.storageUsage = Math.round(Math.random() * 20)
+        packet.time = time
 
         return packet
     }
 
-    for (var i = 0; i < 24; i++) {
-        graphs.registerPacket(generateFakePacket(), 'day', i)
-        graphs.registerPacket(generateFakePacket(), 'average', i)
-        graphs.registerPacket(generateFakePacket(), 'peak', i)
+    for (var i = 0; i < 2920; i++) {
+        timeline.registerPacket(generateFakePacket((Date.now()) - (i * 60 * 60 * 1000)))
     }
 
-    for (var i = 0; i < new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(); i++) {
-        graphs.registerPacket(generateFakePacket(), 'month', i)
-    }
-
-    for (var i = 0; i < 12; i++) {
-        graphs.registerPacket(generateFakePacket(), 'year', i)
-    }
-
-    return graphs.getStats()
+    return timeline.getStats()
 }
 
 module.exports = {

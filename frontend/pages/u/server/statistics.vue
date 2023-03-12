@@ -17,9 +17,9 @@
 
                 <div class="selections">
                     <div class="selection-group">
-                        <div :class="selected == 'day' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'day'">Daily</div>
-                        <div :class="selected == 'month' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'month'">Weekly</div>
-                        <div :class="selected == 'year' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'year'">Monthly</div>
+                        <div :class="selected == 'day' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'day'">Day</div>
+                        <div :class="selected == 'month' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'month'">Month</div>
+                        <div :class="selected == 'year' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'year'">Year</div>
                     </div>
                     <div class="selection-group">
                         <div :class="selected == 'average' ? 'selection-average-selected' : 'selection-average'" @click="selected = 'average'">Average Day</div>
@@ -110,109 +110,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="container">
-                    
-
-                    <div class="axes">
-                        <div class="axis">
-                            <h1 class="axis-title">X Axis</h1>
-                            <div class="selections">
-                                <div class="selection-group">
-                                    <div :class="selected == 'day' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'day'">Daily</div>
-                                    <div :class="selected == 'month' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'month'">Weekly</div>
-                                    <div :class="selected == 'year' ? 'selection-regular-selected' : 'selection-regular'" @click="selected = 'year'">Monthly</div>
-                                </div>
-                                <div class="selection-group">
-                                    <div :class="selected == 'average' ? 'selection-average-selected' : 'selection-average'" @click="selected = 'average'">Average Day</div>
-                                    <div :class="selected == 'peak' ? 'selection-peak-selected' : 'selection-peak'" @click="selected = 'peak'">Peak Day</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="axis">
-                            <h1 class="axis-title">Y Axis</h1>
-                            <div class="options">
-                                <div class="option-column">
-                                    <div class="option" @click="toggleYSelected('cpu')">
-                                        <div :class="isYSelected('cpu') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            CPU Usage
-                                        </div>
-                                    </div>
-                                    <div class="option" @click="toggleYSelected('ram')">
-                                        <div :class="isYSelected('ram') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            RAM Usage
-                                        </div>
-                                    </div>
-                                    <div class="option" @click="toggleYSelected('storage')">
-                                        <div :class="isYSelected('storage') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Storage Usage
-                                        </div>
-                                    </div>
-                                    <div class="option" @click="toggleYSelected('players')">
-                                        <div :class="isYSelected('players') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Player Count
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="option-column">
-                                    <div class="option" @click="toggleYSelected('messages')">
-                                        <div :class="isYSelected('messages') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Messages sent
-                                        </div>
-                                    </div>
-                                    <div class="option" @click="toggleYSelected('characters')">
-                                        <div :class="isYSelected('characters') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Characters sent
-                                        </div>
-                                    </div>
-                                    <div class="option" @click="toggleYSelected('whispers')">
-                                        <div :class="isYSelected('whispers') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Whispers sent
-                                        </div>
-                                    </div>
-                                    <div class="option" @click="toggleYSelected('commands')">
-                                        <div :class="isYSelected('commands') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Commands sent
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="option-column">
-                                    <div class="option" @click="toggleYSelected('blocksBrokenPerPlayer')">
-                                        <div :class="isYSelected('blocksBrokenPerPlayer') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Blocks broken/player
-                                        </div>
-                                    </div>
-                                    <div class="option" @click="toggleYSelected('blocksPlacedPerPlayer')">
-                                        <div :class="isYSelected('blocksPlacedPerPlayer') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Blocks placed/player
-                                        </div>
-                                    </div>
-                                    <div class="option" @click="toggleYSelected('blocksTraveledPerPlayer')">
-                                        <div :class="isYSelected('blocksTraveledPerPlayer') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Blocks traveled/player
-                                        </div>
-                                    </div>
-                                    <div class="option" @click="toggleYSelected('itemsCraftedPerPlayer')">
-                                        <div :class="isYSelected('itemsCraftedPerPlayer') ? 'option-button-selected' : 'option-button'" />
-                                        <div class="option-text">
-                                            Items Crafted/player
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
         </div>
     </NuxtLayout>
 </template>
@@ -609,16 +506,69 @@ function getLabels() {
 }
 
 function getDataset(index, timeFrame) {
+    var timeline = activeServer.value.stats.timeline
     const values = []
-    // Timezone offset
-    if (timeFrame == 'day' || timeFrame == 'average' || timeFrame == 'peak')
-        for (var i = 0; i < -Math.floor(new Date().getTimezoneOffset() / 60); i++) {
-            values.push(undefined)
-        }
+    const date = new Date()
 
-    for (var timeFrame of activeServer.value.stats.graphs[timeFrame]) {
-        var value = timeFrame[index] / timeFrame.dataCount
-        values.push(isNaN(value) && index != 'storage' || value == Infinity ? 0 : value)
+    switch (timeFrame) {
+        case 'day':
+            for (var i = 0; i <= 23; i++) {
+                var timestamp = timeline.find(timestamp => {
+                    const timelineDate = new Date(timestamp.time)
+                    return timelineDate.getDate() == date.getDate() && timelineDate.getMonth() == date.getMonth() && timelineDate.getFullYear() == date.getFullYear() && timelineDate.getHours() == i
+                })
+
+                values.push(timestamp ? timestamp.stats.dataCount == 0 ? 0 : timestamp.stats[index] / timestamp.stats.dataCount : 0)
+            }
+            break;
+        case 'month':
+            for (var i = 0; i <= new Date(parseInt(date.getFullYear()), date.getMonth() + 1, 0).getDate(); i++) {
+                var timestamps = timeline.filter(timestamp => {
+                    const timelineDate = new Date(timestamp.time)
+                    return timelineDate.getDate() == i && timelineDate.getMonth() == date.getMonth() && timelineDate.getFullYear() == date.getFullYear()
+                })
+
+                var dataCount = timestamps.reduce((acc, cur) => acc + cur.stats.dataCount, 0)
+                var value = timestamps.reduce((acc, cur) => acc + cur.stats[index], 0)
+                values.push(timestamps.length > 0 ? dataCount == 0 ? 0 : value / dataCount : 0)
+            }
+            break;
+        case 'year':
+            for (var i = 0; i < 12; i++) {
+                var timestamps = timeline.filter(timestamp => {
+                    const timelineDate = new Date(timestamp.time)
+                    return timelineDate.getMonth() == i && timelineDate.getFullYear() == date.getFullYear()
+                })
+
+                var dataCount = timestamps.reduce((acc, cur) => acc + cur.stats.dataCount, 0)
+                var value = timestamps.reduce((acc, cur) => acc + cur.stats[index], 0)
+                values.push(timestamps.length > 0 ? dataCount == 0 ? 0 : value / dataCount : 0)
+            }
+            break;
+        case 'average':
+            for (var i = 0; i <= 23; i++) {
+                var timestamps = timeline.filter(timestamp => {
+                    const timelineDate = new Date(timestamp.time)
+                    return timelineDate.getHours() == i
+                })
+
+                var dataCount = timestamps.reduce((acc, cur) => acc + cur.stats.dataCount, 0)
+                var value = timestamps.reduce((acc, cur) => acc + cur.stats[index], 0)
+                values.push(timestamps.length > 0 ? dataCount == 0 ? 0 : value / dataCount : 0)
+            }
+            break;
+        case 'peak':
+            for (var i = 0; i <= 23; i++) {
+                var timestamps = timeline.filter(timestamp => {
+                    const timelineDate = new Date(timestamp.time)
+                    return timelineDate.getHours() == i && timelineDate.getMonth() == activeServer.value.stats.peakInfo.month && timelineDate.getFullYear() == activeServer.value.stats.peakInfo.year && timelineDate.getDate() == activeServer.value.stats.peakInfo.day
+                })
+
+                var dataCount = timestamps.reduce((acc, cur) => acc + cur.stats.dataCount, 0)
+                var value = timestamps.reduce((acc, cur) => acc + cur.stats[index], 0)
+                values.push(timestamps.length > 0 ? dataCount == 0 ? 0 : value / dataCount : 0)
+            }
+            break;
     }
 
     return values
