@@ -1,6 +1,6 @@
 <template>
     <div>
-
+        <SharedPopup title="Last step" description="Please check your email and click on the link that we sent you to finish creating your account" button="Okay" :visible="displayPopup" />
         <Head>
             <Title>Login</Title>
         </Head>
@@ -180,6 +180,8 @@ const token = useCookie("token", {
     sameSite: 'lax'
 })
 
+const displayPopup = ref()
+
 async function register(e) {
     connecting.value = true
     const { data, error } = await useFetch(config.public.origin + "/api/auth/register", {
@@ -200,6 +202,7 @@ async function register(e) {
 
     registerSuccess.value = true
     registerError.value = null
+    displayPopup.value = true
 }
 
 async function login(e) {
