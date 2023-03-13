@@ -18,7 +18,7 @@
             <div class="player" v-for="player of getSearchPlayers()">
                 <img class="player-img" :src="`https://cravatar.eu/avatar/${player.username}/20.png`" />
                 <div class="player-name">{{ player.username }}</div>
-                <div class="player-location">{{ player.online ? player.location : "---" }}</div>
+                <div :class="player.online ? 'player-location' : 'player-location-offline'">{{ player.online ? player.location : "---" }}</div>
                 <div class="player-engagement">58.3</div>
                 <div class="player-messages">{{ player.messages }}</div>
                 <div class="player-session">{{ player.online ? formatTime(player.session) : "---" }}</div>
@@ -149,6 +149,14 @@
 
 .player-location {
     width: 11rem;
+
+    color: white;
+
+    &-offline {
+        @extend .player-location;
+        
+        color: $gray1;
+    }
 }
 
 .player-engagement {
@@ -186,9 +194,24 @@ const playerSearch = ref()
 
 function getSearchPlayers() {
     if (playerSearch.value && playerSearch.value.length > 0)
-        return activeServer.value.stats.players.filter(i => i.username.toLowerCase().includes(playerSearch.value.toLowerCase()))
+        return sortPlayerList(activeServer.value.stats.players.filter(i => i.username.toLowerCase().includes(playerSearch.value.toLowerCase())))
 
-    return activeServer.value.stats.players
+    return sortPlayerList(activeServer.value.stats.players)
+}
+
+function sortPlayerList(list) {
+    return list.sort((a, b) => {
+        console.log(a.online + " " + b.online)
+
+        if (a.online && b.online)
+            return a.username.localeCompare(b.username)
+        if (a.online)
+            return -1
+        if (b.online)
+            return 1
+
+        return b.lastOnline - a.lastOnline
+    })
 }
 
 function formatTime(seconds) {

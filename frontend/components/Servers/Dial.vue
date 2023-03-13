@@ -18,7 +18,7 @@ $width: 3.5rem;
     height: $height;
     width: $width;
 
-    margin: 0 0.5rem;
+    margin: 0 0.75rem;
 }
 
 .blue {
@@ -54,7 +54,7 @@ const props = defineProps({
     hex: String
 })
 
-const scale =2
+const scale = 2
 
 function drawRadius(radius) {
     var canvas = document.getElementById(props.id)
@@ -66,7 +66,7 @@ function drawRadius(radius) {
 
     function drawWedge(ctx, x, y, radius, percent, color) {
         ctx.strokeStyle = color;
-        ctx.lineWidth = 5 * scale;
+        ctx.lineWidth = convertRemToPixels(0.25) * scale;
 
         ctx.translate(x, y);        // translate to rotating pivot
         ctx.rotate(Math.PI * 1);  // rotate, here 90° deg
@@ -99,9 +99,13 @@ function resizeCanvas(canvas) {
     return false;
 }
 
+function convertRemToPixels(rem) {    
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
 onMounted(() => {
     setTimeout(() => {
-        drawRadius(25 * scale, props.percent)
+        drawRadius(convertRemToPixels(1.6) * scale, props.percent)
     }, 30)
 })
 </script>

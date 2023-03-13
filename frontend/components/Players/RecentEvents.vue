@@ -5,52 +5,52 @@
         </h1>
 
         <div class="list">
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">7:13 PM</p>
                 <p class="player-name">DespacitoMaster</p>
                 <p class="player-action">left</p>
             </div>
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">7:12 PM</p>
                 <p class="player-name">DaddyBlockbone</p>
                 <p class="player-action">joined</p>
             </div>
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">6:02 PM</p>
                 <p class="player-name">Maximimand</p>
                 <p class="player-action">left</p>
             </div>
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">6:02 PM</p>
                 <p class="player-name">Maximimand</p>
                 <p class="player-action">died</p>
             </div>
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">6:01 PM</p>
                 <p class="player-name">Maximimand</p>
                 <p class="player-action">joined</p>
             </div>
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">6:01 PM</p>
                 <p class="player-name">Maximimand</p>
                 <p class="player-action">left</p>
             </div>
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">6:01 PM</p>
                 <p class="player-name">Maximimand</p>
                 <p class="player-action">joined</p>
             </div>
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">5:58 PM</p>
                 <p class="player-name">DespacitoMaster</p>
                 <p class="player-action">joined</p>
             </div>
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">5:34 PM</p>
                 <p class="player-name">Wolfie</p>
                 <p class="player-action">died</p>
             </div>
-            <div class="player">
+            <div class="player" v-if="demo">
                 <p class="player-time">5:26 PM</p>
                 <p class="player-name">Wolfie</p>
                 <p class="player-action">died</p>
@@ -135,4 +135,5 @@
 
 <script setup>
 const activeServer = useState('activeServer')
+const demo = useState('demo')
 </script>

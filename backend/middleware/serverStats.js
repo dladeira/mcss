@@ -331,7 +331,7 @@ class Timeline {
             var found = false
             for (var i of playerStats) {
                 if (i.uuid == player.uuid) {
-                    i.playtime += player.playtime
+                    i.playtime += parseInt(player.playtime)
                     i.blocksBroken += parseInt(player.blocksBroken)
                     i.blocksPlaced += parseInt(player.blocksPlaced)
                     found = true
@@ -342,9 +342,9 @@ class Timeline {
             if (!found) {
                 playerStats.push({
                     uuid: player.uuid,
-                    playtime: player.playtime,
-                    blocksBroken: player.blocksBroken,
-                    blocksPlaced: player.blocksPlaced
+                    playtime: parseInt(player.playtime),
+                    blocksBroken: parseInt(player.blocksBroken),
+                    blocksPlaced: parseInt(player.blocksPlaced)
                 })
             }
         }
@@ -474,11 +474,11 @@ function generateFakeServer(name, id) {
             max_players: 20,
             totalPlaytime: Math.round(Math.random() * 100000) + 300000,
             players: [
-                generateFakePlayer('DespacitoMaster', true, false, false),
-                generateFakePlayer('DaddyBlockbone', true, false, false),
-                generateFakePlayer('Xx_420No0b420_xX', false, false, false),
-                generateFakePlayer('Wolfie2024', false, true, false),
-                generateFakePlayer('Maximimand4', false, true, false)
+                generateFakePlayer('DespacitoMaster', Math.random() > 0.5, false, false),
+                generateFakePlayer('DaddyBlockbone', Math.random() > 0.5, false, false),
+                generateFakePlayer('Xx_420No0b420_xX', Math.random() > 0.5, false, false),
+                generateFakePlayer('Wolfie2024', Math.random() > 0.5, true, false),
+                generateFakePlayer('Maximimand4', Math.random() > 0.5, true, false)
             ],
             timeline: generateFakeTimeline()
         }
@@ -499,11 +499,11 @@ function generateFakePacket(time) {
     const packet = {}
 
     packet.players = [
-        generateFakePlayer('DespacitoMaster', true, false, true),
-        generateFakePlayer('DaddyBlockbone', true, false, true),
+        generateFakePlayer('DespacitoMaster', Math.random() > 0.5, false, true),
+        generateFakePlayer('DaddyBlockbone', Math.random() > 0.5, false, true),
         generateFakePlayer('Xx_420No0b420_xX', false, false, true),
-        generateFakePlayer('Wolfie2024', false, true, true),
-        generateFakePlayer('Maximimand4', false, true, true),
+        generateFakePlayer('Wolfie2024', Math.random() > 0.5, true, true),
+        generateFakePlayer('Maximimand4', Math.random() > 0.5, true, true),
     ]
 
     packet.cpuUsage = Math.round(Math.random() * 50 + 20)
@@ -523,6 +523,7 @@ function generateFakePlayer(username, online, recent, packetPlayer) {
                 itemsCrafted: Math.random() * 2,
                 blocksTraveled: Math.random() * 100,
                 username: username,
+                playtime: Math.random() * 30,
                 uuid: username
             }
         else
@@ -547,14 +548,14 @@ function generateFakePlayer(username, online, recent, packetPlayer) {
         characters: Math.round(Math.random() * 10000),
         whispers: Math.round(Math.random() * 100),
         commands: Math.round(Math.random() * 100),
-        location: `---`,
+        location: online ? `(${Math.round(Math.random() * 3000 - 1500)}, ${Math.round(Math.random() * 3000 - 1500)}, ${Math.round(Math.random() * 3000 - 1500)})` : `---`,
         sessions: [],
         username: username,
         uuid: username,
         online: online,
         joined: recent ? Date.now() - 3600000 : Date.now() - (48 * 60 * 60 * 1000),
-        lastOnline: online ? Date.now() - (48 * 60 * 60 * 1000) : Date.now(),
-        session: online ? (Math.random() * 4) * 60 * 60 : 0
+        lastOnline: online ? Date.now() : Date.now() - Math.round(Math.random() * 48 * 60 * 60 * 1000),
+        session: online ? Math.random() * 4 * 60 * 60 : 0
     }
 
     for (var i = 0; i < 20; i++)
