@@ -1,4 +1,3 @@
-const bson = require('bson')
 const config = require('config')
 
 const User = require('../models/User')
@@ -332,7 +331,7 @@ class Timeline {
             var found = false
             for (var i of playerStats) {
                 if (i.uuid == player.uuid) {
-                    i.playtime += 1
+                    i.playtime += player.playtime
                     i.blocksBroken += parseInt(player.blocksBroken)
                     i.blocksPlaced += parseInt(player.blocksPlaced)
                     found = true
@@ -343,9 +342,9 @@ class Timeline {
             if (!found) {
                 playerStats.push({
                     uuid: player.uuid,
-                    playtime: 1,
-                    blocksBroken: 0,
-                    blocksPlaced: 0
+                    playtime: player.playtime,
+                    blocksBroken: player.blocksBroken,
+                    blocksPlaced: player.blocksPlaced
                 })
             }
         }
@@ -445,19 +444,6 @@ function generateFakeServer(name, id) {
         storage: 5,
         owner: null,
         dataLifetime: 0,
-        recentMessages: [
-            { msg: "Work it, make it, do it", sender: "DaddyBlockbone" },
-            { msg: "Makes us harder, better, faster, stronger", sender: "DespacitoMaster" },
-            { msg: "N-n-now that that don't kill me", sender: "DespacitoMaster" },
-            { msg: "Can only make me stronger", sender: "DespacitoMaster" },
-            { msg: "I need you to hurry up now, 'Cause I can't wait much longer", sender: "DespacitoMaster" },
-            { msg: "I know I got to be right now", sender: "DespacitoMaster" },
-            { msg: "'Cause I can't get much wronger", sender: "DespacitoMaster" },
-            { msg: "Man, I've been waiting all night now", sender: "DespacitoMaster" },
-            { msg: "That's how long I've been on ya", sender: "DespacitoMaster" },
-            { msg: "(Work it harder, make it better)", sender: "Maximimand" },
-            { msg: "(Do it faster, makes us stronger)", sender: "Maximimand" },
-        ],
         stats: {
             cpuUsage: Math.round(Math.random() * 100),
             ramUsage: Math.round(Math.random() * 100),
@@ -488,208 +474,11 @@ function generateFakeServer(name, id) {
             max_players: 20,
             totalPlaytime: Math.round(Math.random() * 100000) + 300000,
             players: [
-                {
-                    playtime: Math.random() * 50000 + 100000,
-                    blocksBroken: Math.round(Math.random() * 10000),
-                    blocksPlaced: Math.round(Math.random() * 10000),
-                    blocksTraveled: Math.round(Math.random() * 10000),
-                    deaths: Math.round(Math.random() * 10),
-                    itemsCrafted: Math.round(Math.random() * 1000),
-                    messages: Math.round(Math.random() * 1000),
-                    characters: Math.round(Math.random() * 10000),
-                    whispers: Math.round(Math.random() * 100),
-                    commands: Math.round(Math.random() * 100),
-                    location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
-                    username: 'DespacitoMaster',
-                    session: 1078,
-                    sessions: [
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 },
-                        { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 }
-                    ],
-                    online: true,
-                    joined: Date.now() - 48 * 60 * 60 * 1000,
-                    lastOnline: Date.now()
-                },
-                {
-                    playtime: Math.random() * 50000 + 100000,
-                    blocksBroken: Math.round(Math.random() * 10000),
-                    blocksPlaced: Math.round(Math.random() * 10000),
-                    blocksTraveled: Math.round(Math.random() * 10000),
-                    deaths: Math.round(Math.random() * 40),
-                    itemsCrafted: Math.round(Math.random() * 1000),
-                    messages: Math.round(Math.random() * 1000),
-                    characters: Math.round(Math.random() * 10000),
-                    whispers: Math.round(Math.random() * 100),
-                    commands: Math.round(Math.random() * 100),
-                    location: `---`,
-                    username: 'Maximimand',
-                    sessions: [
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 }
-                    ],
-                    online: false,
-                    joined: Date.now() - 60 * 60 * 1000,
-                    lastOnline: Date.now() - 60 * 60 * 1000
-                },
-                {
-                    playtime: Math.random() * 50000 + 100000,
-                    blocksBroken: Math.round(Math.random() * 10000),
-                    blocksPlaced: Math.round(Math.random() * 10000),
-                    blocksTraveled: Math.round(Math.random() * 10000),
-                    deaths: Math.round(Math.random() * 40),
-                    itemsCrafted: Math.round(Math.random() * 1000),
-                    messages: Math.round(Math.random() * 1000),
-                    characters: Math.round(Math.random() * 10000),
-                    whispers: Math.round(Math.random() * 100),
-                    commands: Math.round(Math.random() * 100),
-                    location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
-                    username: 'Xx_420No0B420_xX',
-                    session: 644,
-                    sessions: [
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 }
-                    ],
-                    online: true,
-                    joined: Date.now() - 48 * 60 * 60 * 1000,
-                    lastOnline: Date.now()
-                },
-                {
-                    playtime: Math.random() * 50000 + 100000,
-                    blocksBroken: Math.round(Math.random() * 10000),
-                    blocksPlaced: Math.round(Math.random() * 10000),
-                    blocksTraveled: Math.round(Math.random() * 10000),
-                    deaths: Math.round(Math.random() * 40),
-                    itemsCrafted: Math.round(Math.random() * 1000),
-                    messages: Math.round(Math.random() * 1000),
-                    characters: Math.round(Math.random() * 10000),
-                    whispers: Math.round(Math.random() * 100),
-                    commands: Math.round(Math.random() * 100),
-                    location: `---`,
-                    username: 'DaddyBlockbone',
-                    sessions: [
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 }
-                    ],
-                    online: false,
-                    joined: Date.now() - 48 * 60 * 60 * 1000,
-                    lastOnline: Date.now() - 48 * 60 * 60 * 1000
-                },
-                {
-                    playtime: Math.random() * 50000 + 100000,
-                    blocksBroken: Math.round(Math.random() * 10000),
-                    blocksPlaced: Math.round(Math.random() * 10000),
-                    blocksTraveled: Math.round(Math.random() * 10000),
-                    deaths: Math.round(Math.random() * 40),
-                    itemsCrafted: Math.round(Math.random() * 1000),
-                    messages: Math.round(Math.random() * 1000),
-                    characters: Math.round(Math.random() * 10000),
-                    whispers: Math.round(Math.random() * 100),
-                    commands: Math.round(Math.random() * 100),
-                    location: `---`,
-                    username: 'Wolfie2024',
-                    sessions: [
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
-                        { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 }
-                    ],
-                    online: false,
-                    joined: Date.now() - 48 * 60 * 60 * 1000,
-                    lastOnline: Date.now() - 48 * 60 * 60 * 1000
-                }
+                generateFakePlayer('DespacitoMaster', true, false, false),
+                generateFakePlayer('DaddyBlockbone', true, false, false),
+                generateFakePlayer('Xx_420No0b420_xX', false, false, false),
+                generateFakePlayer('Wolfie2024', false, true, false),
+                generateFakePlayer('Maximimand4', false, true, false)
             ],
             timeline: generateFakeTimeline()
         }
@@ -699,100 +488,79 @@ function generateFakeServer(name, id) {
 function generateFakeTimeline() {
     const timeline = new Timeline(Date.now() - (2920 * 60 * 60 * 1000))
 
-    function generateFakePacket(time) {
-        const packet = {}
-
-        packet.players = [
-            {
-                playtime: Math.random() * 50000 + 100000,
-                blocksBroken: Math.round(Math.random() * 10000),
-                blocksPlaced: Math.round(Math.random() * 10000),
-                blocksTraveled: Math.round(Math.random() * 10000),
-                deaths: Math.round(Math.random() * 10),
-                itemsCrafted: Math.round(Math.random() * 1000),
-                messages: Math.round(Math.random() * 1000),
-                characters: Math.round(Math.random() * 10000),
-                whispers: Math.round(Math.random() * 100),
-                commands: Math.round(Math.random() * 100),
-                location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
-                username: 'DespacitoMaster',
-                online: true,
-            },
-            {
-                playtime: Math.random() * 50000 + 100000,
-                blocksBroken: Math.round(Math.random() * 10000),
-                blocksPlaced: Math.round(Math.random() * 10000),
-                blocksTraveled: Math.round(Math.random() * 10000),
-                deaths: Math.round(Math.random() * 40),
-                itemsCrafted: Math.round(Math.random() * 1000),
-                messages: Math.round(Math.random() * 1000),
-                characters: Math.round(Math.random() * 10000),
-                whispers: Math.round(Math.random() * 100),
-                commands: Math.round(Math.random() * 100),
-                location: `---`,
-                username: 'Maximimand',
-                online: false,
-            },
-            {
-                playtime: Math.random() * 50000 + 100000,
-                blocksBroken: Math.round(Math.random() * 10000),
-                blocksPlaced: Math.round(Math.random() * 10000),
-                blocksTraveled: Math.round(Math.random() * 10000),
-                deaths: Math.round(Math.random() * 40),
-                itemsCrafted: Math.round(Math.random() * 1000),
-                messages: Math.round(Math.random() * 1000),
-                characters: Math.round(Math.random() * 10000),
-                whispers: Math.round(Math.random() * 100),
-                commands: Math.round(Math.random() * 100),
-                location: `(${Math.round(Math.random() * 1000)}, ${Math.round(Math.random() * 100)}, ${Math.round(Math.random() * 1000)})`,
-                username: 'Xx_420No0B420_xX',
-                online: true,
-            },
-            {
-                playtime: Math.random() * 50000 + 100000,
-                blocksBroken: Math.round(Math.random() * 10000),
-                blocksPlaced: Math.round(Math.random() * 10000),
-                blocksTraveled: Math.round(Math.random() * 10000),
-                deaths: Math.round(Math.random() * 40),
-                itemsCrafted: Math.round(Math.random() * 1000),
-                messages: Math.round(Math.random() * 1000),
-                characters: Math.round(Math.random() * 10000),
-                whispers: Math.round(Math.random() * 100),
-                commands: Math.round(Math.random() * 100),
-                location: `---`,
-                username: 'DaddyBlockbone',
-                online: false
-            },
-            {
-                playtime: Math.random() * 50000 + 100000,
-                blocksBroken: Math.round(Math.random() * 10000),
-                blocksPlaced: Math.round(Math.random() * 10000),
-                blocksTraveled: Math.round(Math.random() * 10000),
-                deaths: Math.round(Math.random() * 40),
-                itemsCrafted: Math.round(Math.random() * 1000),
-                messages: Math.round(Math.random() * 1000),
-                characters: Math.round(Math.random() * 10000),
-                whispers: Math.round(Math.random() * 100),
-                commands: Math.round(Math.random() * 100),
-                location: `---`,
-                username: 'Wolfie2024',
-                online: false
-            }
-        ]
-
-        packet.cpuUsage = Math.round(Math.random() * 50 + 20)
-        packet.ramUsage = Math.round(Math.random() * 20 + 60)
-        packet.storageUsage = Math.round(Math.random() * 20)
-        packet.time = time
-
-        return packet
-    }
-
     for (var i = 0; i < 2920; i++) {
         timeline.registerPacket(generateFakePacket((Date.now()) - (i * 60 * 60 * 1000)))
     }
 
     return timeline.getStats()
+}
+
+function generateFakePacket(time) {
+    const packet = {}
+
+    packet.players = [
+        generateFakePlayer('DespacitoMaster', true, false, true),
+        generateFakePlayer('DaddyBlockbone', true, false, true),
+        generateFakePlayer('Xx_420No0b420_xX', false, false, true),
+        generateFakePlayer('Wolfie2024', false, true, true),
+        generateFakePlayer('Maximimand4', false, true, true),
+    ]
+
+    packet.cpuUsage = Math.round(Math.random() * 50 + 20)
+    packet.ramUsage = Math.round(Math.random() * 20 + 60)
+    packet.storageUsage = Math.round(Math.random() * 20)
+    packet.time = time
+
+    return packet
+}
+
+function generateFakePlayer(username, online, recent, packetPlayer) {
+    if (packetPlayer) {
+        if (Math.random() > 0.9)
+            return {
+                blocksBroken: Math.random() * 50,
+                blocksPlaced: Math.random() * 10,
+                itemsCrafted: Math.random() * 2,
+                blocksTraveled: Math.random() * 100,
+                username: username,
+                uuid: username
+            }
+        else
+            return {
+                blocksBroken: 0,
+                blocksPlaced: 0,
+                itemsCrafted: 0,
+                blocksTraveled: 0,
+                username: username,
+                uuid: username
+            }
+    }
+
+    const player = {
+        playtime: Math.random() * 50000 + 100000,
+        blocksBroken: Math.round(Math.random() * 10000),
+        blocksPlaced: Math.round(Math.random() * 10000),
+        blocksTraveled: Math.round(Math.random() * 10000),
+        deaths: Math.round(Math.random() * 40),
+        itemsCrafted: Math.round(Math.random() * 1000),
+        messages: Math.round(Math.random() * 1000),
+        characters: Math.round(Math.random() * 10000),
+        whispers: Math.round(Math.random() * 100),
+        commands: Math.round(Math.random() * 100),
+        location: `---`,
+        sessions: [],
+        username: username,
+        uuid: username,
+        online: online,
+        joined: recent ? Date.now() - 3600000 : Date.now() - (48 * 60 * 60 * 1000),
+        lastOnline: online ? Date.now() - (48 * 60 * 60 * 1000) : Date.now(),
+        session: online ? (Math.random() * 4) * 60 * 60 : 0
+    }
+
+    for (var i = 0; i < 20; i++)
+        player.sessions.push({ time: Date.now() - Math.random() * 20160 * 60 * 1000, length: Math.random() * 10000 })
+
+    return player
 }
 
 module.exports = {
