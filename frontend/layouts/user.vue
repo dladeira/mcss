@@ -3,8 +3,8 @@
         <NotificationSystem />
         <UserNavbar />
 
-        <div v-if="serversPending" class="loading" id="loading-text">
-            Loading server data...
+        <div v-if="serversPending" class="loading">
+            Loading server data
         </div>
 
         <div class="page" v-if="user && servers">
@@ -63,7 +63,8 @@
     opacity: 0;
 
     animation-name: opacity-keyframes;
-    animation-duration: 2s;
+    animation-duration: 2.5s;
+    animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
 
     &-finished {
@@ -110,12 +111,16 @@
 }
 
 @keyframes opacity-keyframes {
-    from {
+    0% {
         opacity: 0;
     }
 
-    to {
+    50% {
         opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
     }
 }
 </style>
@@ -225,49 +230,4 @@ function getToken() {
 
 getUserData()
 getServerData()
-
-onMounted(() => {
-    function setDots(dotCount) {
-        var dots = ""
-        var loadingText = document.getElementById('loading-text')
-        for (var i = 0; i < dotCount; i++) {
-            dots += "."
-        }
-
-        if (loadingText) {
-            loadingText.innerHTML = `Loading server data${dots}`
-            return true
-        } else {
-            return false
-        }
-    }
-
-    var timeForChange = 400
-
-    setDots(1)
-
-    document.getElementById('loading-text').classList.add("loading-finished")
-
-    setTimeout(() => {
-        setDots(2)
-        var interval1 = setInterval(() => {
-            if (!setDots(2))
-                clearTimeout(interval1)
-        }, timeForChange * 3)
-    }, timeForChange)
-
-    setTimeout(() => {
-        setDots(3)
-        var interval2 = setInterval(() => {
-            if (!setDots(3))
-                clearTimeout(interval2)
-        }, timeForChange * 3)
-    }, timeForChange * 2)
-
-    var interval3 = setInterval(() => {
-        if (!setDots(1)) {
-            clearTimeout(interval3)
-        }
-    }, timeForChange * 3)
-})
 </script>
