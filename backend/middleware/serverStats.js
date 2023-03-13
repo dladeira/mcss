@@ -526,6 +526,8 @@ function generateFakeServer(name, id) {
                         { "time": (Date.now() - Math.random() * 21600000) / 1000, "length": Math.random * 10000 }
                     ],
                     online: true,
+                    joined: Date.now() - 48 * 60 * 60 * 1000,
+                    lastOnline: Date.now()
                 },
                 {
                     playtime: Math.random() * 50000 + 100000,
@@ -540,7 +542,6 @@ function generateFakeServer(name, id) {
                     commands: Math.round(Math.random() * 100),
                     location: `---`,
                     username: 'Maximimand',
-                    session: Math.round(Math.random * 1000),
                     sessions: [
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
@@ -565,6 +566,8 @@ function generateFakeServer(name, id) {
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 }
                     ],
                     online: false,
+                    joined: Date.now() - 60 * 60 * 1000,
+                    lastOnline: Date.now() - 60 * 60 * 1000
                 },
                 {
                     playtime: Math.random() * 50000 + 100000,
@@ -604,6 +607,8 @@ function generateFakeServer(name, id) {
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 }
                     ],
                     online: true,
+                    joined: Date.now() - 48 * 60 * 60 * 1000,
+                    lastOnline: Date.now()
                 },
                 {
                     playtime: Math.random() * 50000 + 100000,
@@ -618,7 +623,6 @@ function generateFakeServer(name, id) {
                     commands: Math.round(Math.random() * 100),
                     location: `---`,
                     username: 'DaddyBlockbone',
-                    session: Math.round(Math.random * 1000),
                     sessions: [
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
@@ -642,7 +646,9 @@ function generateFakeServer(name, id) {
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 }
                     ],
-                    online: false
+                    online: false,
+                    joined: Date.now() - 48 * 60 * 60 * 1000,
+                    lastOnline: Date.now() - 48 * 60 * 60 * 1000
                 },
                 {
                     playtime: Math.random() * 50000 + 100000,
@@ -657,7 +663,6 @@ function generateFakeServer(name, id) {
                     commands: Math.round(Math.random() * 100),
                     location: `---`,
                     username: 'Wolfie2024',
-                    session: Math.round(Math.random * 1000),
                     sessions: [
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
@@ -681,7 +686,9 @@ function generateFakeServer(name, id) {
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 },
                         { "time": Date.now() - Math.random() * 21600000, "length": Math.random * 10000 }
                     ],
-                    online: false
+                    online: false,
+                    joined: Date.now() - 48 * 60 * 60 * 1000,
+                    lastOnline: Date.now() - 48 * 60 * 60 * 1000
                 }
             ],
             timeline: generateFakeTimeline()
