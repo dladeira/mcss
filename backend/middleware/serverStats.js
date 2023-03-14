@@ -35,7 +35,8 @@ const DEFAULT_STATS = {
     totalPlaytime: 0,
     playerPeak: 0,
     runningTime: 0,
-    dataCount: 0
+    dataCount: 0,
+    peakTime: Date.now()
 }
 
 async function serverStatsMw(req, res, next) {
@@ -129,11 +130,7 @@ async function generateStats(server) {
         if (packet.players.length > stats.playerPeak) {
             playerPeakDate = new Date(packet.time)
             stats.playerPeak = packet.players.length
-            stats.peakInfo = {
-                day: playerPeakDate.getUTCDate(),
-                year: playerPeakDate.getUTCFullYear(),
-                month: playerPeakDate.getUTCMonth()
-            }
+            stats.peakTime = playerPeakDate.getTime()
         }
     }
 

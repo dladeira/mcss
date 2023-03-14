@@ -561,7 +561,8 @@ function getDataset(index, timeFrame) {
             for (var i = 0; i <= 23; i++) {
                 var timestamps = timeline.filter(timestamp => {
                     const timelineDate = new Date(timestamp.time)
-                    return timelineDate.getHours() == i && timelineDate.getMonth() == activeServer.value.stats.peakInfo.month && timelineDate.getFullYear() == activeServer.value.stats.peakInfo.year && timelineDate.getDate() == activeServer.value.stats.peakInfo.day
+                    const peakDate = new Date(activeServer.value.stats.peakTime)
+                    return timelineDate.getHours() == i && timelineDate.getMonth() == peakDate.getUTCMonth() && timelineDate.getFullYear() == peakDate.getUTCFullYear() && timelineDate.getDate() == peakDate.getDate()
                 })
 
                 var dataCount = timestamps.reduce((acc, cur) => acc + cur.stats.dataCount, 0)
