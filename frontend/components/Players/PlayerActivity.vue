@@ -19,7 +19,7 @@
                 <span :class="get24h() > 0 ? 'positive' : get24h() < 0 ? 'negative' : 'neutral'">{{ getSign(get24h()) + formatNumber(Math.abs(get24h())) }}</span> vs last 24h
             </div>
             <div class="front-change">
-                <span :class="getLastWeek() > 0 ? 'positive' : getLastWeek() < 0 ? 'negative' : 'neutral'">{{ getSign(getLastWeek()) + formatNumber(Math.abs(getLastWeek())) }}</span> vs last week
+                <span :class="get7DAvg() > 0 ? 'positive' : get7DAvg() < 0 ? 'negative' : 'neutral'">{{ getSign(get7DAvg()) + formatNumber(Math.abs(get7DAvg())) }}</span> vs 7d AVG
             </div>
         </div>
     </div>
@@ -153,7 +153,7 @@ function calculatedEngagement(player, daysElapsed, daysSkipped) {
         }
     }
 
-    return Math.min(blocksBroken / (150 * daysElapsed) + blocksPlaced / (100 * daysElapsed), 1) * 100
+    return Math.min(blocksBroken / (10000 * daysElapsed) + blocksPlaced / (4000 * daysElapsed), 1) * 100
 }
 
 function getAverage(arr) {
@@ -167,8 +167,8 @@ function get24h() {
     return diff
 }
 
-function getLastWeek() {
-    var diff = getEngagementScore(14, 7) - (getEngagementScore(14) - getEngagementScore(7))
+function get7DAvg() {
+    var diff = getEngagementScore(1) - getEngagementScore(7)
     return diff
 }
 

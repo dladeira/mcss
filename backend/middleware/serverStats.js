@@ -146,7 +146,7 @@ async function generateStats(server) {
 
         lastTime = packet.time
 
-        totalPacketsSkipped += Math.min(packetsSkipped, 0)
+        totalPacketsSkipped += Math.max(packetsSkipped, 0)
 
         if (server.dataLifetime != 0 && startTime.getTime() - packetDate.getTime() > server.dataLifetime * MONTH)
             return deletePackets.push(packet._id)
@@ -207,7 +207,7 @@ async function generateStats(server) {
 
         // Reset session for offline players
         for (var statsPlayer of stats.players) {
-            if (!packet.players.find(i => i.uuid == statsPlayer.uuid)) {
+            if (!packet.players.find(i => i.uuid == statsPlayer.uuid) || packetsSkipped > 0) {
                 if (statsPlayer.session > 0)
                     statsPlayer.sessions.push({ time: packetDate.getTime(), length: statsPlayer.session })
                 statsPlayer.session = 0

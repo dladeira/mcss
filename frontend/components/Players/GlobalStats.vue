@@ -106,7 +106,7 @@ function formatNumber(number) {
         unit = ""
     }
 
-    return Number(lead.toPrecision(2)) + unit
+    return Number(lead.toPrecision(unit.length == 0 ? 3 : 2)) + unit
 }
 
 function formatTime(seconds) {

@@ -19,7 +19,7 @@
                 <span :class="get24h() > 0 ? 'positive' : get24h() < 0 ? 'negative' : 'neutral'">{{ getSign(get24h()) + formatTime(Math.abs(get24h())) }}</span> vs last 24h
             </div>
             <div class="front-change">
-                <span :class="getLastWeek() > 0 ? 'positive' : getLastWeek() < 0 ? 'negative' : 'neutral'">{{ getSign(getLastWeek()) + formatTime(Math.abs(getLastWeek())) }}</span> vs last week
+                <span :class="get7DAvg() > 0 ? 'positive' : get7DAvg() < 0 ? 'negative' : 'neutral'">{{ getSign(get7DAvg()) + formatTime(Math.abs(get7DAvg())) }}</span> vs 7d AVG
             </div>
         </div>
     </div>
@@ -120,14 +120,14 @@
 <script setup>
 const activeServer = useState('activeServer')
 
-function getSessions(daysElapsed = 1) {
+function getSessions(daysElapsed = 1, daysSkipped = 0) {
     const { players } = activeServer.value.stats
     const list = []
     const now = Date.now()
 
     for (var player of players) {
         for (var session of player.sessions) {
-            if (now - session.time < daysElapsed * 24 * 60 * 60 * 1000)
+            if (now - session.time < (daysElapsed + daysSkipped) * 24 * 60 * 60 * 1000 && now - session.time > daysSkipped * 24 * 60 * 60 * 1000)
                 list.push(session.length)
         }
     }
@@ -142,12 +142,12 @@ function getAverage(arr) {
 }
 
 function get24h() {
-    var diff = getSessions(1) - (getSessions(2) - getSessions(1))
+    var diff = getSessions(1) - getSessions(1, 1)
     return diff
 }
 
-function getLastWeek() {
-    var diff = getSessions(7) - (getSessions(14) - getSessions(7))
+function get7DAvg() {
+    var diff = getSessions(1) - getSessions(7)
     return diff
 }
 

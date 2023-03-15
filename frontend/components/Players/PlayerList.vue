@@ -19,7 +19,7 @@
                 <img class="player-img" :src="`https://cravatar.eu/avatar/${player.username}/20.png`" />
                 <div class="player-name">{{ player.username }}</div>
                 <div :class="player.online ? 'player-location' : 'player-location-offline'">{{ player.online ? player.location : "---" }}</div>
-                <div class="player-engagement">58.3</div>
+                <div class="player-engagement">{{ Math.round(calculatedEngagement(player, 7) * 10) / 10 }}</div>
                 <div class="player-messages">{{ player.messages }}</div>
                 <div class="player-session">{{ player.online ? formatTime(player.session) : "---" }}</div>
                 <div class="player-playtime">{{ formatTime(player.playtime) }}</div>
@@ -201,7 +201,6 @@ function getSearchPlayers() {
 
 function sortPlayerList(list) {
     return list.sort((a, b) => {
-        console.log(a.online + " " + b.online)
 
         if (a.online && b.online)
             return a.username.localeCompare(b.username)
@@ -236,5 +235,28 @@ function formatTime(seconds) {
 
 function openPlayerCard(player) {
     playerCard.value = player
+}
+
+function calculatedEngagement(player, daysElapsed) {
+    var blocksBroken = 0
+    var blocksPlaced = 0
+
+    var timestamps = []
+    for (var timestamp of activeServer.value.stats.timeline) {
+        if ((Date.now() - timestamp.time < (daysElapsed) * 24 * 60 * 60 * 1000)) {
+            timestamps.push(timestamp)
+        }
+    }
+
+    for (var timestamp of timestamps) {
+        const statsPlayer = timestamp.stats.playerStats.find(i => i.uuid == player.uuid)
+
+        if (statsPlayer) {
+            blocksBroken += statsPlayer.blocksBroken
+            blocksPlaced += statsPlayer.blocksPlaced
+        }
+    }
+
+    return Math.min(blocksBroken / (10000 * daysElapsed) + blocksPlaced / (4000 * daysElapsed), 1) * 100
 }
 </script>
