@@ -4,7 +4,7 @@
     },
     "plans": {
         "free": {
-            "storage": 10,
+            "storage": 50,
             "serverSlots": 1,
             "maxDataLife": 0,
             "updateFrequency": 30
