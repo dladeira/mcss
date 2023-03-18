@@ -1,6 +1,7 @@
 <template>
-    <div>
+    <NuxtLayout name="no-user">
         <SharedPopup title="Last step" description="Please check your email and click on the link that we sent you to finish creating your account" button="Okay" :visible="displayPopup" />
+
         <Head>
             <Title>Login</Title>
         </Head>
@@ -31,7 +32,7 @@
                 <div v-if="loginError" class="error">{{ loginError }}</div>
             </form>
         </div>
-    </div>
+    </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
@@ -224,7 +225,7 @@ async function login(e) {
 
     if (!e.target.remember.checked) {
         window.onbeforeunload = () => {
-            document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+            document.cookie.split(";").forEach(function (c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
         }
     }
 

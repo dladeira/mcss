@@ -18,6 +18,7 @@
                 <!-- <AccountPassword /> -->
             </div>
             <div class="column">
+                <AccountSupport />
                 <!-- <div class="plan"></div> -->
                 <!-- <div class="control"></div> -->
             </div>

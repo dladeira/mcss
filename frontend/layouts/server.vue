@@ -1,7 +1,6 @@
 <template>
     <div>
         <slot v-if="activeServer" />
-
     </div>
 </template>
 

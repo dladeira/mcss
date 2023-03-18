@@ -3,7 +3,7 @@
         <footer class="footer">
             <div class="brand">
                 <h1 class="title">MCSS</h1>
-                <h2 class="subtitle">© 2022 Daniel Ladeira. All Rights Reserved.</h2>
+                <h2 class="subtitle">© 2023 Daniel Ladeira. All Rights Reserved.</h2>
                 <p class="description">
                     MCSS is not affiliated with Minecraft.
                     <br />
@@ -18,20 +18,19 @@
 
                 <div class="links">
                     <div class="link-column">
-                        <nuxt-link to="/" class="link">Home</nuxt-link>
                         <nuxt-link to="/pricing" class="link">Pricing</nuxt-link>
                         <nuxt-link to="/roadmap" class="link">Roadmap</nuxt-link>
+                        <nuxt-link to="/developers" class="link">Developers</nuxt-link>
                     </div>
                     <div class="link-column">
                         <nuxt-link to="/login" class="link">Login</nuxt-link>
-                        <nuxt-link to="/login" class="link">Sign up</nuxt-link>
                         <nuxt-link to="/tos" class="link">TOS</nuxt-link>
+                        <nuxt-link to="/support" class="link">Support</nuxt-link>
                     </div>
 
                     <div class="link-column">
                         <nuxt-link to="/u/servers" class="link">Servers</nuxt-link>
                         <nuxt-link to="/u/account" class="link">Account</nuxt-link>
-                        <nuxt-link to="/" @click.prevent="logout" class="link">Logout</nuxt-link>
                     </div>
                 </div>
             </div>
@@ -162,22 +161,3 @@
     }
 }
 </style>
-
-<script setup>
-const demo = useState('demo')
-const token = useCookie("token", {
-    maxAge: 2592000,
-    sameSite: 'lax'
-})
-const activeServerCookie = useCookie("activeServer", {
-    maxAge: 2592000,
-    sameSite: 'lax'
-})
-
-function logout() {
-    demo.value = false
-    token.value = ""
-    activeServerCookie.value = ""
-    navigateTo("/")
-}
-</script>

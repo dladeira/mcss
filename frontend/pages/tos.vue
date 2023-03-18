@@ -231,7 +231,7 @@ For more information about our privacy practices, if you have questions, or if y
 
     width: fit-content;
 
-    font-size: 4rem;
+    font-size: 3rem;
 
     &-green {
         color: #00FF75;

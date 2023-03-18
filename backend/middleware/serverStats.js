@@ -155,7 +155,7 @@ async function generateStats(server) {
 
         main:
         for (var packetPlayer of packet.players) {
-            const latestPlayer = latestData.players.find(i => i.uuid == packetPlayer.uuid)
+            const latestPlayer = packetsSkipped == 0 ? latestData.players.find(i => i.uuid == packetPlayer.uuid) : null
 
             // Existing player
             for (var statsPlayer of stats.players) {
