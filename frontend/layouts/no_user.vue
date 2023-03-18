@@ -24,8 +24,6 @@ function getToken() {
     return token.value && token.value.length > 0 ? token.value : undefined
 }
 
-console.log("bing")
-
 if (getToken() || demo.value) {
     navigateTo("/u/servers")
 } else {
