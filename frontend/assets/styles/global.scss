@@ -19,11 +19,11 @@ body,
     }
 
     @include short {
-        font-size: 14px;
+        font-size: 14px !important;
     }
 
     @include extra-short {
-        font-size: 13px;
+        font-size: 13px !important;
     }
 }
 

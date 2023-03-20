@@ -33,6 +33,11 @@
 
 <style lang="scss" scoped>
 .panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
     grid-column: 1 / 3;
     grid-row: 1 / 2;
 
@@ -52,11 +57,12 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
 
+    height: 100%;
     width: 90%;
 
-    margin: 0.75rem auto 0 1rem;
+    margin: auto;
 }
 
 .dials {
@@ -89,8 +95,6 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-
-    height: 100%;
 }
 
 .players-title {

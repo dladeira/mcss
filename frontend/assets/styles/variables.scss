@@ -30,12 +30,15 @@ $gradient-main: linear-gradient(to right,
 // ==========
 
 $desktop-width: 1600px;
+$desktop-height: 960px;
 $xs-height: 800px;
 $s-height: 870px;
 
 @mixin desktop {
     @media (min-width: $desktop-width) {
-        @content;
+        @media (min-height: 960px) {
+            @content;
+        }
     }
 }
 
