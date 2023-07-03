@@ -148,8 +148,10 @@ async function generateStats(server) {
 
         totalPacketsSkipped += Math.max(packetsSkipped, 0)
 
-        if (server.dataLifetime != 0 && startTime.getTime() - packetDate.getTime() > server.dataLifetime * MONTH)
-            return deletePackets.push(packet._id)
+        if (server.dataLifetime != 0 && startTime.getTime() - packetDate.getTime() > server.dataLifetime * MONTH) {
+            deletePackets.push(packet._id)
+            continue
+        }
 
         timeline.registerPacket(packet)
 
@@ -238,6 +240,7 @@ async function generateStats(server) {
         stats.whispers += statsPlayer.whispers
         stats.commands += statsPlayer.commands
     }
+
     // Set final stats
     stats.cpuUsage = latestData.cpuUsage
     stats.ramUsage = latestData.ramUsage
