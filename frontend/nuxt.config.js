@@ -26,16 +26,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     proxy: {
       target: process.env.API_SERVER,
-      options: [
-        {
-          target: process.env.API_SERVER,
-          changeOrigin: true,
-          pathRewrite: {
-            "^/api": "/",
-          },
-          pathFilter: ["/api"],
-        },
-      ],
+      changeOrigin: true,
+      pathRewrite: {
+        "^/api": "/",
+      },
+      pathFilter: ["/api"],
     },
     public: {
       origin: process.env.WEB_SERVER,
